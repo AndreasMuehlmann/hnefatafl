@@ -1,5 +1,7 @@
 # hnefatafl
 
+This is a program for playing hnefatafl. Also a algorithm will developed to play hnefatafl.
+
 ## Quickstart
 
 - Clone the repository with `https://github.com/AndreasMuehlmann/hnefatafl.git`.
