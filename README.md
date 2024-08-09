@@ -1,4 +1,13 @@
 # hnefatafl
 
-Clone the repository with `https://github.com/AndreasMuehlmann/hnefatafl.git`.
-Then get all the submodules with `git submodule update --init --recursive`.
+## Quickstart
+
+- Clone the repository with `https://github.com/AndreasMuehlmann/hnefatafl.git`.
+- Then get all the submodules with `git submodule update --init --recursive`.
+- Then create the `build` directory and `cd` into it.
+- Run `cmake -DCMAKE_BUILD_TYPE=Debug ..` for a Debug build configuration or run `cmake -DCMAKE_BUILD_TYPE=Release ..`
+    for a Release build configuration.
+- Build the Project with `cmake --build build` from the project directory
+- Execute the tests executable in the build directory to run the unit tests
+- The program (`hnefatafl`) is also in the build directory
+- Install the program and libraries with `sudo make install` in the `build` directory

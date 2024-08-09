@@ -20,8 +20,14 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 
-
 add_subdirectory(lib/Catch2)
 add_executable(tests tests/test.cpp src/helper.cpp)
 target_include_directories(tests PRIVATE src)
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+
+
+install(
+    TARGETS hnefatafl
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+)
