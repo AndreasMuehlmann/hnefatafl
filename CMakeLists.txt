@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable(hnefatafl 
+    src/Game.cpp
     src/hnefatafl.cpp
 )
 
@@ -21,7 +22,7 @@ endif()
 
 
 add_subdirectory(lib/Catch2)
-add_executable(tests tests/test.cpp src/helper.cpp)
+add_executable(tests tests/test.cpp src/Game.cpp)
 target_include_directories(tests PRIVATE src)
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 
