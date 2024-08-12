@@ -9,11 +9,6 @@ enum Figur {
     Guard
 }; 
 
-enum Player {
-    KingAttacker,
-    KingDefender
-};
-
 struct Position {
     unsigned int x;
     unsigned int y;
@@ -22,9 +17,12 @@ struct Position {
 class Game {
 private:
     Figur field[FIELD_SIZE][FIELD_SIZE];
-    Player toMove;
+    bool wikingsToMove;
 public:
     Game();
-    bool move(Position from, Position to);
+    bool isBlockedXRange(unsigned int fromX, unsigned int toX, unsigned int y);
+    bool isBlockedYRange(unsigned int fromY, unsigned toY, unsigned int x);
+    void updateField(Position lastMovedTo);
+    void move(Position from, Position to);
     void printField();
 };
