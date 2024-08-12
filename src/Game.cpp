@@ -83,9 +83,9 @@ void Game::updateField(Position lastMovedTo) {
 }
 
 void Game::move(Position from, Position to) {
-    if (from.x < FIELD_SIZE && from.y < FIELD_SIZE) {
+    if (from.x >= FIELD_SIZE && from.y >= FIELD_SIZE) {
         throw std::invalid_argument("Position to move away from out of field range.");
-    } else if (to.x < FIELD_SIZE && to.y < FIELD_SIZE) {
+    } else if (to.x >= FIELD_SIZE && to.y >= FIELD_SIZE) {
         throw std::invalid_argument("Position to move to out of field range.");
     } else if (from.x == to.x && from.y == to.y) {
         throw std::invalid_argument("Position to move to and position to move from are equal.");
