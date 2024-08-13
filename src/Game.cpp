@@ -64,22 +64,38 @@ Figur Game::figurAt(Position position) {
 
 
 bool Game::isBlockedXRange(unsigned int fromX, unsigned int toX, unsigned int y) {
-    for (int x = fromX; fromX <= toX; x++) {
+    unsigned int low, high;
+    if (fromX < toX) {
+        low = fromX + 1;
+        high = toX;
+    } else {
+        low = toX;
+        high = fromX - 1;
+    }
+    for (unsigned int x = low + 1; x <= high; x++) {
         if (field[x][y] != Figur::None) {
-            return false;
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
 
 bool Game::isBlockedYRange(unsigned int fromY, unsigned toY, unsigned int x) {
-    for (int y = fromY; fromY <= toY; y++) {
+    unsigned int low, high;
+    if (fromY < toY) {
+        low = fromY + 1;
+        high = toY;
+    } else {
+        low = toY;
+        high = fromY - 1;
+    }
+    for (unsigned int y = low + 1; y <= high; y++) {
         if (field[x][y] != Figur::None) {
-            return false;
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
 
@@ -104,7 +120,7 @@ void Game::move(Position from, Position to) {
         throw std::invalid_argument("Diagonal movement is not allowed.");
     } else if ((to.x == 0 || to.x == 8) && (to.y == 0 || to.y == 8) && figurAt(from) != Figur::King) {
         throw std::invalid_argument("Cannot move into the corner unless the figur is the king.");
-    } else if ((to.x == 4 && to.y == 4) && figurAt(from) == Figur::King) {
+    } else if ((to.x == 4 && to.y == 4) && figurAt(from) != Figur::King) {
         throw std::invalid_argument("Cannot move into the center position unless the figur is the king.");
     }
 
@@ -114,6 +130,8 @@ void Game::move(Position from, Position to) {
     } else {
         throw std::invalid_argument("Cannot move because the path is blocked.");
     }
+
+    updateField(to);
 
     wikingsToMove = !wikingsToMove;
 }

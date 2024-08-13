@@ -18,12 +18,12 @@ class Game {
 private:
     Figur field[FIELD_SIZE][FIELD_SIZE];
     bool wikingsToMove;
+    void updateField(Position lastMovedTo);
 public:
     Game();
     Figur figurAt(Position position);
     bool isBlockedXRange(unsigned int fromX, unsigned int toX, unsigned int y);
     bool isBlockedYRange(unsigned int fromY, unsigned toY, unsigned int x);
-    void updateField(Position lastMovedTo);
     void move(Position from, Position to);
     void printField();
 };

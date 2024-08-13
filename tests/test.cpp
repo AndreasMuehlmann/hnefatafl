@@ -48,6 +48,14 @@ bool check_for_exception_in_move(Game &game, Position from, Position to, std::st
     return false;
 }
 
+void move_king_out_of_the_middle(Game &game) {
+    game.move({ 7, 4 }, { 7, 5 });
+    game.move({ 4, 5 }, { 5, 5 });
+    game.move({ 7, 5 }, { 7, 4 });
+    game.move({ 4, 4 }, { 4, 5 });
+    game.move({ 7, 4 }, { 7, 5 });
+}
+
 TEST_CASE( "Test impossible moves", "[move]" ) {
     Game game;
 
@@ -56,17 +64,13 @@ TEST_CASE( "Test impossible moves", "[move]" ) {
     REQUIRE(check_for_exception_in_move(game, {0, 4}, {0, 6}, "Cannot move because the path is blocked."));
 
     try {
-        game.move({ 4, 5 }, { 5, 5 });
-        game.move({ 7, 4 }, { 7, 5 });
-        game.move({ 4, 4 }, { 4, 5 });
-        game.move({ 7, 5 }, { 7, 4 });
+        move_king_out_of_the_middle(game);
     } catch (std::invalid_argument& e) {
-
         std::cout << "Unexpected exception." << std::endl;
         game.printField();
         throw e;
     }
 
     REQUIRE(check_for_exception_in_move(game, {3, 4}, {4, 4}, "Cannot move into the center position unless the figur is the king."));
-    REQUIRE(check_for_exception_in_move(game, {4, 4}, {4, 5}, "Cannot move because the path is blocked."));
+    REQUIRE(check_for_exception_in_move(game, {4, 2}, {4, 0}, "Cannot move because the path is blocked."));
 }
