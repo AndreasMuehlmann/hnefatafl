@@ -58,6 +58,11 @@ Game::Game() {
 }
 
 
+Figur Game::figurAt(Position position) {
+    return field[position.x][position.y];
+}
+
+
 bool Game::isBlockedXRange(unsigned int fromX, unsigned int toX, unsigned int y) {
     for (int x = fromX; fromX <= toX; x++) {
         if (field[x][y] != Figur::None) {
@@ -79,8 +84,9 @@ bool Game::isBlockedYRange(unsigned int fromY, unsigned toY, unsigned int x) {
 
 
 void Game::updateField(Position lastMovedTo) {
-    
+    (void)lastMovedTo;
 }
+
 
 void Game::move(Position from, Position to) {
     if (from.x >= FIELD_SIZE && from.y >= FIELD_SIZE) {
@@ -104,8 +110,6 @@ void Game::move(Position from, Position to) {
     } else {
         throw std::invalid_argument("Cannot move because the path is blocked.");
     }
-
-    updateField(to);
 
     wikingsToMove = !wikingsToMove;
 }

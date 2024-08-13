@@ -3,11 +3,10 @@
 #include "Game.hpp"
 
 
-/*
-TEST_CASE( "Factorials are computed", "[factorial]" ) {
-    REQUIRE( Factorial(1) == 1 );
-    REQUIRE( Factorial(2) == 2 );
-    REQUIRE( Factorial(3) == 6 );
-    REQUIRE( Factorial(10) == 3628800 );
+TEST_CASE( "A move is tested", "[move]" ) {
+    Game game;
+    struct Position from = { 4, 1 };
+    struct Position to = { 5, 1 };
+    game.move(from, to);
+    REQUIRE( game.figurAt(to) == Figur::Wiking );
 }
-*/

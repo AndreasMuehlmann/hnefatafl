@@ -6,5 +6,6 @@ int main() {
     struct Position from = { 4, 1 };
     struct Position to = { 5, 1 };
     game.move(from, to);
+    game.updateField(to);
     game.printField();
 }

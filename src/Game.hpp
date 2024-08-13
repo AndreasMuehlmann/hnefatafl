@@ -20,6 +20,7 @@ private:
     bool wikingsToMove;
 public:
     Game();
+    Figur figurAt(Position position);
     bool isBlockedXRange(unsigned int fromX, unsigned int toX, unsigned int y);
     bool isBlockedYRange(unsigned int fromY, unsigned toY, unsigned int x);
     void updateField(Position lastMovedTo);
