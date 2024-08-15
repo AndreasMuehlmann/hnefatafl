@@ -12,18 +12,19 @@ TEST_CASE( "Multiple possible moves are tested", "[move]" ) {
     from = { 4, 1 }; 
     to = { 5, 1 };
     game.move(from, to);
-    REQUIRE(game.figurAt(to) == Figur::Wiking);
+    REQUIRE(game.getFigurAt(to) == Figur::Wiking);
 
     from = { 4, 5 };
     to = { 7, 5 };
     game.move(from, to);
-    REQUIRE(game.figurAt(to) == Figur::Guard);
+    REQUIRE(game.getFigurAt(to) == Figur::Guard);
 
     from = { 8, 5 };
     to = { 8, 7 };
     game.move(from, to);
-    REQUIRE(game.figurAt(to) == Figur::Wiking);
+    REQUIRE(game.getFigurAt(to) == Figur::Wiking);
 }
+
 
 bool check_for_exception_in_move(Game &game, Position from, Position to, std::string expectedException) {
     try {
@@ -48,6 +49,7 @@ bool check_for_exception_in_move(Game &game, Position from, Position to, std::st
     return false;
 }
 
+
 void move_king_out_of_the_middle(Game &game) {
     game.move({ 7, 4 }, { 7, 5 });
     game.move({ 4, 5 }, { 5, 5 });
@@ -55,6 +57,7 @@ void move_king_out_of_the_middle(Game &game) {
     game.move({ 4, 4 }, { 4, 5 });
     game.move({ 7, 4 }, { 7, 5 });
 }
+
 
 TEST_CASE( "Test impossible moves", "[move]" ) {
     Game game;
@@ -73,4 +76,62 @@ TEST_CASE( "Test impossible moves", "[move]" ) {
 
     REQUIRE(check_for_exception_in_move(game, {3, 4}, {4, 4}, "Cannot move into the center position unless the figur is the king."));
     REQUIRE(check_for_exception_in_move(game, {4, 2}, {4, 0}, "Cannot move because the path is blocked."));
+}
+
+
+TEST_CASE( "Test if figures are removed by a capture", "[captureXAxis, captureYAxis]" ) {
+    {
+        Figur field[FIELD_SIZE][FIELD_SIZE] = {
+            {Figur::None, Figur::Wiking, Figur::Guard, Figur::Guard, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+        };
+        Game game(field);
+        game.printField();
+        game.move({4, 1}, {4, 0});
+        game.printField();
+        REQUIRE(game.getFigurAt({2, 0}) == Figur::None);
+        REQUIRE(game.getFigurAt({3, 0}) == Figur::None);
+    }
+    {
+        Figur field[FIELD_SIZE][FIELD_SIZE] = {
+            {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::King, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::Guard, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+        };
+        Game game(field);
+        game.move({1, 8}, {2, 8});
+        game.move({1, 1}, {0, 1});
+        REQUIRE(game.getFigurAt({0, 2}) == Figur::None);
+        REQUIRE(game.getFigurAt({0, 3}) == Figur::None);
+    }
+    {
+        Figur field[FIELD_SIZE][FIELD_SIZE] = {
+            {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::King, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::Guard, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            {Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+        };
+        Game game(field);
+        game.move({1, 4}, {0, 4});
+        REQUIRE(game.getFigurAt({0, 2}) == Figur::King);
+        REQUIRE(game.getFigurAt({0, 3}) == Figur::Guard);
+    }
 }
