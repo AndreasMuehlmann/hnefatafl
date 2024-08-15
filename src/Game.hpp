@@ -1,6 +1,9 @@
 #pragma once
 
+#include <array>
+
 #define FIELD_SIZE 9
+
 
 enum Figur {
     None,
@@ -14,9 +17,11 @@ struct Position {
     unsigned int y;
 };
 
+typedef std::array<std::array<Figur, FIELD_SIZE>, FIELD_SIZE> Field ;
+
 class Game {
 private:
-    Figur field[FIELD_SIZE][FIELD_SIZE];
+    Field field;
     bool wikingsToMove;
     Position kingPosition;
 
@@ -26,10 +31,11 @@ private:
     bool isBlockedYAxis(unsigned int fromY, unsigned toY, unsigned int x);
 public:
     Game();
-    Game(Figur newField[FIELD_SIZE][FIELD_SIZE]);
+    Game(Field field);
     bool areWikingsToMove();
     Figur getFigurAt(Position position);
     void setFigurAt(Figur figur, Position position);
+    void getFieldCopy(Field fieldToCopyInto);
     void move(Position from, Position to);
     void updateField(Position lastMovedTo);
     bool isGameOver(Position lastMovedTo);

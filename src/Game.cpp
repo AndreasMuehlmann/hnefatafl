@@ -1,3 +1,4 @@
+#include <cstring>
 #include <iostream>
 
 #include "Game.hpp"
@@ -60,14 +61,9 @@ Game::Game() {
 }
 
 
-Game::Game(Figur newFieldFirstArrayYAxis[FIELD_SIZE][FIELD_SIZE]) {
+Game::Game(Field newField) {
     wikingsToMove = true;
-
-     for (unsigned int x = 0; x < FIELD_SIZE; ++x) {
-        for (unsigned int y = 0; y < FIELD_SIZE; ++y) {
-            setFigurAt(newFieldFirstArrayYAxis[y][x], {x, y});
-        }
-    }
+    field = newField;
 }
 
 
@@ -85,6 +81,14 @@ void Game::setFigurAt(Figur figur, Position position) {
     field[position.x][position.y] = figur;
 }
 
+
+void Game::getFieldCopy(Field fieldToCopyInto) {
+    for (int y = 0; y < FIELD_SIZE; y++) {
+        for (int x = 0; x < FIELD_SIZE; x++) {
+            fieldToCopyInto[x][y] = field[x][y];
+        }
+    }
+}
 
 bool Game::isBlockedXAxis(unsigned int fromX, unsigned int toX, unsigned int y) {
     unsigned int low, high;

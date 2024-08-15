@@ -23,8 +23,17 @@ endif()
 
 
 add_subdirectory(lib/Catch2)
-add_executable(tests tests/TestGame.cpp src/Game.cpp src/Engine.cpp)
+
+add_executable(tests
+    tests/TestGame.cpp
+    tests/TestEngine.cpp
+    tests/helper.cpp
+    src/Game.cpp
+    src/Engine.cpp
+)
+
 target_include_directories(tests PRIVATE src)
+target_include_directories(tests PRIVATE tests)
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 
 
