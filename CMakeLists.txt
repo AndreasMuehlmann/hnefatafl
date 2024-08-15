@@ -10,8 +10,9 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable(hnefatafl 
+    src/Hnefatafl.cpp
     src/Game.cpp
-    src/hnefatafl.cpp
+    src/Engine.cpp
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
@@ -22,7 +23,7 @@ endif()
 
 
 add_subdirectory(lib/Catch2)
-add_executable(tests tests/test.cpp src/Game.cpp)
+add_executable(tests tests/TestGame.cpp src/Game.cpp src/Engine.cpp)
 target_include_directories(tests PRIVATE src)
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 

@@ -22,7 +22,19 @@ int main() {
         std::stringstream ss(input);
         if (ss >> xFrom >> comma >> yFrom >> semicolon >> xTo >> comma >> yTo) {
             try {
-                game.move({xFrom, yFrom}, {xTo, yTo});
+                struct Position from {xFrom, yFrom};
+                struct Position to {xTo, yTo};
+                game.move(from, to);
+                game.updateField(to);
+                if (game.isGameOver(to)) {
+                    if (game.areWikingsToMove()) {
+                        std::cout << "The wikings won!!" << std::endl;
+                    } else {
+                        std::cout << "The king won!!" << std::endl;
+                    }
+                    break;
+                };
+                game.moveDone();
             } catch (std::invalid_argument &e) {
                 std::cout << e.what() << std::endl;
             }

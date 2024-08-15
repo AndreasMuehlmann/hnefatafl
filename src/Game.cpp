@@ -55,6 +55,8 @@ Game::Game() {
               
     field[5][4] = Figur::Guard;
     field[6][4] = Figur::Guard;
+
+    kingPosition = {4, 4};
 }
 
 
@@ -66,6 +68,11 @@ Game::Game(Figur newFieldFirstArrayYAxis[FIELD_SIZE][FIELD_SIZE]) {
             setFigurAt(newFieldFirstArrayYAxis[y][x], {x, y});
         }
     }
+}
+
+
+bool Game::areWikingsToMove() {
+    return wikingsToMove;
 }
 
 
@@ -84,11 +91,13 @@ bool Game::isBlockedXAxis(unsigned int fromX, unsigned int toX, unsigned int y) 
     if (fromX < toX) {
         low = fromX + 1;
         high = toX;
-    } else {
+    } else if (fromX > toX) {
         low = toX;
         high = fromX - 1;
+    } else {
+        return false;
     }
-    for (unsigned int x = low + 1; x <= high; x++) {
+    for (unsigned int x = low; x <= high; x++) {
         if (field[x][y] != Figur::None) {
             return true;
         }
@@ -102,16 +111,53 @@ bool Game::isBlockedYAxis(unsigned int fromY, unsigned toY, unsigned int x) {
     if (fromY < toY) {
         low = fromY + 1;
         high = toY;
-    } else {
+    } else if (fromY > toY){
         low = toY;
         high = fromY - 1;
+    } else {
+        return false;
     }
-    for (unsigned int y = low + 1; y <= high; y++) {
+    for (unsigned int y = low; y <= high; y++) {
         if (field[x][y] != Figur::None) {
             return true;
         }
     }
     return false;
+}
+
+
+void Game::move(Position from, Position to) {
+    if (from.x >= FIELD_SIZE || from.y >= FIELD_SIZE) {
+        throw std::invalid_argument("Position to move away from out of field range.");
+    } else if (to.x >= FIELD_SIZE || to.y >= FIELD_SIZE) {
+        throw std::invalid_argument("Position to move to out of field range.");
+    } else if (from.x == to.x && from.y == to.y) {
+        throw std::invalid_argument("Position to move to and position to move from are equal.");
+    } 
+
+    Figur figur = getFigurAt(from);
+    if (figur == Figur::None) {
+        throw std::invalid_argument("On the position to move away from is no figur.");
+    } else if ((wikingsToMove && isKingDefender(getFigurAt(from))) 
+            || (!wikingsToMove && isKingAttacker(getFigurAt(from)))) {
+        throw std::invalid_argument("The figur belongs to the other player.");
+    } else if (from.x != to.x && from.y != to.y) {
+        throw std::invalid_argument("Diagonal movement is not allowed.");
+    } else if ((to.x == 0 || to.x == 8) && (to.y == 0 || to.y == 8) && figur != Figur::King) {
+        throw std::invalid_argument("Cannot move into the corner unless the figur is the king.");
+    } else if ((to.x == 4 && to.y == 4) && figur != Figur::King) {
+        throw std::invalid_argument("Cannot move into the center position unless the figur is the king.");
+    }
+
+    if (!isBlockedXAxis(from.x, to.x, from.y) && !isBlockedYAxis(from.y, to.y, from.x)) {
+        setFigurAt(figur, to);
+        setFigurAt(Figur::None, from);
+        if (figur == Figur::King) {
+            kingPosition = to;
+        }
+    } else {
+        throw std::invalid_argument("Cannot move because the path is blocked.");
+    }
 }
 
 
@@ -146,14 +192,6 @@ void Game::captureYAxis(Position lastMovedTo, int direction) {
 
 
 void Game::updateField(Position lastMovedTo) {
-    if (getFigurAt(lastMovedTo) == Figur::King &&
-            (
-             (lastMovedTo.x == 0 || lastMovedTo.x == FIELD_SIZE - 1) 
-             && (lastMovedTo.y == 0 || lastMovedTo.y == FIELD_SIZE - 1)
-            )) {
-        std::cout << "The king won!!" << std::endl;
-    }
-
     captureXAxis(lastMovedTo, 1);
     captureXAxis(lastMovedTo, -1);
     captureYAxis(lastMovedTo, 1);
@@ -161,35 +199,21 @@ void Game::updateField(Position lastMovedTo) {
 }
 
 
-void Game::move(Position from, Position to) {
-    if (from.x >= FIELD_SIZE || from.y >= FIELD_SIZE) {
-        throw std::invalid_argument("Position to move away from out of field range.");
-    } else if (to.x >= FIELD_SIZE || to.y >= FIELD_SIZE) {
-        throw std::invalid_argument("Position to move to out of field range.");
-    } else if (from.x == to.x && from.y == to.y) {
-        throw std::invalid_argument("Position to move to and position to move from are equal.");
-    } else if (getFigurAt(from) == Figur::None) {
-        throw std::invalid_argument("On the position to move away from is no figur.");
-    } else if ((wikingsToMove && isKingDefender(getFigurAt(from))) 
-            || (!wikingsToMove && isKingAttacker(getFigurAt(from)))) {
-        throw std::invalid_argument("The figur belongs to the other player.");
-    } else if (from.x != to.x && from.y != to.y) {
-        throw std::invalid_argument("Diagonal movement is not allowed.");
-    } else if ((to.x == 0 || to.x == 8) && (to.y == 0 || to.y == 8) && getFigurAt(from) != Figur::King) {
-        throw std::invalid_argument("Cannot move into the corner unless the figur is the king.");
-    } else if ((to.x == 4 && to.y == 4) && getFigurAt(from) != Figur::King) {
-        throw std::invalid_argument("Cannot move into the center position unless the figur is the king.");
+bool Game::isGameOver(Position lastMovedTo) {
+    if (getFigurAt(lastMovedTo) == Figur::King) {
+        return (kingPosition.x == 0 || kingPosition.x == FIELD_SIZE - 1) 
+            && (kingPosition.y == 0 || kingPosition.y == FIELD_SIZE - 1);
+    } else if (wikingsToMove) {
+        return (kingPosition.x == FIELD_SIZE - 1 || getFigurAt({kingPosition.x + 1, kingPosition.y}) == Figur::Wiking)
+            && (kingPosition.x == 0 || getFigurAt({kingPosition.x - 1, kingPosition.y}) == Figur::Wiking)
+            && (kingPosition.y == FIELD_SIZE - 1 || getFigurAt({kingPosition.x, kingPosition.y + 1}) == Figur::Wiking)
+            && (kingPosition.y == 0 || getFigurAt({kingPosition.x, kingPosition.y - 1}) == Figur::Wiking);
     }
+    return false;
+}
 
-    if (!isBlockedXAxis(from.x, to.x, from.y) && !isBlockedYAxis(from.y, to.y, from.x)) {
-        setFigurAt(getFigurAt(from), to);
-        setFigurAt(Figur::None, from);
-    } else {
-        throw std::invalid_argument("Cannot move because the path is blocked.");
-    }
 
-    updateField(to);
-
+void Game::moveDone() {
     wikingsToMove = !wikingsToMove;
 }
 
@@ -215,4 +239,3 @@ void Game::printField() {
         std::cout << std::endl;
     }
 }
-
