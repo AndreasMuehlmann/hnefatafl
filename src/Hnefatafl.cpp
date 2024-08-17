@@ -10,15 +10,15 @@
 int main() {
 
     Field field = {
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::King, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::None},
-        std::array<Figur, FIELD_SIZE> {Figur::Wiking, Figur::Wiking, Figur::Guard, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
+        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::None},
         std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
         std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::King, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
         std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
         std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
-        std::array<Figur, FIELD_SIZE> {Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
         std::array<Figur, FIELD_SIZE> {Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::None},
+        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
     };
     Game game(field);
 
@@ -53,8 +53,10 @@ int main() {
         try {
             game.move(move);
             game.updateField(move.to);
+            std::cout << game.isGameOver(move.to) << std::endl;
             if (game.isGameOver(move.to)) {
                 if (game.areWikingsToMove()) {
+                    game.printField();
                     std::cout << "The wikings won!!" << std::endl;
                 } else {
                     std::cout << "The king won!!" << std::endl;

@@ -69,6 +69,13 @@ Game::Game() {
 Game::Game(Field newField) {
     wikingsToMove = true;
     field = newField;
+    for (int x = 0; x < FIELD_SIZE; x++) {
+        for (int y = 0; y < FIELD_SIZE; y++) {
+            if (getFigurAt({x, y}) == Figur::King) {
+                kingPosition = {x, y};
+            }
+        }
+    }
 }
 
 
