@@ -17,7 +17,7 @@ int main() {
 
 
 
-    unsigned int xFrom, yFrom, xTo, yTo;
+    int xFrom, yFrom, xTo, yTo;
     char comma, semicolon;
 
     std::string input;
@@ -30,8 +30,8 @@ int main() {
         std::stringstream ss(input);
         if (ss >> xFrom >> comma >> yFrom >> semicolon >> xTo >> comma >> yTo) {
             try {
-                struct Position from {xFrom, yFrom};
-                struct Position to {xTo, yTo};
+                struct Vec2D from {xFrom, yFrom};
+                struct Vec2D to {xTo, yTo};
                 game.move(from, to);
                 game.updateField(to);
                 if (game.isGameOver(to)) {

@@ -4,6 +4,11 @@
 #include "Game.hpp"
 
 
+int sign(int x) {
+    return (x > 0) - (x < 0);
+}
+
+
 bool isKingAttacker(Figur figur) {
     return figur == Figur::Wiking;
 }
@@ -72,12 +77,12 @@ bool Game::areWikingsToMove() {
 }
 
 
-Figur Game::getFigurAt(Position position) {
+Figur Game::getFigurAt(Vec2D position) {
     return field[position.x][position.y];
 }
 
 
-void Game::setFigurAt(Figur figur, Position position) {
+void Game::setFigurAt(Figur figur, Vec2D position) {
     field[position.x][position.y] = figur;
 }
 
@@ -90,47 +95,23 @@ void Game::getFieldCopy(Field fieldToCopyInto) {
     }
 }
 
-bool Game::isBlockedXAxis(unsigned int fromX, unsigned int toX, unsigned int y) {
-    unsigned int low, high;
-    if (fromX < toX) {
-        low = fromX + 1;
-        high = toX;
-    } else if (fromX > toX) {
-        low = toX;
-        high = fromX - 1;
-    } else {
-        return false;
-    }
-    for (unsigned int x = low; x <= high; x++) {
-        if (field[x][y] != Figur::None) {
+
+bool Game::isBlocked(Vec2D from, Vec2D to) {
+    Vec2D direction = {sign(to.x - from.x), sign(to.y - from.y)};
+    Vec2D positionToCheck = from;
+    do {
+        positionToCheck = {positionToCheck.x + direction.x, positionToCheck.y + direction.y};
+        if (getFigurAt(positionToCheck) != Figur::None) {
             return true;
         }
-    }
+    } while (!(positionToCheck.x == to.x && positionToCheck.y == to.y)
+            && 0 <= positionToCheck.x && positionToCheck.x < FIELD_SIZE
+            && 0 <= positionToCheck.y && positionToCheck.y < FIELD_SIZE);
     return false;
 }
 
 
-bool Game::isBlockedYAxis(unsigned int fromY, unsigned toY, unsigned int x) {
-    unsigned int low, high;
-    if (fromY < toY) {
-        low = fromY + 1;
-        high = toY;
-    } else if (fromY > toY){
-        low = toY;
-        high = fromY - 1;
-    } else {
-        return false;
-    }
-    for (unsigned int y = low; y <= high; y++) {
-        if (field[x][y] != Figur::None) {
-            return true;
-        }
-    }
-    return false;
-}
-
-
-void Game::move(Position from, Position to) {
+void Game::move(Vec2D from, Vec2D to) {
     if (from.x >= FIELD_SIZE || from.y >= FIELD_SIZE) {
         throw std::invalid_argument("Position to move away from out of field range.");
     } else if (to.x >= FIELD_SIZE || to.y >= FIELD_SIZE) {
@@ -153,7 +134,7 @@ void Game::move(Position from, Position to) {
         throw std::invalid_argument("Cannot move into the center position unless the figur is the king.");
     }
 
-    if (!isBlockedXAxis(from.x, to.x, from.y) && !isBlockedYAxis(from.y, to.y, from.x)) {
+    if (!isBlocked(from, to)) {
         setFigurAt(figur, to);
         setFigurAt(Figur::None, from);
         if (figur == Figur::King) {
@@ -165,45 +146,34 @@ void Game::move(Position from, Position to) {
 }
 
 
-void Game::captureXAxis(Position lastMovedTo, int direction) {
-    for (unsigned int x = lastMovedTo.x + direction; x < FIELD_SIZE; x += direction) {
-        Figur figur = getFigurAt({x, lastMovedTo.y});
+void Game::capture(Vec2D lastMovedTo, Vec2D direction) {
+    Vec2D positionToCheck = {lastMovedTo.x + direction.x, lastMovedTo.y + direction.y};
+    while (0 <= positionToCheck.x && positionToCheck.x < FIELD_SIZE && 0 <= positionToCheck.y && positionToCheck.y < FIELD_SIZE) {
+        Figur figur = getFigurAt(positionToCheck);
         if (figur == Figur::None || (wikingsToMove && figur == Figur::King)) {
             break;
         } else if ((wikingsToMove && figur == Figur::Wiking) 
                 || (!wikingsToMove && (figur == Figur::Guard || figur == Figur::King))) {
-            for (unsigned int xToDelete = lastMovedTo.x + direction; xToDelete * direction < x * direction; xToDelete += direction) {
-                setFigurAt(Figur::None, {xToDelete, lastMovedTo.y});
-            }
-        }             
-    }
-}
-
-
-void Game::captureYAxis(Position lastMovedTo, int direction) {
-    for (unsigned int y = lastMovedTo.y + direction; y < FIELD_SIZE; y += direction) {
-        Figur figur = getFigurAt({lastMovedTo.x, y});
-        if (figur == Figur::None || (wikingsToMove && figur == Figur::King)) {
-            break;
-        } else if ((wikingsToMove && figur == Figur::Wiking) 
-                || (!wikingsToMove && (figur == Figur::Guard || figur == Figur::King))) {
-            for (unsigned int yToDelete = lastMovedTo.y + direction; yToDelete * direction < y * direction; yToDelete += direction) {
-                setFigurAt(Figur::None, {lastMovedTo.x, yToDelete});
-            }
+                Vec2D positionToDelete = {lastMovedTo.x + direction.x, lastMovedTo.y + direction.y};
+                while (!(positionToDelete.x == positionToCheck.x && positionToDelete.y == positionToCheck.y)) {
+                    setFigurAt(Figur::None, positionToDelete);
+                    positionToDelete = {positionToDelete.x + direction.x, positionToDelete.y + direction.y};
+                }
         }           
+        positionToCheck = {positionToCheck.x + direction.x, positionToCheck.y + direction.y};
     }
 }
 
 
-void Game::updateField(Position lastMovedTo) {
-    captureXAxis(lastMovedTo, 1);
-    captureXAxis(lastMovedTo, -1);
-    captureYAxis(lastMovedTo, 1);
-    captureYAxis(lastMovedTo, -1);
+void Game::updateField(Vec2D lastMovedTo) {
+    capture(lastMovedTo, {1, 0});
+    capture(lastMovedTo, {-1, 0});
+    capture(lastMovedTo, {0, 1});
+    capture(lastMovedTo, {0, -1});
 }
 
 
-bool Game::isGameOver(Position lastMovedTo) {
+bool Game::isGameOver(Vec2D lastMovedTo) {
     if (getFigurAt(lastMovedTo) == Figur::King) {
         return (kingPosition.x == 0 || kingPosition.x == FIELD_SIZE - 1) 
             && (kingPosition.y == 0 || kingPosition.y == FIELD_SIZE - 1);

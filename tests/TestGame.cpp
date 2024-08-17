@@ -8,8 +8,8 @@
 
 TEST_CASE( "Multiple possible moves are tested", "[move]" ) {
     Game game;
-    struct Position from;
-    struct Position to;
+    struct Vec2D from;
+    struct Vec2D to;
 
     from = { 4, 1 }; 
     to = { 5, 1 };
@@ -31,7 +31,7 @@ TEST_CASE( "Multiple possible moves are tested", "[move]" ) {
 }
 
 
-bool check_for_exception_in_move(Game &game, Position from, Position to, std::string expectedException) {
+bool check_for_exception_in_move(Game &game, Vec2D from, Vec2D to, std::string expectedException) {
     try {
         game.move(from, to);
     } catch (std::invalid_argument& e) {
@@ -55,7 +55,7 @@ bool check_for_exception_in_move(Game &game, Position from, Position to, std::st
 }
 
 
-void move_king_out_of_the_middle(Game &game) {
+void moveKingOutOfMiddle(Game &game) {
     game.moveDone();
     game.move({ 4, 5 }, { 5, 5 });
     game.move({ 4, 4 }, { 4, 5 });
@@ -70,7 +70,7 @@ TEST_CASE( "Test impossible moves", "[move]" ) {
     REQUIRE(check_for_exception_in_move(game, {0, 4}, {0, 6}, "Cannot move because the path is blocked."));
 
     try {
-        move_king_out_of_the_middle(game);
+        moveKingOutOfMiddle(game);
     } catch (std::invalid_argument& e) {
         std::cout << "Unexpected exception." << std::endl;
         game.printField();

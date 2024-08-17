@@ -12,9 +12,9 @@ enum Figur {
     Guard
 }; 
 
-struct Position {
-    unsigned int x;
-    unsigned int y;
+struct Vec2D {
+    int x;
+    int y;
 };
 
 typedef std::array<std::array<Figur, FIELD_SIZE>, FIELD_SIZE> Field ;
@@ -23,22 +23,20 @@ class Game {
 private:
     Field field;
     bool wikingsToMove;
-    Position kingPosition;
+    Vec2D kingPosition;
 
-    void captureXAxis(Position lastMovedTo, int direction);
-    void captureYAxis(Position lastMovedTo, int direction);
-    bool isBlockedXAxis(unsigned int fromX, unsigned int toX, unsigned int y);
-    bool isBlockedYAxis(unsigned int fromY, unsigned toY, unsigned int x);
+    void capture(Vec2D lastMovedTo, Vec2D direction);
+    bool isBlocked(Vec2D startingPosition, Vec2D direction);
 public:
     Game();
     Game(Field field);
     bool areWikingsToMove();
-    Figur getFigurAt(Position position);
-    void setFigurAt(Figur figur, Position position);
+    Figur getFigurAt(Vec2D position);
+    void setFigurAt(Figur figur, Vec2D position);
     void getFieldCopy(Field fieldToCopyInto);
-    void move(Position from, Position to);
-    void updateField(Position lastMovedTo);
-    bool isGameOver(Position lastMovedTo);
+    void move(Vec2D from, Vec2D to);
+    void updateField(Vec2D lastMovedTo);
+    bool isGameOver(Vec2D lastMovedTo);
     void moveDone();
     void printField();
 };

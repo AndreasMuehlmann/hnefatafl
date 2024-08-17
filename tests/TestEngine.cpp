@@ -21,7 +21,7 @@ TEST_CASE( "Test if all positions that are to move are collected", "[getAllFigur
         };
         transform(field);
         Engine engine;
-        std::vector<Position> figursToMove = engine.getFigursToMove(field, true);
+        std::vector<Vec2D> figursToMove = engine.getFigursToMove(field, true);
         REQUIRE(figursToMove[0].x == 0);
         REQUIRE(figursToMove[0].y == 5);
         REQUIRE(figursToMove[1].x == 1);
@@ -41,7 +41,7 @@ TEST_CASE( "Test if all positions that are to move are collected", "[getAllFigur
         };
         transform(field);
         Engine engine;
-        std::vector<Position> figursToMove = engine.getFigursToMove(field, false);
+        std::vector<Vec2D> figursToMove = engine.getFigursToMove(field, false);
         REQUIRE(figursToMove[0].x == 0);
         REQUIRE(figursToMove[0].y == 5);
         REQUIRE(figursToMove[1].x == 1);

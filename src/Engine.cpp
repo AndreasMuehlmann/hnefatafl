@@ -1,14 +1,13 @@
-#include <iostream>
 #include "Engine.hpp"
 #include "Game.hpp"
 
 
-std::vector<Position> Engine::getFigursToMove(Field field, bool wikingsToMove) {
-    std::vector<Position> startingPositions;
+std::vector<Vec2D> Engine::getFigursToMove(Field field, bool wikingsToMove) {
+    std::vector<Vec2D> startingPositions;
     startingPositions.reserve(100);
 
-    for (unsigned int x = 0; x < FIELD_SIZE; x++) {
-        for (unsigned int y = 0; y < FIELD_SIZE; y++) {
+    for (int x = 0; x < FIELD_SIZE; x++) {
+        for (int y = 0; y < FIELD_SIZE; y++) {
             if ((wikingsToMove && field[x][y] == Figur::Wiking) || (!wikingsToMove && (field[x][y] == Figur::Guard || field[x][y] == Figur::King))) {
                 startingPositions.push_back({x, y});
             }
