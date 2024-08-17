@@ -1,5 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <vector>
+#include <iostream>
 
 #include "Game.hpp"
 #include "Engine.hpp"
@@ -104,4 +105,79 @@ TEST_CASE( "Test getting all available moves", "[getAvailableMoves]" ) {
     REQUIRE(availableMoves[0].to.y == 5);
     REQUIRE(availableMoves.size() == 3);
     REQUIRE(availableMoves[2].to.y == 7);
+}
+
+
+TEST_CASE( "Test if correct moves are calcualted", "[minimax]" ) {
+    {
+        Field field = {
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::Guard, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::Guard, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+        };
+        transform(field);
+
+        Game game(field);
+        game.moveDone();
+        Engine engine(game, 4);
+        Move move = engine.getMove();
+        std::cout << "move " << move.from.x << ", " << move.from.y << "; " << move.to.x << ", " << move.to.y << std::endl;
+        REQUIRE(move.from.x == 0);
+        REQUIRE(move.from.y == 7);
+        REQUIRE(move.to.x == 0);
+        REQUIRE(move.to.y == 6);
+    }
+    {
+        Field field = {
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::King, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+        };
+        transform(field);
+
+        Game game(field);
+        Engine engine(game, 1);
+        game.moveDone();
+        Move move = engine.getMove();
+        std::cout << "move " << move.from.x << ", " << move.from.y << "; " << move.to.x << ", " << move.to.y << std::endl;
+        REQUIRE(move.from.x == 1);
+        REQUIRE(move.from.y == 0);
+        REQUIRE(move.to.x == 0);
+        REQUIRE(move.to.y == 0);
+    }
+    {
+        Field field = {
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::King, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::Wiking, Figur::Wiking, Figur::Guard, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::None},
+        };
+        transform(field);
+
+        Game game(field);
+        Engine engine(game, 4);
+        Move move = engine.getMove();
+        std::cout << "move " << move.from.x << ", " << move.from.y << "; " << move.to.x << ", " << move.to.y << std::endl;
+        REQUIRE(move.from.x == 1);
+        REQUIRE(move.from.y == 1);
+        REQUIRE(move.to.x == 1);
+        REQUIRE(move.to.y == 0);
+    }
 }

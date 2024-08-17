@@ -22,10 +22,13 @@ std::vector<Vec2D> getFigursToMove(const Field& field, bool wikingsToMove) {
 void insertAvailableMovesFigurInDirection(std::vector<Move>& availableMoves, const Field& field, Vec2D from, Vec2D direction) {
     Vec2D position = {from.x + direction.x, from.y + direction.y};
     while (0 <= position.x && position.x < FIELD_SIZE && 0 <= position.y && position.y < FIELD_SIZE) {
-        if (field[position.x][position.y] != Figur::None 
-                || (position.x == 4 && position.y == 4)
-                || ((position.x == 0 || position.x == 8) && (position.y == 0 || position.y == 8))) {
+        if (field[position.x][position.y] != Figur::None) {
             return;
+        } else if (field[from.x][from.y] != Figur::King) {
+            if ((position.x == 4 && position.y == 4)
+                || ((position.x == 0 || position.x == 8) && (position.y == 0 || position.y == 8))) {
+                return;
+            }
         }
         availableMoves.push_back({from, position});
         position = {position.x + direction.x, position.y + direction.y};
@@ -79,7 +82,7 @@ int minimax(Game game, Move move, unsigned int depth, int alpha, int beta) {
             // std::cout  << "Wikings won" << std::endl;
             return 1000;
         } else {
-            std::cout  << "Guards won" << std::endl;
+            //std::cout  << "Guards won" << std::endl;
             return -1000;
         }
     };
@@ -129,18 +132,18 @@ Engine::Engine(Game& game, unsigned int depth)
 
 
 Move Engine::getMove() {
-    int alpha = -1000;
-    int beta = 1000;
+    int alpha = -10000;
+    int beta = 10000;
     Move bestMove = {{0, 0}, {0, 0}};
     const Field& field = game.getField();
 
     if (game.areWikingsToMove()) {
-        int max = -1000;
+        int max = -100000;
         std::vector<Vec2D> figuresToMove = getFigursToMove(field, game.areWikingsToMove());
         std::vector<Move> availableMoves = getAvailableMoves(field, figuresToMove);
         for (Move move : availableMoves) {
             int evaluation = minimax(game, move, depth - 1, alpha, beta);
-            std::cout << "evaluation: " << evaluation << " move " << move.from.x << ", " << move.from.y << "; " << move.to.x << ", " << move.to.y << std::endl;
+            // std::cout << "evaluation: " << evaluation << " move " << move.from.x << ", " << move.from.y << "; " << move.to.x << ", " << move.to.y << std::endl;
             if (evaluation > max) {
                 max = evaluation;
                 bestMove = move;
@@ -152,7 +155,7 @@ Move Engine::getMove() {
         }
         std::cout << "evaluation of best move: " << max << std::endl;
     } else {
-        int min = 1000;
+        int min = 100000;
         std::vector<Vec2D> figuresToMove = getFigursToMove(field, game.areWikingsToMove());
         std::vector<Move> availableMoves = getAvailableMoves(field, figuresToMove);
         for (Move move : availableMoves) {
