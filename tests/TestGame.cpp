@@ -1,4 +1,3 @@
-#include <array>
 #include <iostream>
 #include <catch2/catch_test_macros.hpp>
 
@@ -13,27 +12,27 @@ TEST_CASE( "Multiple possible moves are tested", "[move]" ) {
 
     from = { 4, 1 }; 
     to = { 5, 1 };
-    game.move(from, to);
+    game.move({from, to});
     game.moveDone();
     REQUIRE(game.getFigurAt(to) == Figur::Wiking);
 
     from = { 4, 5 };
     to = { 7, 5 };
-    game.move(from, to);
+    game.move({from, to});
     game.moveDone();
     REQUIRE(game.getFigurAt(to) == Figur::Guard);
 
     from = { 8, 5 };
     to = { 8, 7 };
-    game.move(from, to);
+    game.move({from, to});
     game.moveDone();
     REQUIRE(game.getFigurAt(to) == Figur::Wiking);
 }
 
 
-bool check_for_exception_in_move(Game &game, Vec2D from, Vec2D to, std::string expectedException) {
+bool check_for_exception_in_move(Game& game, Move move, std::string expectedException) {
     try {
-        game.move(from, to);
+        game.move({move.from, move.to});
     } catch (std::invalid_argument& e) {
         if (expectedException == e.what()) {
             return true;
@@ -41,8 +40,8 @@ bool check_for_exception_in_move(Game &game, Vec2D from, Vec2D to, std::string e
             std::cout << "\"" <<e.what() << "\"" <<
                 " not matching expected exception " << "\"" << expectedException << "\"" << std::endl;
 
-            std::cout << "Move from " << from.x << ", " << from.y 
-                << " to " << to.x << ", " << to.y << "." << std::endl;
+            std::cout << "Move from " << move.from.x << ", " << move.from.y 
+                << " to " << move.to.x << ", " << move.to.y << "." << std::endl;
             std::cout << "Field before move:" << std::endl;
             game.printField();
             return false;
@@ -55,19 +54,19 @@ bool check_for_exception_in_move(Game &game, Vec2D from, Vec2D to, std::string e
 }
 
 
-void moveKingOutOfMiddle(Game &game) {
+void moveKingOutOfMiddle(Game& game) {
     game.moveDone();
-    game.move({ 4, 5 }, { 5, 5 });
-    game.move({ 4, 4 }, { 4, 5 });
+    game.move({{ 4, 5 }, { 5, 5 }});
+    game.move({{ 4, 4 }, { 4, 5 }});
 }
 
 
 TEST_CASE( "Test impossible moves", "[move]" ) {
     Game game;
 
-    REQUIRE(check_for_exception_in_move(game, {10, 5}, {7, 10}, "Position to move away from out of field range."));
-    REQUIRE(check_for_exception_in_move(game, {0, 5}, {0, 8}, "Cannot move into the corner unless the figur is the king."));
-    REQUIRE(check_for_exception_in_move(game, {0, 4}, {0, 6}, "Cannot move because the path is blocked."));
+    REQUIRE(check_for_exception_in_move(game, {{10, 5}, {7, 10}}, "Position to move away from out of field range."));
+    REQUIRE(check_for_exception_in_move(game, {{0, 5}, {0, 8}}, "Cannot move into the corner unless the figur is the king."));
+    REQUIRE(check_for_exception_in_move(game, {{0, 4}, {0, 6}}, "Cannot move because the path is blocked."));
 
     try {
         moveKingOutOfMiddle(game);
@@ -77,8 +76,8 @@ TEST_CASE( "Test impossible moves", "[move]" ) {
         throw e;
     }
 
-    REQUIRE(check_for_exception_in_move(game, {3, 4}, {4, 4}, "Cannot move into the center position unless the figur is the king."));
-    REQUIRE(check_for_exception_in_move(game, {4, 2}, {4, 0}, "Cannot move because the path is blocked."));
+    REQUIRE(check_for_exception_in_move(game, {{3, 4}, {4, 4}}, "Cannot move into the center position unless the figur is the king."));
+    REQUIRE(check_for_exception_in_move(game, {{4, 2}, {4, 0}}, "Cannot move because the path is blocked."));
 }
 
 
@@ -97,7 +96,7 @@ TEST_CASE( "Test if figures are removed by a capture", "[captureXAxis, captureYA
         };
         transform(field);
         Game game(field);
-        game.move({4, 1}, {4, 0});
+        game.move({{4, 1}, {4, 0}});
         game.updateField({4, 0});
         REQUIRE(game.getFigurAt({2, 0}) == Figur::None);
         REQUIRE(game.getFigurAt({3, 0}) == Figur::None);
@@ -117,7 +116,7 @@ TEST_CASE( "Test if figures are removed by a capture", "[captureXAxis, captureYA
         transform(field);
         Game game(field);
         game.moveDone();
-        game.move({1, 1}, {0, 1});
+        game.move({{1, 1}, {0, 1}});
         game.updateField({0, 1});
         REQUIRE(game.getFigurAt({0, 2}) == Figur::None);
         REQUIRE(game.getFigurAt({0, 3}) == Figur::None);
@@ -136,7 +135,7 @@ TEST_CASE( "Test if figures are removed by a capture", "[captureXAxis, captureYA
         };
         transform(field);
         Game game(field);
-        game.move({1, 4}, {0, 4});
+        game.move({{1, 4}, {0, 4}});
         game.updateField({0, 4});
         REQUIRE(game.getFigurAt({0, 2}) == Figur::King);
         REQUIRE(game.getFigurAt({0, 3}) == Figur::Guard);

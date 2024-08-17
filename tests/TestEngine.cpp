@@ -1,5 +1,5 @@
-#include <array>
 #include <catch2/catch_test_macros.hpp>
+#include <vector>
 
 #include "Game.hpp"
 #include "Engine.hpp"
@@ -63,23 +63,27 @@ TEST_CASE( "Test getting available moves for a single figur in one direction", "
 
     std::vector<Move> availableMoves;
     insertAvailableMovesFigurInDirection(availableMoves, field, {0, 5}, {1, 0});
+    REQUIRE(availableMoves.size() == 1);
     REQUIRE(availableMoves[0].from.x == 0);
     REQUIRE(availableMoves[0].from.y == 5);
     REQUIRE(availableMoves[0].to.x == 1);
     REQUIRE(availableMoves[0].to.y == 5);
 
     insertAvailableMovesFigurInDirection(availableMoves, field, {0, 5}, {-1, 0});
+    REQUIRE(availableMoves.size() == 1);
     REQUIRE(availableMoves[0].to.x == 1);
 
     insertAvailableMovesFigurInDirection(availableMoves, field, {0, 5}, {0, 1});
-    REQUIRE(availableMoves[3].to.y == 8);
+    REQUIRE(availableMoves.size() == 3);
+    REQUIRE(availableMoves[2].to.y == 7);
 
     insertAvailableMovesFigurInDirection(availableMoves, field, {0, 5}, {0, -1});
-    REQUIRE(availableMoves[8].to.y == 0);
+    REQUIRE(availableMoves.size() == 7);
+    REQUIRE(availableMoves[6].to.y == 1);
 }
 
 
-TEST_CASE( "Test getting all available moves for all figures", "[getAvailableMoves]" ) {
+TEST_CASE( "Test getting all available moves", "[getAvailableMoves]" ) {
     Field field = {
         std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
         std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
@@ -92,13 +96,12 @@ TEST_CASE( "Test getting all available moves for all figures", "[getAvailableMov
         std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
     };
     transform(field);
-
-    std::vector<Move> availableMoves = getAvailableMoves(field, true);
+    std::vector<Vec2D> figursToMove = getFigursToMove(field, true);
+    std::vector<Move> availableMoves = getAvailableMoves(field, figursToMove);
     REQUIRE(availableMoves[0].from.x == 0);
     REQUIRE(availableMoves[0].from.y == 5);
     REQUIRE(availableMoves[0].to.x == 1);
     REQUIRE(availableMoves[0].to.y == 5);
-
-    insertAvailableMovesFigurInDirection(availableMoves, field, {0, 5}, {0, 1});
-    REQUIRE(availableMoves[3].to.y == 8);
+    REQUIRE(availableMoves.size() == 3);
+    REQUIRE(availableMoves[2].to.y == 7);
 }

@@ -92,49 +92,49 @@ const Field& Game::getField() {
 }
 
 
-bool Game::isBlocked(Vec2D from, Vec2D to) {
-    Vec2D direction = {sign(to.x - from.x), sign(to.y - from.y)};
-    Vec2D positionToCheck = from;
+bool Game::isBlocked(Move move) {
+    Vec2D direction = {sign(move.to.x - move.from.x), sign(move.to.y - move.from.y)};
+    Vec2D positionToCheck = move.from;
     do {
         positionToCheck = {positionToCheck.x + direction.x, positionToCheck.y + direction.y};
         if (getFigurAt(positionToCheck) != Figur::None) {
             return true;
         }
-    } while (!(positionToCheck.x == to.x && positionToCheck.y == to.y)
+    } while (!(positionToCheck.x == move.to.x && positionToCheck.y == move.to.y)
             && 0 <= positionToCheck.x && positionToCheck.x < FIELD_SIZE
             && 0 <= positionToCheck.y && positionToCheck.y < FIELD_SIZE);
     return false;
 }
 
 
-void Game::move(Vec2D from, Vec2D to) {
-    if (from.x >= FIELD_SIZE || from.y >= FIELD_SIZE) {
+void Game::move(Move move) {
+    if (move.from.x >= FIELD_SIZE || move.from.y >= FIELD_SIZE) {
         throw std::invalid_argument("Position to move away from out of field range.");
-    } else if (to.x >= FIELD_SIZE || to.y >= FIELD_SIZE) {
+    } else if (move.to.x >= FIELD_SIZE || move.to.y >= FIELD_SIZE) {
         throw std::invalid_argument("Position to move to out of field range.");
-    } else if (from.x == to.x && from.y == to.y) {
+    } else if (move.from.x == move.to.x && move.from.y == move.to.y) {
         throw std::invalid_argument("Position to move to and position to move from are equal.");
     } 
 
-    Figur figur = getFigurAt(from);
+    Figur figur = getFigurAt(move.from);
     if (figur == Figur::None) {
         throw std::invalid_argument("On the position to move away from is no figur.");
-    } else if ((wikingsToMove && isKingDefender(getFigurAt(from))) 
-            || (!wikingsToMove && isKingAttacker(getFigurAt(from)))) {
+    } else if ((wikingsToMove && isKingDefender(getFigurAt(move.from))) 
+            || (!wikingsToMove && isKingAttacker(getFigurAt(move.from)))) {
         throw std::invalid_argument("The figur belongs to the other player.");
-    } else if (from.x != to.x && from.y != to.y) {
+    } else if (move.from.x != move.to.x && move.from.y != move.to.y) {
         throw std::invalid_argument("Diagonal movement is not allowed.");
-    } else if ((to.x == 0 || to.x == 8) && (to.y == 0 || to.y == 8) && figur != Figur::King) {
+    } else if ((move.to.x == 0 || move.to.x == 8) && (move.to.y == 0 || move.to.y == 8) && figur != Figur::King) {
         throw std::invalid_argument("Cannot move into the corner unless the figur is the king.");
-    } else if ((to.x == 4 && to.y == 4) && figur != Figur::King) {
+    } else if ((move.to.x == 4 && move.to.y == 4) && figur != Figur::King) {
         throw std::invalid_argument("Cannot move into the center position unless the figur is the king.");
     }
 
-    if (!isBlocked(from, to)) {
-        setFigurAt(figur, to);
-        setFigurAt(Figur::None, from);
+    if (!isBlocked(move)) {
+        setFigurAt(figur, move.to);
+        setFigurAt(Figur::None, move.from);
         if (figur == Figur::King) {
-            kingPosition = to;
+            kingPosition = move.to;
         }
     } else {
         throw std::invalid_argument("Cannot move because the path is blocked.");
