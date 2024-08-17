@@ -9,13 +9,9 @@
 
 int main() {
     Game game; 
-    Field fieldCopy;
-    game.getFieldCopy(fieldCopy);
 
-    Engine engine;
-    engine.minimax(fieldCopy, 2, -10000, 10000, game.areWikingsToMove());
-
-
+    Engine engine(game);
+    engine.getMove();
 
     int xFrom, yFrom, xTo, yTo;
     char comma, semicolon;

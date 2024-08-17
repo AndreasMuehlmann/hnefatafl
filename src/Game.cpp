@@ -87,12 +87,8 @@ void Game::setFigurAt(Figur figur, Vec2D position) {
 }
 
 
-void Game::getFieldCopy(Field fieldToCopyInto) {
-    for (int y = 0; y < FIELD_SIZE; y++) {
-        for (int x = 0; x < FIELD_SIZE; x++) {
-            fieldToCopyInto[x][y] = field[x][y];
-        }
-    }
+const Field& Game::getField() {
+    return field;
 }
 
 
