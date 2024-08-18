@@ -1,5 +1,6 @@
 #include <cstring>
 #include <iostream>
+#include <stdexcept>
 
 #include "Game.hpp"
 
@@ -63,15 +64,26 @@ Game::Game() {
     field[6][4] = Figur::Guard;
 
     kingPosition = {4, 4};
+    wikingCount = 16;
+    guardCount = 8;
 }
 
 
 Game::Game(Field newField) {
     wikingsToMove = true;
     field = newField;
+    unsigned int kingCount = 0;
     for (int x = 0; x < FIELD_SIZE; x++) {
         for (int y = 0; y < FIELD_SIZE; y++) {
-            if (getFigurAt({x, y}) == Figur::King) {
+            if (getFigurAt({x, y}) == Figur::Wiking) {
+                wikingCount += 1;
+            } else if (getFigurAt({x, y}) == Figur::Guard) {
+                guardCount += 1;
+            } else if (getFigurAt({x, y}) == Figur::King) {
+                kingCount += 1;
+                if (kingCount >= 2) {
+                    throw std::invalid_argument("Two kings in field.");
+                }
                 kingPosition = {x, y};
             }
         }
@@ -79,12 +91,12 @@ Game::Game(Field newField) {
 }
 
 
-bool Game::areWikingsToMove() {
+bool Game::areWikingsToMove() const {
     return wikingsToMove;
 }
 
 
-Figur Game::getFigurAt(Vec2D position) {
+Figur Game::getFigurAt(Vec2D position) const {
     return field[position.x][position.y];
 }
 
@@ -94,8 +106,18 @@ void Game::setFigurAt(Figur figur, Vec2D position) {
 }
 
 
-const Field& Game::getField() {
+const Field& Game::getField() const{
     return field;
+}
+
+
+unsigned int Game::getWikingCount() const {
+    return wikingCount;
+}
+
+
+unsigned int Game::getGuardCount() const {
+    return guardCount;
 }
 
 
@@ -111,7 +133,7 @@ void Game::moveUnchecked(Move move) {
 }
 
 
-bool Game::isBlocked(Move move) {
+bool Game::isBlocked(Move move) const {
     Vec2D direction = {sign(move.to.x - move.from.x), sign(move.to.y - move.from.y)};
     Vec2D positionToCheck = move.from;
     do {
@@ -165,14 +187,24 @@ void Game::move(Move move) {
 
 void Game::capture(Vec2D lastMovedTo, Vec2D direction) {
     Vec2D positionToCheck = {lastMovedTo.x + direction.x, lastMovedTo.y + direction.y};
+    Figur movedFigur = getFigurAt(lastMovedTo);
+    if (movedFigur == getFigurAt(positionToCheck) || (movedFigur == Figur::Guard && getFigurAt(positionToCheck) == Figur::King)) {
+        return;
+    }
     while (0 <= positionToCheck.x && positionToCheck.x < FIELD_SIZE && 0 <= positionToCheck.y && positionToCheck.y < FIELD_SIZE) {
         Figur figur = getFigurAt(positionToCheck);
-        if (figur == Figur::None || (getFigurAt(lastMovedTo) == Figur::Wiking && figur == Figur::King)) {
+        if (figur == Figur::None || (movedFigur == Figur::Wiking && figur == Figur::King)) {
             break;
-        } else if ((getFigurAt(lastMovedTo) == Figur::Wiking && figur == Figur::Wiking) 
-                || (getFigurAt(lastMovedTo) != Figur::Wiking && (figur == Figur::Guard || figur == Figur::King))) {
+        } else if ((movedFigur == Figur::Wiking && figur == Figur::Wiking) 
+                || (movedFigur != Figur::Wiking && (figur == Figur::Guard || figur == Figur::King))) {
                 Vec2D positionToDelete = {lastMovedTo.x + direction.x, lastMovedTo.y + direction.y};
                 while (!(positionToDelete.x == positionToCheck.x && positionToDelete.y == positionToCheck.y)) {
+                    Figur figurToDelete = getFigurAt(positionToDelete);
+                    if (figurToDelete == Figur::Guard) {
+                        guardCount -= 1;
+                    } else if (figurToDelete == Figur::Wiking) {
+                        wikingCount -= 1;
+                    }
                     setFigurAt(Figur::None, positionToDelete);
                     positionToDelete = {positionToDelete.x + direction.x, positionToDelete.y + direction.y};
                 }
@@ -190,7 +222,7 @@ void Game::updateField(Vec2D lastMovedTo) {
 }
 
 
-Figur Game::whoWon() {
+Figur Game::whoWon() const {
     if ((kingPosition.x == 0 || kingPosition.x == FIELD_SIZE - 1) 
             && (kingPosition.y == 0 || kingPosition.y == FIELD_SIZE - 1))  {
         return Figur::King;
@@ -204,7 +236,7 @@ Figur Game::whoWon() {
 }
 
 
-void Game::printField() {
+void Game::printField() const {
     for (int y = 0; y < FIELD_SIZE; y++) {
         for (int x = 0; x < FIELD_SIZE; x++) {
             switch (field[x][y]) {

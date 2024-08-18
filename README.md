@@ -16,12 +16,10 @@ This is a program for playing hnefatafl. Also a algorithm will developed to play
 
  ## TODO
 - Tiefen nacheinander und bei sicherem gewinn den ersten nehmen
-- isGameOver führt teilweise zu seg faults
+- isGameOver führt teilweise zu seg faults => weil keine Züge verfügbar sind => checken in whoWon
 - isGameOver führt zum gewinn wenn der König nicht ganz umzingelt ist
-- König wird von zwei guards gecaptured
 - Search path extension
 - bessere statische bewertung
-- optimierung und multithreading
 - gute züge zuerst => besseres alpha beta pruning
 - check if no figures are left to move
 => irgendwie höhere tiefe erreichen

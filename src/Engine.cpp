@@ -1,5 +1,4 @@
 #include <iostream>
-#include <chrono>
 
 #include "Engine.hpp"
 #include "Game.hpp"
@@ -52,26 +51,9 @@ std::vector<Move> getAvailableMoves(const Field& field, std::vector<Vec2D>& figu
 }
 
 
-int staticEvaluation(const Field& field) {
-    int score = 0;
-    for (int x = 0; x < FIELD_SIZE; x++) {
-        for (int y = 0; y < FIELD_SIZE; y++) {
-            switch (field[x][y]) {
-                case Figur::King:
-                    score -= 6;
-                    break;
-                case Figur::Guard:
-                    score -= 1;
-                    break;
-                case Figur::Wiking:
-                    score += 1;
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-    return score;
+int staticEvaluation(const Game& game) {
+    int kingWorth = 6;
+    return game.getWikingCount() - game.getGuardCount() - kingWorth;
 };
 
 
@@ -136,6 +118,7 @@ Move Engine::getMove() {
     EvaluatedMove evaluatedMove = {{{0, 0}, {0, 0}}, 0};
     for (unsigned int depth = 1; depth < maxDepth + 1; depth++) {
         evaluatedMove = minimax(depth);
+        std::cout << depth << std::endl;
         if (evaluatedMove.evaluation == 1000 || evaluatedMove.evaluation == -1000) {
             std::cout << "evaluation of best move: " << evaluatedMove.evaluation << std::endl;
             return evaluatedMove.move;
@@ -157,7 +140,7 @@ EvaluatedMove Engine::minimax(unsigned int depth) {
         std::vector<Move> availableMoves = getAvailableMoves(field, figuresToMove);
         evaluatedMoves.reserve(availableMoves.size());
 
-        #pragma omp parallel for num_threads(10)
+        #pragma omp parallel for num_threads(1)
         for (Move move : availableMoves) {
             int evaluation = minimaxHelper(game, move, depth - 1, alpha, beta);
             // std::cout << "evaluation: " << evaluation << " move " << move.from.x << ", " << move.from.y << "; " << move.to.x << ", " << move.to.y << std::endl;
@@ -179,7 +162,7 @@ EvaluatedMove Engine::minimax(unsigned int depth) {
         std::vector<Move> availableMoves = getAvailableMoves(field, figuresToMove);
         evaluatedMoves.reserve(availableMoves.size());
 
-        #pragma omp parallel for num_threads(10)
+        #pragma omp parallel for num_threads(1)
         for (Move move : availableMoves) {
             int evaluation = minimaxHelper(game, move, depth - 1, alpha, beta);
             #pragma omp critical

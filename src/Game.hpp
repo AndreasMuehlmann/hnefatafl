@@ -19,6 +19,7 @@ struct Vec2D {
 };
 
 
+
 struct Move {
     Vec2D from;
     Vec2D to;
@@ -27,23 +28,28 @@ struct Move {
 typedef std::array<std::array<Figur, FIELD_SIZE>, FIELD_SIZE> Field ;
 
 class Game {
+
 private:
     Field field;
     bool wikingsToMove;
     Vec2D kingPosition;
+    unsigned int guardCount;
+    unsigned int wikingCount;
 
     void capture(Vec2D lastMovedTo, Vec2D direction);
-    bool isBlocked(Move move);
+    bool isBlocked(Move move) const;
     void setFigurAt(Figur figur, Vec2D position);
 public:
     Game();
     Game(Field field);
-    bool areWikingsToMove();
-    Figur getFigurAt(Vec2D position);
-    const Field& getField();
+    bool areWikingsToMove() const;
+    Figur getFigurAt(Vec2D position) const;
+    const Field& getField() const;
+    unsigned int getWikingCount() const;
+    unsigned int getGuardCount() const;
     void moveUnchecked(Move move);
     void move(Move move);
     void updateField(Vec2D lastMovedTo);
-    Figur whoWon();
-    void printField();
+    Figur whoWon() const;
+    void printField() const;
 };

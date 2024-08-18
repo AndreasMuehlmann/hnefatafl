@@ -127,8 +127,9 @@ TEST_CASE( "Test if correct moves are calcualted", "[minimax]" ) {
         game.move({{7, 8}, {6, 8}});
         Engine engine(game, 4);
         Move move = engine.getMove();
-        REQUIRE(move.from.x == 1);
+        std::cout << "move " << move.from.x << ", " << move.from.y << "; " << move.to.x << ", " << move.to.y << std::endl;
         REQUIRE(move.from.y == 6);
+        REQUIRE(move.from.x == 1);
         REQUIRE(move.to.x == 0);
         REQUIRE(move.to.y == 6);
     }
