@@ -157,7 +157,7 @@ EvaluatedMove Engine::minimax(unsigned int depth) {
         std::vector<Move> availableMoves = getAvailableMoves(field, figuresToMove);
         evaluatedMoves.reserve(availableMoves.size());
 
-        #pragma omp parallel for
+        #pragma omp parallel for num_threads(10)
         for (Move move : availableMoves) {
             int evaluation = minimaxHelper(game, move, depth - 1, alpha, beta);
             // std::cout << "evaluation: " << evaluation << " move " << move.from.x << ", " << move.from.y << "; " << move.to.x << ", " << move.to.y << std::endl;
@@ -179,7 +179,7 @@ EvaluatedMove Engine::minimax(unsigned int depth) {
         std::vector<Move> availableMoves = getAvailableMoves(field, figuresToMove);
         evaluatedMoves.reserve(availableMoves.size());
 
-        #pragma omp parallel for
+        #pragma omp parallel for num_threads(10)
         for (Move move : availableMoves) {
             int evaluation = minimaxHelper(game, move, depth - 1, alpha, beta);
             #pragma omp critical
