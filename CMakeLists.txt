@@ -32,6 +32,13 @@ add_executable(tests
     src/Engine.cpp
 )
 
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(hnefatafl PUBLIC OpenMP::OpenMP_CXX)
+    target_link_libraries(tests PUBLIC OpenMP::OpenMP_CXX)
+endif()
+
+
 target_include_directories(tests PRIVATE src)
 target_include_directories(tests PRIVATE tests)
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)

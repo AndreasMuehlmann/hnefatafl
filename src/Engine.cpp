@@ -149,34 +149,51 @@ Move Engine::getMove() {
 EvaluatedMove Engine::minimax(unsigned int depth) {
     int alpha = -10000;
     int beta = 10000;
-    EvaluatedMove bestMove = {{{0, 0}, {0, 0}}, 0};
     const Field& field = game.getField();
 
+    std::vector<EvaluatedMove> evaluatedMoves;
     if (game.areWikingsToMove()) {
-        int max = -100000;
         std::vector<Vec2D> figuresToMove = getFigursToMove(field, game.areWikingsToMove());
         std::vector<Move> availableMoves = getAvailableMoves(field, figuresToMove);
+        evaluatedMoves.reserve(availableMoves.size());
+
+        #pragma omp parallel for
         for (Move move : availableMoves) {
             int evaluation = minimaxHelper(game, move, depth - 1, alpha, beta);
             // std::cout << "evaluation: " << evaluation << " move " << move.from.x << ", " << move.from.y << "; " << move.to.x << ", " << move.to.y << std::endl;
-            if (evaluation > max) {
-                max = evaluation;
-                bestMove = {move, evaluation};
+            #pragma omp critical
+            {
+                evaluatedMoves.push_back({move, evaluation});
+                alpha = std::max(alpha, evaluation);
             }
-            alpha = std::max(alpha, evaluation);
         }
+        EvaluatedMove bestMove = evaluatedMoves[0];
+        for (EvaluatedMove evaluatedMove : evaluatedMoves) {
+            if (evaluatedMove.evaluation > bestMove.evaluation) {
+                bestMove = evaluatedMove;
+            }
+        }
+        return bestMove;
     } else {
-        int min = 100000;
         std::vector<Vec2D> figuresToMove = getFigursToMove(field, game.areWikingsToMove());
         std::vector<Move> availableMoves = getAvailableMoves(field, figuresToMove);
+        evaluatedMoves.reserve(availableMoves.size());
+
+        #pragma omp parallel for
         for (Move move : availableMoves) {
             int evaluation = minimaxHelper(game, move, depth - 1, alpha, beta);
-            if (evaluation < min) {
-                min = evaluation;
-                bestMove = {move, evaluation};
+            #pragma omp critical
+            {
+                evaluatedMoves.push_back({move, evaluation});
+                beta = std::min(beta, evaluation);
             }
-            beta = std::min(beta, evaluation);
         }
+        EvaluatedMove bestMove = evaluatedMoves[0];
+        for (EvaluatedMove evaluatedMove : evaluatedMoves) {
+            if (evaluatedMove.evaluation < bestMove.evaluation) {
+                bestMove = evaluatedMove;
+            }
+        }
+        return bestMove;
     }
-    return bestMove;
 }

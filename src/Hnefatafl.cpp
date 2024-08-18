@@ -11,7 +11,7 @@
 int main() {
     Game game;
 
-    Engine engine(game, 5);
+    Engine engine(game, 6);
 
     std::string input;
 
@@ -42,11 +42,11 @@ int main() {
             Figur winner = game.whoWon();
             if (winner == Figur::King) {
                 game.printField();
-                std::cout << "The wikings won!!" << std::endl;
+                std::cout << "The king won!!" << std::endl;
                 break;
             } else if (winner == Figur::Wiking) {
                 game.printField();
-                std::cout << "The king won!!" << std::endl;
+                std::cout << "The wikings won!!" << std::endl;
                 break;
             }
         } catch (std::invalid_argument &e) {
