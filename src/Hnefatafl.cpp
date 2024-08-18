@@ -8,21 +8,9 @@
 
 
 int main() {
+    Game game;
 
-    Field field = {
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::None},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::King, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::None},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
-    };
-    Game game(field);
-
-    Engine engine(game, 4);
+    Engine engine(game, 5);
 
     std::string input;
 
@@ -33,8 +21,6 @@ int main() {
         if (game.areWikingsToMove()) {
             move = engine.getMove();
         } else {
-            move = engine.getMove();
-            /*
             int xFrom, yFrom, xTo, yTo;
             char comma, semicolon;
 
@@ -48,7 +34,6 @@ int main() {
             }
             std::cout << xFrom << " " << yFrom << std::endl;
             move = {{xFrom, yFrom}, {xTo, yTo}};
-            */
         }
         try {
             game.move(move);
