@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 
 #include "Engine.hpp"
 #include "Game.hpp"
@@ -74,19 +75,15 @@ int staticEvaluation(const Field& field) {
 };
 
 
-int minimax(Game game, Move move, unsigned int depth, int alpha, int beta) {
+int minimaxHelper(Game game, Move move, unsigned int depth, int alpha, int beta) {
     game.move(move);
     game.updateField(move.to);
-    if (game.isGameOver(move.to)) {
-        if (game.areWikingsToMove()) {
-            // std::cout  << "Wikings won" << std::endl;
-            return 1000;
-        } else {
-            //std::cout  << "Guards won" << std::endl;
-            return -1000;
-        }
-    };
-    game.moveDone();
+    Figur winner = game.whoWon();
+    if (winner == Figur::Wiking) {
+        return 1000;
+    } else if (winner == Figur::King) {
+        return -1000;
+    }
 
     const Field& field = game.getField();
 
@@ -102,7 +99,7 @@ int minimax(Game game, Move move, unsigned int depth, int alpha, int beta) {
         std::vector<Vec2D> figuresToMove = getFigursToMove(field, game.areWikingsToMove());
         std::vector<Move> availableMoves = getAvailableMoves(field, figuresToMove);
         for (Move move : availableMoves) {
-            int evaluation = minimax(game, move, depth - 1, alpha, beta);
+            int evaluation = minimaxHelper(game, move, depth - 1, alpha, beta);
             max = std::max(max, evaluation);
             alpha = std::max(alpha, evaluation);
             if (beta <= alpha) {
@@ -115,7 +112,7 @@ int minimax(Game game, Move move, unsigned int depth, int alpha, int beta) {
         std::vector<Vec2D> figuresToMove = getFigursToMove(field, game.areWikingsToMove());
         std::vector<Move> availableMoves = getAvailableMoves(field, figuresToMove);
         for (Move move : availableMoves) {
-            int evaluation = minimax(game, move, depth - 1, alpha, beta);
+            int evaluation = minimaxHelper(game, move, depth - 1, alpha, beta);
             min = std::min(min, evaluation);
             beta = std::min(beta, evaluation);
             if (beta <= alpha) {
@@ -127,14 +124,32 @@ int minimax(Game game, Move move, unsigned int depth, int alpha, int beta) {
 }
 
 
-Engine::Engine(Game& game, unsigned int depth)
-    : game(game), depth(depth) {}
+Engine::Engine(Game& game, unsigned int maxDepth)
+    : game(game), maxDepth(maxDepth) {}
 
 
 Move Engine::getMove() {
+    // std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    // auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    // std::cout << duration.count() << std::endl;
+
+    EvaluatedMove evaluatedMove = {{{0, 0}, {0, 0}}, 0};
+    for (unsigned int depth = 1; depth < maxDepth + 1; depth++) {
+        evaluatedMove = minimax(depth);
+        if (evaluatedMove.evaluation == 1000 || evaluatedMove.evaluation == -1000) {
+            std::cout << "evaluation of best move: " << evaluatedMove.evaluation << std::endl;
+            return evaluatedMove.move;
+        }
+    }
+    std::cout << "evaluation of best move: " << evaluatedMove.evaluation << std::endl;
+    return evaluatedMove.move;
+}
+
+
+EvaluatedMove Engine::minimax(unsigned int depth) {
     int alpha = -10000;
     int beta = 10000;
-    Move bestMove = {{0, 0}, {0, 0}};
+    EvaluatedMove bestMove = {{{0, 0}, {0, 0}}, 0};
     const Field& field = game.getField();
 
     if (game.areWikingsToMove()) {
@@ -142,34 +157,26 @@ Move Engine::getMove() {
         std::vector<Vec2D> figuresToMove = getFigursToMove(field, game.areWikingsToMove());
         std::vector<Move> availableMoves = getAvailableMoves(field, figuresToMove);
         for (Move move : availableMoves) {
-            int evaluation = minimax(game, move, depth - 1, alpha, beta);
+            int evaluation = minimaxHelper(game, move, depth - 1, alpha, beta);
             // std::cout << "evaluation: " << evaluation << " move " << move.from.x << ", " << move.from.y << "; " << move.to.x << ", " << move.to.y << std::endl;
             if (evaluation > max) {
                 max = evaluation;
-                bestMove = move;
+                bestMove = {move, evaluation};
             }
             alpha = std::max(alpha, evaluation);
-            if (beta <= alpha) {
-                break;
-            }
         }
-        std::cout << "evaluation of best move: " << max << std::endl;
     } else {
         int min = 100000;
         std::vector<Vec2D> figuresToMove = getFigursToMove(field, game.areWikingsToMove());
         std::vector<Move> availableMoves = getAvailableMoves(field, figuresToMove);
         for (Move move : availableMoves) {
-            int evaluation = minimax(game, move, depth - 1, alpha, beta);
+            int evaluation = minimaxHelper(game, move, depth - 1, alpha, beta);
             if (evaluation < min) {
                 min = evaluation;
-                bestMove = move;
+                bestMove = {move, evaluation};
             }
             beta = std::min(beta, evaluation);
-            if (beta <= alpha) {
-                break;
-            }
         }
-        std::cout << "evaluation of best move: " << min << std::endl;
     }
     return bestMove;
 }

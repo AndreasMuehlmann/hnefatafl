@@ -23,5 +23,6 @@ This is a program for playing hnefatafl. Also a algorithm will developed to play
 - bessere statische bewertung
 - optimierung und multithreading
 - gute züge zuerst => besseres alpha beta pruning
+- check if no figures are left to move
 => irgendwie höhere tiefe erreichen
 - Die engine gibt einfach auf wenn sie weiß, dass sie verloren hat

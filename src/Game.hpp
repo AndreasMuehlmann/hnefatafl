@@ -12,6 +12,7 @@ enum Figur {
     Guard
 }; 
 
+
 struct Vec2D {
     int x;
     int y;
@@ -40,9 +41,9 @@ public:
     bool areWikingsToMove();
     Figur getFigurAt(Vec2D position);
     const Field& getField();
+    void moveUnchecked(Move move);
     void move(Move move);
     void updateField(Vec2D lastMovedTo);
-    bool isGameOver(Vec2D lastMovedTo);
-    void moveDone();
+    Figur whoWon();
     void printField();
 };

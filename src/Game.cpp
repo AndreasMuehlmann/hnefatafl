@@ -99,6 +99,18 @@ const Field& Game::getField() {
 }
 
 
+void Game::moveUnchecked(Move move) {
+    Figur figur = getFigurAt(move.from);
+    setFigurAt(figur, move.to);
+    setFigurAt(Figur::None, move.from);
+    if (figur == Figur::King) {
+        kingPosition = move.to;
+    }
+
+    wikingsToMove = !wikingsToMove;
+}
+
+
 bool Game::isBlocked(Move move) {
     Vec2D direction = {sign(move.to.x - move.from.x), sign(move.to.y - move.from.y)};
     Vec2D positionToCheck = move.from;
@@ -146,6 +158,8 @@ void Game::move(Move move) {
     } else {
         throw std::invalid_argument("Cannot move because the path is blocked.");
     }
+
+    wikingsToMove = !wikingsToMove;
 }
 
 
@@ -153,10 +167,10 @@ void Game::capture(Vec2D lastMovedTo, Vec2D direction) {
     Vec2D positionToCheck = {lastMovedTo.x + direction.x, lastMovedTo.y + direction.y};
     while (0 <= positionToCheck.x && positionToCheck.x < FIELD_SIZE && 0 <= positionToCheck.y && positionToCheck.y < FIELD_SIZE) {
         Figur figur = getFigurAt(positionToCheck);
-        if (figur == Figur::None || (wikingsToMove && figur == Figur::King)) {
+        if (figur == Figur::None || (getFigurAt(lastMovedTo) == Figur::Wiking && figur == Figur::King)) {
             break;
-        } else if ((wikingsToMove && figur == Figur::Wiking) 
-                || (!wikingsToMove && (figur == Figur::Guard || figur == Figur::King))) {
+        } else if ((getFigurAt(lastMovedTo) == Figur::Wiking && figur == Figur::Wiking) 
+                || (getFigurAt(lastMovedTo) != Figur::Wiking && (figur == Figur::Guard || figur == Figur::King))) {
                 Vec2D positionToDelete = {lastMovedTo.x + direction.x, lastMovedTo.y + direction.y};
                 while (!(positionToDelete.x == positionToCheck.x && positionToDelete.y == positionToCheck.y)) {
                     setFigurAt(Figur::None, positionToDelete);
@@ -176,22 +190,17 @@ void Game::updateField(Vec2D lastMovedTo) {
 }
 
 
-bool Game::isGameOver(Vec2D lastMovedTo) {
-    if (getFigurAt(lastMovedTo) == Figur::King) {
-        return (kingPosition.x == 0 || kingPosition.x == FIELD_SIZE - 1) 
-            && (kingPosition.y == 0 || kingPosition.y == FIELD_SIZE - 1);
-    } else if (wikingsToMove) {
-        return (kingPosition.x == FIELD_SIZE - 1 || getFigurAt({kingPosition.x + 1, kingPosition.y}) == Figur::Wiking)
+Figur Game::whoWon() {
+    if ((kingPosition.x == 0 || kingPosition.x == FIELD_SIZE - 1) 
+            && (kingPosition.y == 0 || kingPosition.y == FIELD_SIZE - 1))  {
+        return Figur::King;
+    } else if ((kingPosition.x == FIELD_SIZE - 1 || getFigurAt({kingPosition.x + 1, kingPosition.y}) == Figur::Wiking)
             && (kingPosition.x == 0 || getFigurAt({kingPosition.x - 1, kingPosition.y}) == Figur::Wiking)
             && (kingPosition.y == FIELD_SIZE - 1 || getFigurAt({kingPosition.x, kingPosition.y + 1}) == Figur::Wiking)
-            && (kingPosition.y == 0 || getFigurAt({kingPosition.x, kingPosition.y - 1}) == Figur::Wiking);
+            && (kingPosition.y == 0 || getFigurAt({kingPosition.x, kingPosition.y - 1}) == Figur::Wiking)) {
+        return Figur::Wiking;
     }
-    return false;
-}
-
-
-void Game::moveDone() {
-    wikingsToMove = !wikingsToMove;
+    return Figur::None;
 }
 
 
