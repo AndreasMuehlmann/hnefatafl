@@ -188,6 +188,9 @@ void Game::move(Move move) {
 void Game::capture(Vec2D lastMovedTo, Vec2D direction) {
     Vec2D positionToCheck = {lastMovedTo.x + direction.x, lastMovedTo.y + direction.y};
     Figur movedFigur = getFigurAt(lastMovedTo);
+    if (!(0 <= positionToCheck.x && positionToCheck.x < FIELD_SIZE && 0 <= positionToCheck.y && positionToCheck.y < FIELD_SIZE)) {
+        return;
+    }
     if (movedFigur == getFigurAt(positionToCheck) || (movedFigur == Figur::Guard && getFigurAt(positionToCheck) == Figur::King)) {
         return;
     }

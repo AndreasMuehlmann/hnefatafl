@@ -9,7 +9,7 @@
 
 
 int main() {
-
+    /*
     Field field = {
         std::array<Figur, FIELD_SIZE> {Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::None},
         std::array<Figur, FIELD_SIZE> {Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
@@ -22,6 +22,8 @@ int main() {
         std::array<Figur, FIELD_SIZE> {Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::None},
     };
     Game game(field);
+    */
+    Game game;
 
     Engine engine(game, 5);
 
@@ -34,8 +36,6 @@ int main() {
         if (game.areWikingsToMove()) {
             move = engine.getMove();
         } else {
-            move = engine.getMove();
-            /*
             int xFrom, yFrom, xTo, yTo;
             char comma, semicolon;
 
@@ -49,7 +49,6 @@ int main() {
             }
             std::cout << xFrom << " " << yFrom << std::endl;
             move = {{xFrom, yFrom}, {xTo, yTo}};
-            */
         }
         try {
             game.move(move);
@@ -67,5 +66,6 @@ int main() {
         } catch (std::invalid_argument &e) {
             std::cout << e.what() << std::endl;
         }
+        game.printField();
     }
 }
