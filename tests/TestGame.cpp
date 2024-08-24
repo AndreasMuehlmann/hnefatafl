@@ -137,6 +137,26 @@ TEST_CASE( "Test if figures are removed by a capture", "[captureXAxis, captureYA
         REQUIRE(game.getFigurAt({0, 2}) == Figur::King);
         REQUIRE(game.getFigurAt({0, 3}) == Figur::Guard);
     }
+    {
+        Field field = {
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Guard, Figur::King, Figur::Wiking, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Guard},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+        };
+        transform(field);
+        Game game(field);
+        game.move({{0, 7}, {0, 6}});
+        game.move({{8, 2}, {8, 1}});
+        game.updateField({8, 1});
+        REQUIRE(game.getFigurAt({7, 1}) == Figur::None);
+        REQUIRE(game.getFigurAt({6, 1}) == Figur::King);
+    }
 }
 
 TEST_CASE( "Test if a winning condition is met", "[isGameOver]" ) {

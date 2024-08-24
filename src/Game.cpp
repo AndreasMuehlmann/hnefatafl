@@ -211,7 +211,8 @@ void Game::capture(Vec2D lastMovedTo, Vec2D direction) {
                     setFigurAt(Figur::None, positionToDelete);
                     positionToDelete = {positionToDelete.x + direction.x, positionToDelete.y + direction.y};
                 }
-        }           
+                break;
+        } 
         positionToCheck = {positionToCheck.x + direction.x, positionToCheck.y + direction.y};
     }
 }

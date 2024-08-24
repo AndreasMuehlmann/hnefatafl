@@ -110,6 +110,7 @@ EvaluatedMovePath Engine::minimax(Game game, Move move, unsigned int depth, int 
                 break;
             }
         }
+        /*
         if ((ids[depth] == 1 && depth == 5)
             || (ids[depth] == 73 && depth == 4)
             || (ids[depth] == 199 && depth == 3)
@@ -119,6 +120,7 @@ EvaluatedMovePath Engine::minimax(Game game, Move move, unsigned int depth, int 
         {
             std::cout << "The move" << std::endl;
         }
+        */
         bestEvaluatedMovePath.movePath.push_back({bestMove, ids[depth], depth});
         return bestEvaluatedMovePath;
     } else {
@@ -135,6 +137,7 @@ EvaluatedMovePath Engine::minimax(Game game, Move move, unsigned int depth, int 
                 break;
             }
         }
+        /*
         if ((ids[depth] == 1 && depth == 5)
             || (ids[depth] == 73 && depth == 4)
             || (ids[depth] == 199 && depth == 3)
@@ -144,6 +147,7 @@ EvaluatedMovePath Engine::minimax(Game game, Move move, unsigned int depth, int 
         {
             std::cout << "The move" << std::endl;
         }
+        */
         bestEvaluatedMovePath.movePath.push_back({bestMove, ids[depth], depth});
         return bestEvaluatedMovePath;
     }

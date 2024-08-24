@@ -157,6 +157,75 @@ TEST_CASE( "Test if correct moves are calcualted", "[minimax]" ) {
         REQUIRE(move.to.y == 0);
     }
     {
+            /*
+            __W___KG_
+            _________
+            ___WG_W__
+            _WW_____W
+            ________W
+            ________W
+            _________
+            ____WG__W
+            ___W_W___
+            */
+        Field field = {
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::King, Figur::Guard, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::Guard, Figur::None, Figur::Wiking, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::Wiking, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::Guard, Figur::None, Figur::None, Figur::Wiking},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None},
+        };
+        transform(field);
+
+        Game game(field);
+        Engine engine(game, 4);
+        game.move({{2, 8}, {3, 8}});
+        Move move = engine.getMove();
+        REQUIRE(move.from.x == 7);
+        REQUIRE(move.from.y == 0);
+        REQUIRE(move.to.x == 7);
+        
+    }
+    {
+            /*
+            _________
+            ___W_____
+            ___W____W
+            __W______
+            _W_____W_
+            ______W_W
+            _K_______
+            G________
+            ___WWW_W_
+            */
+        Field field = {
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::Wiking},
+            std::array<Figur, FIELD_SIZE> {Figur::King, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::Guard, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+            std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::Wiking, Figur::Wiking, Figur::None, Figur::Wiking, Figur::None},
+        };
+        transform(field);
+
+        Game game(field);
+        Engine engine(game, 4);
+        game.move({{8, 1}, {8, 2}});
+        Move move = engine.getMove();
+        REQUIRE(move.from.x == 0);
+        REQUIRE(move.from.y == 7);
+        REQUIRE(move.to.x == 1);
+        REQUIRE(move.to.y == 7);
+        
+    }
+    {
         Field field = {
             std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::King, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::None},
             std::array<Figur, FIELD_SIZE> {Figur::Wiking, Figur::Wiking, Figur::Guard, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
