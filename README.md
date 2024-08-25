@@ -15,9 +15,12 @@ This is a program for playing hnefatafl. Also a algorithm will developed to play
 - Install the program and libraries with `sudo make install` in the `build` directory
 
  ## TODO
-- Tiefen nacheinander und bei sicherem gewinn den ersten nehmen
-- isGameOver führt teilweise zu seg faults => weil keine Züge verfügbar sind => checken in whoWon
-- isGameOver führt zum gewinn wenn der König nicht ganz umzingelt ist
+
+
+
+- Bug with field in Hnefatafl.cpp
+- Rule that not all corner can be blocked
+- Remis
 - Search path extension
 - bessere statische bewertung
 - gute züge zuerst => besseres alpha beta pruning

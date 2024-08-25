@@ -180,7 +180,7 @@ Engine::Engine(Game& game, unsigned int maxDepth)
 
 Move Engine::getMove() {
     Move move = {{-1, -1}, {-1, -1}};
-    EvaluatedMovePath evaluatedMovePath;
+    EvaluatedMovePath evaluatedMovePath = {std::vector<MoveWithId>{{move, 0, 0}}, 0};
     for (unsigned int depth = 1; depth < maxDepth + 1; depth++) {
         evaluatedMovePath = minimax(game, move, depth, alpha_beta_starting_value * -1, alpha_beta_starting_value);
         if (evaluatedMovePath.evaluation ==  winning_value 
