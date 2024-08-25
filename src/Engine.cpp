@@ -4,6 +4,11 @@
 #include "Game.hpp"
 
 
+const int evaluation_starting_value = 100000;
+const int winning_value = evaluation_starting_value - 1;
+const int alpha_beta_starting_value = evaluation_starting_value;
+
+
 std::vector<Vec2D> getFigursToMove(const Field& field, bool wikingsToMove) {
     std::vector<Vec2D> startingPositions;
     startingPositions.reserve(20);
@@ -58,25 +63,24 @@ int staticEvaluation(const Game& game) {
 
 
 EvaluatedMovePath Engine::minimax(Game game, Move move, unsigned int depth, int alpha, int beta) {
-    ids[depth]++;
     if (move.from.x != -1) {
         game.move(move);
         game.updateField(move.to);
         Figur winner = game.whoWon();
         if (winner == Figur::Wiking) {
             /*
-            std::cout << "eval: " << std::numeric_limits<int>::max() << std::endl;
+            std::cout << "eval: " << winning_value << std::endl;
             std::cout << "wikingsCount: " << game.getWikingCount() << ", guardsCount: " << game.getGuardCount() << std::endl;
             game.printField();
             */
-            return {std::vector<MoveWithId>{}, std::numeric_limits<int>::max()};
+            return {std::vector<MoveWithId>{}, winning_value};
         } else if (winner == Figur::King) {
             /*
-            std::cout << "eval: " << std::numeric_limits<int>::min() << std::endl;
+            std::cout << "eval: " << winning_value * -1 << std::endl;
             std::cout << "wikingsCount: " << game.getWikingCount() << ", guardsCount: " << game.getGuardCount() << std::endl;
             game.printField();
             */
-            return {std::vector<MoveWithId>{}, std::numeric_limits<int>::min()};
+            return {std::vector<MoveWithId>{}, winning_value * -1};
         }
 
         if (depth == 0) {
@@ -95,14 +99,21 @@ EvaluatedMovePath Engine::minimax(Game game, Move move, unsigned int depth, int 
     std::vector<Move> availableMoves = getAvailableMoves(field, figuresToMove);
     EvaluatedMovePath evaluatedMovePath;
     EvaluatedMovePath bestEvaluatedMovePath = evaluatedMovePath;
-    Move bestMove;
+    MoveWithId bestMove;
     if (game.areWikingsToMove()) {
-        int max = std::numeric_limits<int>::min();
+        int max = evaluation_starting_value * -1;
         for (Move move : availableMoves) {
+            ids[depth]++;
+            /*
+            if ((ids[depth] == 1 && depth == 3) || (ids[depth] == 22 && depth == 2)) 
+            {
+                std::cout << "The move" << std::endl;
+            }
+            */
             evaluatedMovePath = minimax(game, move, depth - 1, alpha, beta);
             if (evaluatedMovePath.evaluation > max) {
                 max = evaluatedMovePath.evaluation;
-                bestMove = move;
+                bestMove = {move, ids[depth], depth};
                 bestEvaluatedMovePath = evaluatedMovePath;
             }
             alpha = std::max(alpha, evaluatedMovePath.evaluation);
@@ -110,26 +121,21 @@ EvaluatedMovePath Engine::minimax(Game game, Move move, unsigned int depth, int 
                 break;
             }
         }
-        /*
-        if ((ids[depth] == 1 && depth == 5)
-            || (ids[depth] == 73 && depth == 4)
-            || (ids[depth] == 199 && depth == 3)
-            || (ids[depth] == 5464 && depth == 2)
-            || (ids[depth] == 15511 && depth == 1)
-            ) 
-        {
-            std::cout << "The move" << std::endl;
-        }
-        */
-        bestEvaluatedMovePath.movePath.push_back({bestMove, ids[depth], depth});
+        bestEvaluatedMovePath.movePath.push_back(bestMove);
         return bestEvaluatedMovePath;
     } else {
-        int min = std::numeric_limits<int>::max();
+        int min = evaluation_starting_value;
         for (Move move : availableMoves) {
+            /*
+            if ((ids[depth] == 1 && depth == 3) || (ids[depth] == 22 && depth == 2)) 
+            {
+                std::cout << "The move" << std::endl;
+            }
+            */
             evaluatedMovePath = minimax(game, move, depth - 1, alpha, beta);
             if (evaluatedMovePath.evaluation < min) {
                 min = evaluatedMovePath.evaluation;
-                bestMove = move;
+                bestMove = {move, ids[depth], depth};
                 bestEvaluatedMovePath = evaluatedMovePath;
             }
             beta = std::min(beta, evaluatedMovePath.evaluation);
@@ -137,18 +143,7 @@ EvaluatedMovePath Engine::minimax(Game game, Move move, unsigned int depth, int 
                 break;
             }
         }
-        /*
-        if ((ids[depth] == 1 && depth == 5)
-            || (ids[depth] == 73 && depth == 4)
-            || (ids[depth] == 199 && depth == 3)
-            || (ids[depth] == 5464 && depth == 2)
-            || (ids[depth] == 15511 && depth == 1)
-            ) 
-        {
-            std::cout << "The move" << std::endl;
-        }
-        */
-        bestEvaluatedMovePath.movePath.push_back({bestMove, ids[depth], depth});
+        bestEvaluatedMovePath.movePath.push_back(bestMove);
         return bestEvaluatedMovePath;
     }
 }
@@ -177,7 +172,7 @@ void moveAlongPath(Game game, EvaluatedMovePath evaluatedMovePath) {
 
 Engine::Engine(Game& game, unsigned int maxDepth)
     : game(game), maxDepth(maxDepth) {
-        for (unsigned int i = 0; i  < maxDepth; i++) {
+        for (unsigned int i = 0; i  < maxDepth + 1; i++) {
             ids.push_back(0);
         }
 }
@@ -187,9 +182,9 @@ Move Engine::getMove() {
     Move move = {{-1, -1}, {-1, -1}};
     EvaluatedMovePath evaluatedMovePath;
     for (unsigned int depth = 1; depth < maxDepth + 1; depth++) {
-        evaluatedMovePath = minimax(game, move, depth, std::numeric_limits<int>::min() + 1, std::numeric_limits<int>::max() - 1);
-        if (evaluatedMovePath.evaluation ==  std::numeric_limits<int>::max() 
-            || evaluatedMovePath.evaluation == std::numeric_limits<int>::min()) {
+        evaluatedMovePath = minimax(game, move, depth, alpha_beta_starting_value * -1, alpha_beta_starting_value);
+        if (evaluatedMovePath.evaluation ==  winning_value 
+            || evaluatedMovePath.evaluation == winning_value * -1) {
             moveAlongPath(game, evaluatedMovePath);
             std::cout << "Evaluation: " << evaluatedMovePath.evaluation << std::endl;
             return evaluatedMovePath.movePath[evaluatedMovePath.movePath.size() - 1].move;
