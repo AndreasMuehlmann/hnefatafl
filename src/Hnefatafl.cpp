@@ -8,6 +8,7 @@
 #include "Engine.hpp"
 
 int main() {
+    /*
     Field field = {
         std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::King, Figur::None, Figur::Guard, Figur::None, Figur::None},
         std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
@@ -21,8 +22,14 @@ int main() {
     };
 
     Game game(field);
+    */
 
-    Engine engine(game, 4);
+    Game game;
+    game.move({{5, 8}, {7, 8}});
+    game.move({{5, 4}, {5, 7}});
+    game.move({{3, 8}, {1, 8}});
+    game.move({{4, 4}, {5, 4}});
+    Engine engine(game, 6);
 
     std::string input;
 
@@ -33,6 +40,8 @@ int main() {
         if (game.areWikingsToMove()) {
             move = engine.getMove();
         } else {
+            move = engine.getMove();
+            /*
             int xFrom, yFrom, xTo, yTo;
             char comma, semicolon;
 
@@ -46,6 +55,7 @@ int main() {
             }
             std::cout << xFrom << " " << yFrom << std::endl;
             move = {{xFrom, yFrom}, {xTo, yTo}};
+            */
         }
         try {
             game.move(move);

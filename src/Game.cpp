@@ -121,6 +121,11 @@ unsigned int Game::getGuardCount() const {
 }
 
 
+Vec2D Game::getKingPosition() const {
+    return kingPosition;
+}
+
+
 void Game::moveUnchecked(Move move) {
     Figur figur = getFigurAt(move.from);
     setFigurAt(figur, move.to);

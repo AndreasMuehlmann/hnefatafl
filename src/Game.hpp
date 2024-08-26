@@ -47,6 +47,7 @@ public:
     const Field& getField() const;
     unsigned int getWikingCount() const;
     unsigned int getGuardCount() const;
+    Vec2D getKingPosition() const;
     void moveUnchecked(Move move);
     void move(Move move);
     void updateField(Vec2D lastMovedTo);

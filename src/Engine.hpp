@@ -13,7 +13,7 @@ struct MoveWithId {
 
 struct EvaluatedMovePath {
     std::vector<MoveWithId> movePath;
-    int evaluation;
+    double evaluation;
 };
 
 
@@ -25,7 +25,7 @@ std::vector<Move> getAvailableMoves(const Field& field, std::vector<Vec2D>& figu
 class Engine {
 public:
     Engine(Game& game, unsigned int maxDepth);
-    EvaluatedMovePath minimax(Game game, Move move, unsigned int depth, int alpha, int beta);
+    EvaluatedMovePath minimax(Game game, Move move, unsigned int depth, double alpha, double beta);
     Move getMove();
 
 private:

@@ -4,9 +4,10 @@
 #include "Game.hpp"
 
 
-const int evaluation_starting_value = 100000;
-const int winning_value = evaluation_starting_value - 1;
-const int alpha_beta_starting_value = evaluation_starting_value;
+constexpr double evaluation_starting_value = 100000;
+constexpr double winning_value = evaluation_starting_value - 1;
+constexpr double alpha_beta_starting_value = evaluation_starting_value;
+constexpr double kingWorth = 6.0;
 
 
 std::vector<Vec2D> getFigursToMove(const Field& field, bool wikingsToMove) {
@@ -56,13 +57,38 @@ std::vector<Move> getAvailableMoves(const Field& field, std::vector<Vec2D>& figu
 }
 
 
-int staticEvaluation(const Game& game) {
-    const int kingWorth = 6;
-    return game.getWikingCount() - game.getGuardCount() - kingWorth;
+inline double scoreCornerPosition(const Game& game, Vec2D position) {
+    Figur figur = game.getFigurAt(position);
+    switch (figur) {
+        case Figur::Wiking:
+            return 0.1;
+        case Figur::Guard:
+            return -0.5;
+        case Figur::King:
+            return -2;
+        default:
+            return 0;
+    }
+}
+
+double staticEvaluation(const Game& game) {
+    double score = 0;
+    score -= game.getGuardCount();
+    score -= kingWorth;
+    score += game.getWikingCount();
+    double distanceEvaluation = 0.3 * ((std::abs(game.getKingPosition().y - 4.0) + std::abs(game.getKingPosition().x - 4.0)) * -1.0 + 4.0);
+    score += distanceEvaluation;
+    score += scoreCornerPosition(game, {0, 1});
+    score += scoreCornerPosition(game, {1, 0});
+    score += scoreCornerPosition(game, {1, 1});
+    score += scoreCornerPosition(game, {0, 7});
+    score += scoreCornerPosition(game, {7, 0});
+    score += scoreCornerPosition(game, {7, 7});
+    return score;
 }
 
 
-EvaluatedMovePath Engine::minimax(Game game, Move move, unsigned int depth, int alpha, int beta) {
+EvaluatedMovePath Engine::minimax(Game game, Move move, unsigned int depth, double alpha, double beta) {
     if (move.from.x != -1) {
         game.move(move);
         game.updateField(move.to);
@@ -84,7 +110,7 @@ EvaluatedMovePath Engine::minimax(Game game, Move move, unsigned int depth, int 
         }
 
         if (depth == 0) {
-            int evaluation = staticEvaluation(game);
+            double evaluation = staticEvaluation(game);
             /*
             std::cout << "static evaluation: " << evaluation << std::endl;
             std::cout << "wikingsCount: " << game.getWikingCount() << ", guardsCount: " << game.getGuardCount() << std::endl;
@@ -97,7 +123,8 @@ EvaluatedMovePath Engine::minimax(Game game, Move move, unsigned int depth, int 
     const Field& field = game.getField();
     std::vector<Vec2D> figuresToMove = getFigursToMove(field, game.areWikingsToMove());
     std::vector<Move> availableMoves = getAvailableMoves(field, figuresToMove);
-    EvaluatedMovePath evaluatedMovePath;
+
+    EvaluatedMovePath evaluatedMovePath = {std::vector<MoveWithId>{{move, 0, 0}}, 0.0};
     EvaluatedMovePath bestEvaluatedMovePath = evaluatedMovePath;
     MoveWithId bestMove;
     if (game.areWikingsToMove()) {
@@ -180,7 +207,7 @@ Engine::Engine(Game& game, unsigned int maxDepth)
 
 Move Engine::getMove() {
     Move move = {{-1, -1}, {-1, -1}};
-    EvaluatedMovePath evaluatedMovePath = {std::vector<MoveWithId>{{move, 0, 0}}, 0};
+    EvaluatedMovePath evaluatedMovePath = {std::vector<MoveWithId>{{move, 0, 0}}, 0.0};
     for (unsigned int depth = 1; depth < maxDepth + 1; depth++) {
         evaluatedMovePath = minimax(game, move, depth, alpha_beta_starting_value * -1, alpha_beta_starting_value);
         if (evaluatedMovePath.evaluation ==  winning_value 
