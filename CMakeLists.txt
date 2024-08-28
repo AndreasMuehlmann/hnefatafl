@@ -18,7 +18,13 @@ add_executable(hnefatafl
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -fsanitize=address,undefined")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -ggdb -fsanitize=address,undefined")
+elseif(CMAKE_BUILD_TYPE STREQUAL "GprofProfile")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -pg")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
+elseif(CMAKE_BUILD_TYPE STREQUAL "ValgrindProfile")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -O2")
 endif()
 
 

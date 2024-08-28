@@ -1,3 +1,6 @@
-build
+build*
+gmon.out
+output.png
+analysis.txt
 .cache
 callgrind*

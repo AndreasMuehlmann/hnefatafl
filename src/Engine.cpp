@@ -64,7 +64,7 @@ int staticEvaluation(const Game& game) {
 
 EvaluatedMovePath Engine::minimax(Game game, Move move, unsigned int depth, int alpha, int beta) {
     if (move.from.x != -1) {
-        game.move(move);
+        game.moveUnchecked(move);
         game.updateField(move.to);
         Figur winner = game.whoWon();
         if (winner == Figur::Wiking) {
