@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <chrono>
+#include <vector>
 
 #include "Game.hpp"
 
@@ -16,20 +16,19 @@ struct EvaluatedMovePath {
     int evaluation;
 };
 
-
-std::vector<Vec2D> getFigursToMove(const Field& field, bool wikingsToMove);
-void insertAvailableMovesFigurInDirection(std::vector<Move>& availableMoves, const Field& field, Vec2D from, Vec2D direction);
-std::vector<Move> getAvailableMoves(const Field& field, std::vector<Vec2D>& figursToMove);
-
+std::vector<Vec2D> getFigursToMove(const Field &field, bool wikingsToMove);
+void insertAvailableMovesFigurInDirection(std::vector<Move> &availableMoves, const Field &field,
+                                          Vec2D from, Vec2D direction);
+std::vector<Move> getAvailableMoves(const Field &field, std::vector<Vec2D> &figursToMove);
 
 class Engine {
-public:
-    Engine(Game& game, unsigned int maxDepth);
+  public:
+    Engine(Game &game, unsigned int maxDepth);
     EvaluatedMovePath minimax(Game game, Move move, unsigned int depth, int alpha, int beta);
     Move getMove();
 
-private:
-    Game& game;
+  private:
+    Game &game;
     unsigned int maxDepth;
     unsigned int availableMiliseconds;
     std::chrono::steady_clock::time_point start;

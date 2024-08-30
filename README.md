@@ -14,8 +14,12 @@ This is a program for playing hnefatafl. Also a algorithm will developed to play
 - The program (`hnefatafl`) is also in the build directory
 - Install the program and libraries with `sudo make install` in the `build` directory
 
- ## TODO
+## Contribute
 
+Run `clang-tidy src/* tests/* -p build/` to check for style improvements.
+Run `git-clang-format` to format modified files before commiting them or run `clang-format -i src/*`.
+
+## TODO
 
 
 - Bug with field in Hnefatafl.cpp

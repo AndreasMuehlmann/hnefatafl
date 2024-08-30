@@ -3,21 +3,20 @@
 #include <stdexcept>
 #include <string>
 
-
-#include "Game.hpp"
 #include "Engine.hpp"
+#include "Game.hpp"
 
-int main() {
+auto main() -> int {
     Field field = {
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::King, Figur::None, Figur::Guard, Figur::None, Figur::None},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::Guard, Figur::None, Figur::Wiking, Figur::None, Figur::None},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::Wiking, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::Guard, Figur::None, Figur::None, Figur::Wiking},
-        std::array<Figur, FIELD_SIZE> {Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None},
+        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::King, Figur::None, Figur::Guard, Figur::None, Figur::None},
+        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::Guard, Figur::None, Figur::Wiking, Figur::None, Figur::None},
+        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::Wiking, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
+        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
+        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
+        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
+        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::Guard, Figur::None, Figur::None, Figur::Wiking},
+        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None},
     };
 
     Game game(field);
@@ -29,18 +28,22 @@ int main() {
     while (true) {
         game.printField();
 
-        Move move;
+        Move move{};
         if (game.areWikingsToMove()) {
             move = engine.getMove();
         } else {
-            int xFrom, yFrom, xTo, yTo;
-            char comma, semicolon;
+            int xFrom = 0;
+            int yFrom = 0;
+            int xTo = 0;
+            int yTo = 0;
+            char comma = 0;
+            char semicolon = 0;
 
             while (true) {
                 std::cout << "Enter coordinates (format: x1, y1; x2, y2): ";
                 std::getline(std::cin, input);
-                std::stringstream ss(input);
-                if (ss >> xFrom >> comma >> yFrom >> semicolon >> xTo >> comma >> yTo) {
+                std::stringstream stringStream(input);
+                if (stringStream >> xFrom >> comma >> yFrom >> semicolon >> xTo >> comma >> yTo) {
                     break;
                 }
             }
@@ -55,7 +58,8 @@ int main() {
                 game.printField();
                 std::cout << "The king won!!" << std::endl;
                 break;
-            } else if (winner == Figur::Wiking) {
+            } 
+            if (winner == Figur::Wiking) {
                 game.printField();
                 std::cout << "The wikings won!!" << std::endl;
                 break;

@@ -1,0 +1,2 @@
+Checks: 'modernize-*,readability-*,cppcoreguidelines-*,llvm-*,performance-*,-performance-avoid-endl'
+HeaderFilterRegex: 'src/.*|include/.*'

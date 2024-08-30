@@ -4,28 +4,18 @@
 
 #include "Game.hpp"
 
+int sign(int x) { return (x > 0) - (x < 0); }
 
-int sign(int x) {
-    return (x > 0) - (x < 0);
-}
+bool isKingAttacker(Figur figur) { return figur == Figur::Wiking; }
 
-
-bool isKingAttacker(Figur figur) {
-    return figur == Figur::Wiking;
-}
-
-
-bool isKingDefender(Figur figur) {
-    return figur == Figur::Guard || figur == Figur::King;
-}
-
+bool isKingDefender(Figur figur) { return figur == Figur::Guard || figur == Figur::King; }
 
 Game::Game() {
     wikingsToMove = true;
 
     for (int x = 0; x < FIELD_SIZE; x++) {
         for (int y = 0; y < FIELD_SIZE; y++) {
-            field[x][y] = Figur::None; 
+            field[x][y] = Figur::None;
         }
     }
 
@@ -59,7 +49,7 @@ Game::Game() {
 
     field[2][4] = Figur::Guard;
     field[3][4] = Figur::Guard;
-              
+
     field[5][4] = Figur::Guard;
     field[6][4] = Figur::Guard;
 
@@ -67,7 +57,6 @@ Game::Game() {
     wikingCount = 16;
     guardCount = 8;
 }
-
 
 Game::Game(Field newField) {
     wikingsToMove = true;
@@ -90,36 +79,17 @@ Game::Game(Field newField) {
     }
 }
 
+bool Game::areWikingsToMove() const { return wikingsToMove; }
 
-bool Game::areWikingsToMove() const {
-    return wikingsToMove;
-}
+Figur Game::getFigurAt(Vec2D position) const { return field[position.x][position.y]; }
 
+void Game::setFigurAt(Figur figur, Vec2D position) { field[position.x][position.y] = figur; }
 
-Figur Game::getFigurAt(Vec2D position) const {
-    return field[position.x][position.y];
-}
+const Field &Game::getField() const { return field; }
 
+unsigned int Game::getWikingCount() const { return wikingCount; }
 
-void Game::setFigurAt(Figur figur, Vec2D position) {
-    field[position.x][position.y] = figur;
-}
-
-
-const Field& Game::getField() const{
-    return field;
-}
-
-
-unsigned int Game::getWikingCount() const {
-    return wikingCount;
-}
-
-
-unsigned int Game::getGuardCount() const {
-    return guardCount;
-}
-
+unsigned int Game::getGuardCount() const { return guardCount; }
 
 void Game::moveUnchecked(Move move) {
     Figur figur = getFigurAt(move.from);
@@ -132,7 +102,6 @@ void Game::moveUnchecked(Move move) {
     wikingsToMove = !wikingsToMove;
 }
 
-
 bool Game::isBlocked(Move move) const {
     Vec2D direction = {sign(move.to.x - move.from.x), sign(move.to.y - move.from.y)};
     Vec2D positionToCheck = move.from;
@@ -141,12 +110,11 @@ bool Game::isBlocked(Move move) const {
         if (getFigurAt(positionToCheck) != Figur::None) {
             return true;
         }
-    } while (!(positionToCheck.x == move.to.x && positionToCheck.y == move.to.y)
-            && 0 <= positionToCheck.x && positionToCheck.x < FIELD_SIZE
-            && 0 <= positionToCheck.y && positionToCheck.y < FIELD_SIZE);
+    } while (!(positionToCheck.x == move.to.x && positionToCheck.y == move.to.y) &&
+             0 <= positionToCheck.x && positionToCheck.x < FIELD_SIZE && 0 <= positionToCheck.y &&
+             positionToCheck.y < FIELD_SIZE);
     return false;
 }
-
 
 void Game::move(Move move) {
     if (move.from.x >= FIELD_SIZE || move.from.y >= FIELD_SIZE) {
@@ -155,20 +123,22 @@ void Game::move(Move move) {
         throw std::invalid_argument("Position to move to out of field range.");
     } else if (move.from.x == move.to.x && move.from.y == move.to.y) {
         throw std::invalid_argument("Position to move to and position to move from are equal.");
-    } 
+    }
 
     Figur figur = getFigurAt(move.from);
     if (figur == Figur::None) {
         throw std::invalid_argument("On the position to move away from is no figur.");
-    } else if ((wikingsToMove && isKingDefender(getFigurAt(move.from))) 
-            || (!wikingsToMove && isKingAttacker(getFigurAt(move.from)))) {
+    } else if ((wikingsToMove && isKingDefender(getFigurAt(move.from))) ||
+               (!wikingsToMove && isKingAttacker(getFigurAt(move.from)))) {
         throw std::invalid_argument("The figur belongs to the other player.");
     } else if (move.from.x != move.to.x && move.from.y != move.to.y) {
         throw std::invalid_argument("Diagonal movement is not allowed.");
-    } else if ((move.to.x == 0 || move.to.x == 8) && (move.to.y == 0 || move.to.y == 8) && figur != Figur::King) {
+    } else if ((move.to.x == 0 || move.to.x == 8) && (move.to.y == 0 || move.to.y == 8) &&
+               figur != Figur::King) {
         throw std::invalid_argument("Cannot move into the corner unless the figur is the king.");
     } else if ((move.to.x == 4 && move.to.y == 4) && figur != Figur::King) {
-        throw std::invalid_argument("Cannot move into the center position unless the figur is the king.");
+        throw std::invalid_argument("Cannot move into the center position "
+                                    "unless the figur is the king.");
     }
 
     if (!isBlocked(move)) {
@@ -184,39 +154,43 @@ void Game::move(Move move) {
     wikingsToMove = !wikingsToMove;
 }
 
-
 void Game::capture(Vec2D lastMovedTo, Vec2D direction) {
     Vec2D positionToCheck = {lastMovedTo.x + direction.x, lastMovedTo.y + direction.y};
     Figur movedFigur = getFigurAt(lastMovedTo);
-    if (!(0 <= positionToCheck.x && positionToCheck.x < FIELD_SIZE && 0 <= positionToCheck.y && positionToCheck.y < FIELD_SIZE)) {
+    if (!(0 <= positionToCheck.x && positionToCheck.x < FIELD_SIZE && 0 <= positionToCheck.y &&
+          positionToCheck.y < FIELD_SIZE)) {
         return;
     }
-    if (movedFigur == getFigurAt(positionToCheck) || (movedFigur == Figur::Guard && getFigurAt(positionToCheck) == Figur::King)) {
+    if (movedFigur == getFigurAt(positionToCheck) ||
+        (movedFigur == Figur::Guard && getFigurAt(positionToCheck) == Figur::King)) {
         return;
     }
-    while (0 <= positionToCheck.x && positionToCheck.x < FIELD_SIZE && 0 <= positionToCheck.y && positionToCheck.y < FIELD_SIZE) {
+    while (0 <= positionToCheck.x && positionToCheck.x < FIELD_SIZE && 0 <= positionToCheck.y &&
+           positionToCheck.y < FIELD_SIZE) {
         Figur figur = getFigurAt(positionToCheck);
         if (figur == Figur::None || (movedFigur == Figur::Wiking && figur == Figur::King)) {
             break;
-        } else if ((movedFigur == Figur::Wiking && figur == Figur::Wiking) 
-                || (movedFigur != Figur::Wiking && (figur == Figur::Guard || figur == Figur::King))) {
-                Vec2D positionToDelete = {lastMovedTo.x + direction.x, lastMovedTo.y + direction.y};
-                while (!(positionToDelete.x == positionToCheck.x && positionToDelete.y == positionToCheck.y)) {
-                    Figur figurToDelete = getFigurAt(positionToDelete);
-                    if (figurToDelete == Figur::Guard) {
-                        guardCount -= 1;
-                    } else if (figurToDelete == Figur::Wiking) {
-                        wikingCount -= 1;
-                    }
-                    setFigurAt(Figur::None, positionToDelete);
-                    positionToDelete = {positionToDelete.x + direction.x, positionToDelete.y + direction.y};
+        } else if ((movedFigur == Figur::Wiking && figur == Figur::Wiking) ||
+                   (movedFigur != Figur::Wiking &&
+                    (figur == Figur::Guard || figur == Figur::King))) {
+            Vec2D positionToDelete = {lastMovedTo.x + direction.x, lastMovedTo.y + direction.y};
+            while (!(positionToDelete.x == positionToCheck.x &&
+                     positionToDelete.y == positionToCheck.y)) {
+                Figur figurToDelete = getFigurAt(positionToDelete);
+                if (figurToDelete == Figur::Guard) {
+                    guardCount -= 1;
+                } else if (figurToDelete == Figur::Wiking) {
+                    wikingCount -= 1;
                 }
-                break;
-        } 
+                setFigurAt(Figur::None, positionToDelete);
+                positionToDelete = {positionToDelete.x + direction.x,
+                                    positionToDelete.y + direction.y};
+            }
+            break;
+        }
         positionToCheck = {positionToCheck.x + direction.x, positionToCheck.y + direction.y};
     }
 }
-
 
 void Game::updateField(Vec2D lastMovedTo) {
     capture(lastMovedTo, {1, 0});
@@ -225,37 +199,39 @@ void Game::updateField(Vec2D lastMovedTo) {
     capture(lastMovedTo, {0, -1});
 }
 
-
 Figur Game::whoWon() const {
-    if ((kingPosition.x == 0 || kingPosition.x == FIELD_SIZE - 1) 
-            && (kingPosition.y == 0 || kingPosition.y == FIELD_SIZE - 1))  {
+    if ((kingPosition.x == 0 || kingPosition.x == FIELD_SIZE - 1) &&
+        (kingPosition.y == 0 || kingPosition.y == FIELD_SIZE - 1)) {
         return Figur::King;
-    } else if ((kingPosition.x == FIELD_SIZE - 1 || getFigurAt({kingPosition.x + 1, kingPosition.y}) == Figur::Wiking)
-            && (kingPosition.x == 0 || getFigurAt({kingPosition.x - 1, kingPosition.y}) == Figur::Wiking)
-            && (kingPosition.y == FIELD_SIZE - 1 || getFigurAt({kingPosition.x, kingPosition.y + 1}) == Figur::Wiking)
-            && (kingPosition.y == 0 || getFigurAt({kingPosition.x, kingPosition.y - 1}) == Figur::Wiking)) {
+    } else if ((kingPosition.x == FIELD_SIZE - 1 ||
+                getFigurAt({kingPosition.x + 1, kingPosition.y}) == Figur::Wiking) &&
+               (kingPosition.x == 0 ||
+                getFigurAt({kingPosition.x - 1, kingPosition.y}) == Figur::Wiking) &&
+               (kingPosition.y == FIELD_SIZE - 1 ||
+                getFigurAt({kingPosition.x, kingPosition.y + 1}) == Figur::Wiking) &&
+               (kingPosition.y == 0 ||
+                getFigurAt({kingPosition.x, kingPosition.y - 1}) == Figur::Wiking)) {
         return Figur::Wiking;
     }
     return Figur::None;
 }
 
-
 void Game::printField() const {
     for (int y = 0; y < FIELD_SIZE; y++) {
         for (int x = 0; x < FIELD_SIZE; x++) {
             switch (field[x][y]) {
-                case Figur::None:
-                    std::cout << "_";
-                    break;
-                case Figur::Wiking:
-                    std::cout << "W";
-                    break;
-                case Figur::Guard:
-                    std::cout << "G";
-                    break;
-                case Figur::King:
-                    std::cout << "K";
-                    break;
+            case Figur::None:
+                std::cout << "_";
+                break;
+            case Figur::Wiking:
+                std::cout << "W";
+                break;
+            case Figur::Guard:
+                std::cout << "G";
+                break;
+            case Figur::King:
+                std::cout << "K";
+                break;
             }
         }
         std::cout << std::endl;
