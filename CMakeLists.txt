@@ -9,8 +9,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=modernize-*,readability-*,cppcoreguidelines-*,llvm-*,performance-*,-performance-avoid-endl;")
-
 add_executable(hnefatafl 
     src/Game.cpp
     src/Hnefatafl.cpp
