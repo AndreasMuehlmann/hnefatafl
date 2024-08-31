@@ -10,15 +10,17 @@ constexpr Figur g = Figur::Guard;
 constexpr Figur k = Figur::King;
 constexpr Figur _ = Figur::None;
 
-using Row = std::array<Figur, FIELD_SIZE>;
-
 TEST_CASE("Test if all wikings to move are collected", "[getAllFigursToMove]") {
     Field field = {
-        Row{_, w, _, _, _, _, _, _, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _}, Row{w, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, w, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
     };
     Game game = createGameFromField(field, true);
 
@@ -31,11 +33,15 @@ TEST_CASE("Test if all wikings to move are collected", "[getAllFigursToMove]") {
 
 TEST_CASE("Test if all guards to move are collected", "[getAllFigursToMove]") {
     Field field = {
-        Row{_, g, _, _, _, _, _, _, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _}, Row{g, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, g, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{g, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
     };
     Game game = createGameFromField(field, false);
 
@@ -49,11 +55,15 @@ TEST_CASE("Test if all guards to move are collected", "[getAllFigursToMove]") {
 TEST_CASE("Test getting available moves for a single figur in one direction",
           "[insertAvailableMovesFigurInDirection]") {
     Field field = {
-        Row{_, _, _, _, _, _, _, _, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _}, Row{w, _, g, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{w, _, g, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
     };
     Game game = createGameFromField(field, true);
 
@@ -82,11 +92,15 @@ TEST_CASE("Test getting available moves for a single figur in one direction",
 
 TEST_CASE("Test getting all available moves", "[getAvailableMoves]") {
     Field field = {
-        Row{_, _, _, _, _, _, _, _, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _}, Row{g, _, _, _, _, _, _, _, _},
-        Row{w, k, _, _, _, _, _, _, _}, Row{w, _, g, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{g, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{w, k, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{w, _, g, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
     };
     Game game = createGameFromField(field, true);
     std::vector<Vec2D> figursToMove = getFigursToMove(game, true);
@@ -101,11 +115,15 @@ TEST_CASE("Test getting all available moves", "[getAvailableMoves]") {
 
 TEST_CASE("Test if king captures two wikings", "[minimax]") {
     Field field = {
-        Row{_, w, _, _, _, _, _, w, _}, Row{w, _, _, _, _, _, _, _, w},
-        Row{_, _, _, _, _, _, _, _, _}, Row{g, _, _, _, _, w, _, _, _},
-        Row{w, _, _, _, _, _, _, _, _}, Row{w, _, _, _, _, _, _, _, _},
-        Row{_, k, _, _, _, _, _, _, _}, Row{w, _, _, _, _, _, _, _, w},
-        Row{_, w, _, _, _, _, _, w, _},
+        std::array<Figur, FIELD_SIZE>{_, w, _, _, _, _, _, w, _},
+        std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, _, w},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{g, _, _, _, _, w, _, _, _},
+        std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, k, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, _, w},
+        std::array<Figur, FIELD_SIZE>{_, w, _, _, _, _, _, w, _},
     };
     Game game = createGameFromField(field, false);
     Engine engine(game, 4);
@@ -118,11 +136,15 @@ TEST_CASE("Test if king captures two wikings", "[minimax]") {
 
 TEST_CASE("Test if king goes into the corner with one move", "[getMove]") {
     Field field = {
-        Row{_, _, _, _, _, _, _, _, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{k, _, _, _, _, _, _, _, _}, Row{w, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{k, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
     };
     Game game = createGameFromField(field, false);
     Engine engine(game, 4);
@@ -135,11 +157,15 @@ TEST_CASE("Test if king goes into the corner with one move", "[getMove]") {
 
 TEST_CASE("Test if guard goes to the side to let the king into the corner", "[getMove]") {
     Field field = {
-        Row{_, _, w, _, _, _, k, g, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{_, _, _, w, g, _, w, _, _}, Row{_, w, w, _, _, _, _, _, w},
-        Row{_, _, _, _, _, _, _, _, w}, Row{_, _, _, _, _, _, _, _, w},
-        Row{_, _, _, _, _, _, _, _, _}, Row{_, _, _, _, w, g, _, _, w},
-        Row{_, _, w, _, _, w, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, w, _, _, _, k, g, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, w, g, _, w, _, _},
+        std::array<Figur, FIELD_SIZE>{_, w, w, _, _, _, _, _, w},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, w},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, w},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, w, g, _, _, w},
+        std::array<Figur, FIELD_SIZE>{_, _, w, _, _, w, _, _, _},
     };
     Game game = createGameFromField(field, false);
     Engine engine(game, 4);
@@ -152,11 +178,15 @@ TEST_CASE("Test if guard goes to the side to let the king into the corner", "[ge
 TEST_CASE("Test if guard goes to the side to let the king into the corner (other situation)",
           "[getMove]") {
     Field field = {
-        Row{_, _, _, _, _, _, _, _, _}, Row{_, _, _, w, _, _, _, _, w},
-        Row{_, _, _, w, _, _, _, _, _}, Row{_, _, w, _, _, _, _, _, _},
-        Row{w, _, _, _, _, _, _, w, _}, Row{_, _, _, _, _, _, w, _, w},
-        Row{k, w, _, _, _, _, _, _, _}, Row{g, _, _, _, _, _, _, _, _},
-        Row{_, _, _, w, w, w, _, w, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, w, _, _, _, _, w},
+        std::array<Figur, FIELD_SIZE>{_, _, _, w, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, w, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, w, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, w, _, w},
+        std::array<Figur, FIELD_SIZE>{k, w, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{g, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, w, w, w, _, w, _},
     };
     Game game = createGameFromField(field, false);
     Engine engine(game, 4);
@@ -169,11 +199,15 @@ TEST_CASE("Test if guard goes to the side to let the king into the corner (other
 
 TEST_CASE("Test if wiking blocks path for king to win", "[getMove]") {
     Field field = {
-        Row{_, _, k, w, _, _, _, w, _}, Row{w, w, g, _, _, _, _, _, w},
-        Row{_, _, _, _, _, _, _, _, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _}, Row{_, _, _, _, _, _, _, _, _},
-        Row{_, _, _, _, _, _, _, _, _}, Row{w, _, _, _, _, _, _, _, w},
-        Row{_, w, _, _, _, _, _, w, _},
+        std::array<Figur, FIELD_SIZE>{_, _, k, w, _, _, _, w, _},
+        std::array<Figur, FIELD_SIZE>{w, w, g, _, _, _, _, _, w},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, _, w},
+        std::array<Figur, FIELD_SIZE>{_, w, _, _, _, _, _, w, _},
     };
     Game game = createGameFromField(field, true);
     Engine engine(game, 4);
