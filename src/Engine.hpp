@@ -1,6 +1,5 @@
 #pragma once
 
-#include <chrono>
 #include <vector>
 
 #include "Game.hpp"
@@ -16,21 +15,20 @@ struct EvaluatedMovePath {
     int evaluation;
 };
 
-std::vector<Vec2D> getFigursToMove(const Field &field, bool wikingsToMove);
-void insertAvailableMovesFigurInDirection(std::vector<Move> &availableMoves, const Field &field,
-                                          Vec2D from, Vec2D direction);
-std::vector<Move> getAvailableMoves(const Field &field, std::vector<Vec2D> &figursToMove);
+auto getFigursToMove(const Game &game, bool wikingsToMove) -> std::vector<Vec2D>;
+auto insertAvailableMovesFigurInDirection(std::vector<Move> &availableMoves, const Game &game,
+                                          Vec2D from, Vec2D direction) -> void;
+auto getAvailableMoves(const Game &game, std::vector<Vec2D> &figursToMove) -> std::vector<Move>;
 
 class Engine {
   public:
     Engine(Game &game, unsigned int maxDepth);
-    EvaluatedMovePath minimax(Game game, Move move, unsigned int depth, int alpha, int beta);
-    Move getMove();
+    auto minimax(Game localGame, Move move, unsigned int depth, int alpha,
+                 int beta) -> EvaluatedMovePath;
+    auto getMove() -> Move;
 
   private:
-    Game &game;
-    unsigned int maxDepth;
-    unsigned int availableMiliseconds;
-    std::chrono::steady_clock::time_point start;
+    Game &m_game;
+    unsigned int m_maxDepth;
     std::vector<unsigned int> ids;
 };

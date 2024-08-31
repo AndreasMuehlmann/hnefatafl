@@ -7,19 +7,24 @@
 #include "Game.hpp"
 
 auto main() -> int {
+
+    constexpr Figur w = Figur::Wiking;
+    constexpr Figur g = Figur::Guard;
+    constexpr Figur k = Figur::King;
+    constexpr Figur _ = Figur::None;
     Field field = {
-        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::King, Figur::None, Figur::Guard, Figur::None, Figur::None},
-        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
-        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::Guard, Figur::None, Figur::Wiking, Figur::None, Figur::None},
-        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::Wiking, Figur::Wiking, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
-        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
-        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking},
-        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None, Figur::None},
-        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::None, Figur::None, Figur::None, Figur::Wiking, Figur::Guard, Figur::None, Figur::None, Figur::Wiking},
-        std::array<Figur, FIELD_SIZE>{Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::Wiking, Figur::None, Figur::None, Figur::None},
+        std::array<Figur, FIELD_SIZE>{_, _, w, _, k, _, g, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, w, g, _, w, _, _},
+        std::array<Figur, FIELD_SIZE>{_, w, w, _, _, _, _, _, w},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, w},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, w},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, w, g, _, _, w},
+        std::array<Figur, FIELD_SIZE>{_, _, w, _, _, w, _, _, _},
     };
 
-    Game game(field);
+    Game game(field, true);
 
     Engine engine(game, 4);
 
@@ -58,7 +63,7 @@ auto main() -> int {
                 game.printField();
                 std::cout << "The king won!!" << std::endl;
                 break;
-            } 
+            }
             if (winner == Figur::Wiking) {
                 game.printField();
                 std::cout << "The wikings won!!" << std::endl;

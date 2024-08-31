@@ -1,2 +1,2 @@
-Checks: 'modernize-*,readability-*,-readability-identifier-length,cppcoreguidelines-*,llvm-*,performance-*,-performance-avoid-endl'
+Checks: 'modernize-*,readability-*,-readability-identifier-length,cppcoreguidelines-*,-cppcoreguidelines-avoid-magic-numbers,llvm-*,performance-*,-performance-avoid-endl'
 HeaderFilterRegex: 'src/.*|include/.*'
