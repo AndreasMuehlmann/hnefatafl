@@ -30,12 +30,11 @@ auto getFigursToMove(const Game &game, bool wikingsToMove) -> std::vector<Vec2D>
 void insertAvailableMovesFigurInDirection(std::vector<Move> &availableMoves, const Game &game,
                                           Vec2D from, Vec2D direction) {
     Vec2D position = {from.x + direction.x, from.y + direction.y};
-    while (0 <= position.x && static_cast<size_t>(position.x) < FIELD_SIZE && 0 <= position.y &&
-           static_cast<size_t>(position.y) < FIELD_SIZE) {
+    while (Game::isPositionInBounds(position)) {
         if (game.getFigurAt(position) != Figur::None) {
             return;
         }
-        if (game.getFigurAt(position) != Figur::King) {
+        if (game.getFigurAt(from) != Figur::King) {
             if ((position.x == (FIELD_SIZE - 1) / 2 && position.y == (FIELD_SIZE - 1) / 2) ||
                 ((position.x == 0 || position.x == FIELD_SIZE - 1) &&
                  (position.y == 0 || position.y == FIELD_SIZE - 1))) {
@@ -152,8 +151,7 @@ auto Engine::getMove() -> Move {
     for (unsigned int depth = 1; depth < m_maxDepth + 1; depth++) {
         evaluatedMovePath =
             minimax(m_game, move, depth, alpha_beta_starting_value * -1, alpha_beta_starting_value);
-        if (evaluatedMovePath.evaluation == winning_value ||
-            evaluatedMovePath.evaluation == winning_value * -1) {
+        if (std::abs(evaluatedMovePath.evaluation) == winning_value) {
             moveAlongPath(m_game, evaluatedMovePath);
             std::cout << "Evaluation: " << evaluatedMovePath.evaluation << std::endl;
             return evaluatedMovePath.movePath[evaluatedMovePath.movePath.size() - 1].move;
