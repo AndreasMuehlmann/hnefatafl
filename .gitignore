@@ -1,4 +1,5 @@
-build*
+debug
+release
 gmon.out
 output.png
 analysis.txt

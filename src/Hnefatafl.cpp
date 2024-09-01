@@ -24,9 +24,12 @@ auto main() -> int {
         std::array<Figur, FIELD_SIZE>{_, _, w, _, _, w, _, _, _},
     };
 
+
     Game game(field, true);
 
-    Engine engine(game, 4);
+    //Game game;
+    constexpr unsigned int maxDepth = 7;
+    Engine engine(game, maxDepth);
 
     std::string input;
 
@@ -72,5 +75,6 @@ auto main() -> int {
         } catch (std::invalid_argument &e) {
             std::cout << e.what() << std::endl;
         }
+        break;
     }
 }

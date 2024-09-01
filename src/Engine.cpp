@@ -6,7 +6,7 @@
 
 constexpr int evaluation_starting_value = 100000;
 constexpr int winning_value = evaluation_starting_value - 1;
-constexpr int alpha_beta_starting_value = evaluation_starting_value;
+constexpr int alpha_beta_starting_value = winning_value;
 constexpr size_t max_amount_figurs = 25;
 constexpr size_t reserverd_moves = 100;
 
@@ -88,7 +88,7 @@ auto Engine::minimax(Game localGame, Move move, unsigned int depth, int alpha,
 
     std::vector<Vec2D> figuresToMove = getFigursToMove(localGame, localGame.areWikingsToMove());
     std::vector<Move> availableMoves = getAvailableMoves(localGame, figuresToMove);
-    EvaluatedMovePath evaluatedMovePath;
+    EvaluatedMovePath evaluatedMovePath{};
     EvaluatedMovePath bestEvaluatedMovePath = evaluatedMovePath;
     MoveWithId bestMove{};
     if (localGame.areWikingsToMove()) {
