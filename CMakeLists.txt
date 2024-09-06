@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.30.2)
+cmake_minimum_required(VERSION 3.22.1)
 
 project(hnefatafl VERSION 0.0.1
     DESCRIPTION "A program for playing hnefatafl"
@@ -26,7 +26,15 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 endif()
 
 
-find_package(Catch2 3 REQUIRED)
+Include(FetchContent)
+
+FetchContent_Declare(
+  Catch2
+  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+  GIT_TAG        v3.4.0 # or a later release
+)
+
+FetchContent_MakeAvailable(Catch2)
 
 add_executable(tests
     tests/TestGame.cpp

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Game.hpp"
 
 class Perft {
