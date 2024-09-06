@@ -1,3 +1,4 @@
+#include <chrono>
 #include <iostream>
 #include <vector>
 
@@ -17,6 +18,7 @@ auto Perft::perftHelper(Game& game, unsigned int depth) -> unsigned long {
 }
 
 auto Perft::perftCopyUnmake(Game game) const -> void {
+    auto start = std::chrono::high_resolution_clock::now();
     const std::vector<Move> availableMoves = game.getAvailableMoves();
     unsigned long sumMoveCounts = 0;
     for (const auto& move : availableMoves) {
@@ -27,7 +29,10 @@ auto Perft::perftCopyUnmake(Game game) const -> void {
         std::cout << move.from.x << ", " << move.from.y << "; " << move.to.x << ", " << move.to.y << ": "<< moveCount << '\n';
         sumMoveCounts += moveCount;
     }
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     std::cout << "SUM: " << sumMoveCounts << '\n';
+    std::cout << "Elapsed time: " << duration.count() << " µ" << '\n';
 }
 
 auto Perft::perftCopyUnmakeHelper(Game& game, unsigned int depth) -> unsigned long {

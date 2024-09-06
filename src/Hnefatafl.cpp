@@ -10,7 +10,7 @@
 auto main() -> int {
     
     Game game;
-    Perft perft(4);
+    Perft perft(5);
     perft.perftCopyUnmake(game);
     /*
     constexpr Figur w = Figur::Wiking;

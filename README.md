@@ -21,13 +21,9 @@ Run `git-clang-format` to format modified files before commiting them or run `cl
 
 ## TODO
 
+- Rewrite:
+    - Interface for players and implement AlphaBetaSearch and human as player, also web api would be a player
+    - command line options with clipp
+    - version als ganzes kopieren und komplett neu anfangen
 - Wenn könig neben thron feld kann er von drei wikingern gefangen genommen werden
-- Bug with field in Hnefatafl.cpp
-- Rule that not all corner can be blocked
-- Remis
-- Search path extension
-- bessere statische bewertung
-- gute züge zuerst => besseres alpha beta pruning
-- check if no figures are left to move
-=> irgendwie höhere tiefe erreichen
-- Die engine gibt einfach auf wenn sie weiß, dass sie verloren hat
+- Wenn man keinen Zug mehr hat hat man verloren
