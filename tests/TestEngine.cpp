@@ -1,5 +1,4 @@
 #include <catch2/catch_test_macros.hpp>
-#include <vector>
 
 #include "Engine.hpp"
 #include "Game.hpp"
@@ -10,108 +9,6 @@ constexpr Figur g = Figur::Guard;
 constexpr Figur k = Figur::King;
 constexpr Figur _ = Figur::None;
 
-TEST_CASE("Test if all wikings to move are collected", "[getAllFigursToMove]") {
-    Field field = {
-        std::array<Figur, FIELD_SIZE>{_, w, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-    };
-    Game game = createGameFromField(field, true);
-
-    std::vector<Vec2D> figursToMove = getFigursToMove(game, true);
-    REQUIRE(figursToMove[0].x == 0);
-    REQUIRE(figursToMove[0].y == 5);
-    REQUIRE(figursToMove[1].x == 1);
-    REQUIRE(figursToMove[1].y == 0);
-}
-
-TEST_CASE("Test if all guards to move are collected", "[getAllFigursToMove]") {
-    Field field = {
-        std::array<Figur, FIELD_SIZE>{_, g, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{g, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-    };
-    Game game = createGameFromField(field, false);
-
-    std::vector<Vec2D> figursToMove = getFigursToMove(game, false);
-    REQUIRE(figursToMove[0].x == 0);
-    REQUIRE(figursToMove[0].y == 5);
-    REQUIRE(figursToMove[1].x == 1);
-    REQUIRE(figursToMove[1].y == 0);
-}
-
-TEST_CASE("Test getting available moves for a single figur in one direction",
-          "[insertAvailableMovesFigurInDirection]") {
-    Field field = {
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{w, _, g, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-    };
-    Game game = createGameFromField(field, true);
-
-    constexpr Vec2D wikingPosition = {0, 5};
-
-    std::vector<Move> availableMoves;
-    insertAvailableMovesFigurInDirection(availableMoves, game, wikingPosition, {1, 0});
-    REQUIRE(availableMoves.size() == 1);
-    REQUIRE(availableMoves[0].from.x == 0);
-    REQUIRE(availableMoves[0].from.y == 5);
-    REQUIRE(availableMoves[0].to.x == 1);
-    REQUIRE(availableMoves[0].to.y == 5);
-
-    insertAvailableMovesFigurInDirection(availableMoves, game, wikingPosition, {-1, 0});
-    REQUIRE(availableMoves.size() == 1);
-    REQUIRE(availableMoves[0].to.x == 1);
-
-    insertAvailableMovesFigurInDirection(availableMoves, game, wikingPosition, {0, 1});
-    REQUIRE(availableMoves.size() == 3);
-    REQUIRE(availableMoves[2].to.y == 7);
-
-    insertAvailableMovesFigurInDirection(availableMoves, game, wikingPosition, {0, -1});
-    REQUIRE(availableMoves.size() == 7);
-    REQUIRE(availableMoves[6].to.y == 1);
-}
-
-TEST_CASE("Test getting all available moves", "[getAvailableMoves]") {
-    Field field = {
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{g, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{w, k, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{w, _, g, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-    };
-    Game game = createGameFromField(field, true);
-    std::vector<Vec2D> figursToMove = getFigursToMove(game, true);
-    std::vector<Move> availableMoves = getAvailableMoves(game, figursToMove);
-    REQUIRE(availableMoves[0].from.x == 0);
-    REQUIRE(availableMoves[0].from.y == 5);
-    REQUIRE(availableMoves[0].to.x == 1);
-    REQUIRE(availableMoves[0].to.y == 5);
-    REQUIRE(availableMoves.size() == 3);
-    REQUIRE(availableMoves[2].to.y == 7);
-}
 
 TEST_CASE("Test if king captures two wikings", "[minimax]") {
     Field field = {

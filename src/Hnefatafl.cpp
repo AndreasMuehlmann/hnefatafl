@@ -5,9 +5,14 @@
 
 #include "Engine.hpp"
 #include "Game.hpp"
+#include "Perft.hpp"
 
 auto main() -> int {
-
+    
+    Game game;
+    Perft perft(4);
+    perft.perftCopyUnmake(game);
+    /*
     constexpr Figur w = Figur::Wiking;
     constexpr Figur g = Figur::Guard;
     constexpr Figur k = Figur::King;
@@ -77,4 +82,5 @@ auto main() -> int {
         }
         break;
     }
+    */
 }

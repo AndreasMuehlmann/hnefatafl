@@ -15,11 +15,6 @@ struct EvaluatedMovePath {
     int evaluation;
 };
 
-auto getFigursToMove(const Game &game, bool wikingsToMove) -> std::vector<Vec2D>;
-auto insertAvailableMovesFigurInDirection(std::vector<Move> &availableMoves, const Game &game,
-                                          Vec2D from, Vec2D direction) -> void;
-auto getAvailableMoves(const Game &game, std::vector<Vec2D> &figursToMove) -> std::vector<Move>;
-
 class Engine {
   public:
     Engine(Game &game, unsigned int maxDepth);

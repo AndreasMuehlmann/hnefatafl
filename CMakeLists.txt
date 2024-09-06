@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable(hnefatafl 
     src/Hnefatafl.cpp
+    src/Perft.cpp
     src/Game.cpp
     src/Engine.cpp
     src/Utils.cpp

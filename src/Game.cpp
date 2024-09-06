@@ -6,7 +6,10 @@
 #include "Utils.hpp"
 
 constexpr unsigned int max_wiking_count = 16;
-constexpr unsigned int max_guard_count = 16;
+constexpr unsigned int max_guard_count = 8;
+
+constexpr size_t max_amount_figurs = 25;
+constexpr size_t reserverd_moves = 100;
 
 Game::Game()
     : m_field(), m_wikingsToMove(true),
@@ -81,6 +84,56 @@ auto Game::moveUnchecked(Move move) -> void {
     }
 
     m_wikingsToMove = !m_wikingsToMove;
+}
+
+auto Game::getFigursToMove() const -> std::vector<Vec2D> {
+    std::vector<Vec2D> startingPositions;
+    startingPositions.reserve(max_amount_figurs);
+
+    for (size_t x = 0; x < FIELD_SIZE; x++) {
+        for (size_t y = 0; y < FIELD_SIZE; y++) {
+            Vec2D position = {static_cast<int>(x), static_cast<int>(y)};
+            Figur figur = getFigurAt(position);
+            if ((m_wikingsToMove && isKingAttacker(figur)) ||
+                (!m_wikingsToMove && isKingDefender(figur))) {
+                startingPositions.push_back(position);
+            }
+        }
+    }
+    return startingPositions;
+}
+
+auto Game::insertAvailableMovesFigurInDirection(std::vector<Move>& availableMoves, Vec2D from, Vec2D direction) const -> void{
+    Vec2D position = {from.x + direction.x, from.y + direction.y};
+    while (Game::isPositionInBounds(position)) {
+        if (getFigurAt(position) != Figur::None) {
+            return;
+        }
+        if (getFigurAt(from) != Figur::King) {
+            if ((position.x == (FIELD_SIZE - 1) / 2 && position.y == (FIELD_SIZE - 1) / 2) ||
+                ((position.x == 0 || position.x == FIELD_SIZE - 1) &&
+                 (position.y == 0 || position.y == FIELD_SIZE - 1))) {
+                return;
+            }
+        }
+        availableMoves.push_back({from, position});
+        position = {position.x + direction.x, position.y + direction.y};
+    }
+}
+
+auto Game::getAvailableMoves() const -> std::vector<Move> {
+    std::vector<Vec2D> figursToMove = getFigursToMove();
+    std::vector<Move> availableMoves;
+    availableMoves.reserve(reserverd_moves);
+
+    for (Vec2D figurePosition : figursToMove) {
+        insertAvailableMovesFigurInDirection(availableMoves, figurePosition, {1, 0});
+        insertAvailableMovesFigurInDirection(availableMoves, figurePosition, {-1, 0});
+        insertAvailableMovesFigurInDirection(availableMoves, figurePosition, {0, 1});
+        insertAvailableMovesFigurInDirection(availableMoves, figurePosition, {0, -1});
+    }
+
+    return availableMoves;
 }
 
 auto Game::isBlocked(Move move) const -> bool {

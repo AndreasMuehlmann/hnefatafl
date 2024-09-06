@@ -7,58 +7,6 @@
 constexpr int evaluation_starting_value = 100000;
 constexpr int winning_value = evaluation_starting_value - 1;
 constexpr int alpha_beta_starting_value = winning_value;
-constexpr size_t max_amount_figurs = 25;
-constexpr size_t reserverd_moves = 100;
-
-auto getFigursToMove(const Game &game, bool wikingsToMove) -> std::vector<Vec2D> {
-    std::vector<Vec2D> startingPositions;
-    startingPositions.reserve(max_amount_figurs);
-
-    for (size_t x = 0; x < FIELD_SIZE; x++) {
-        for (size_t y = 0; y < FIELD_SIZE; y++) {
-            Vec2D position = {static_cast<int>(x), static_cast<int>(y)};
-            Figur figur = game.getFigurAt(position);
-            if ((wikingsToMove && isKingAttacker(figur)) ||
-                (!wikingsToMove && isKingDefender(figur))) {
-                startingPositions.push_back(position);
-            }
-        }
-    }
-    return startingPositions;
-}
-
-void insertAvailableMovesFigurInDirection(std::vector<Move> &availableMoves, const Game &game,
-                                          Vec2D from, Vec2D direction) {
-    Vec2D position = {from.x + direction.x, from.y + direction.y};
-    while (Game::isPositionInBounds(position)) {
-        if (game.getFigurAt(position) != Figur::None) {
-            return;
-        }
-        if (game.getFigurAt(from) != Figur::King) {
-            if ((position.x == (FIELD_SIZE - 1) / 2 && position.y == (FIELD_SIZE - 1) / 2) ||
-                ((position.x == 0 || position.x == FIELD_SIZE - 1) &&
-                 (position.y == 0 || position.y == FIELD_SIZE - 1))) {
-                return;
-            }
-        }
-        availableMoves.push_back({from, position});
-        position = {position.x + direction.x, position.y + direction.y};
-    }
-}
-
-auto getAvailableMoves(const Game &game, std::vector<Vec2D> &figursToMove) -> std::vector<Move> {
-    std::vector<Move> availableMoves;
-    availableMoves.reserve(reserverd_moves);
-
-    for (Vec2D figurePosition : figursToMove) {
-        insertAvailableMovesFigurInDirection(availableMoves, game, figurePosition, {1, 0});
-        insertAvailableMovesFigurInDirection(availableMoves, game, figurePosition, {-1, 0});
-        insertAvailableMovesFigurInDirection(availableMoves, game, figurePosition, {0, 1});
-        insertAvailableMovesFigurInDirection(availableMoves, game, figurePosition, {0, -1});
-    }
-
-    return availableMoves;
-}
 
 auto staticEvaluation(const Game &game) -> int {
     constexpr int kingWorth = 6;
@@ -85,8 +33,7 @@ auto Engine::minimax(Game localGame, Move move, unsigned int depth, int alpha,
         }
     }
 
-    std::vector<Vec2D> figuresToMove = getFigursToMove(localGame, localGame.areWikingsToMove());
-    std::vector<Move> availableMoves = getAvailableMoves(localGame, figuresToMove);
+    std::vector<Move> availableMoves = localGame.getAvailableMoves();
     EvaluatedMovePath evaluatedMovePath{};
     EvaluatedMovePath bestEvaluatedMovePath = evaluatedMovePath;
     MoveWithId bestMove{};

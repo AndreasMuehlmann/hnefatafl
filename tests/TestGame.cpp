@@ -222,3 +222,26 @@ TEST_CASE("Test that winning condition is not met when king is nearly surrounded
     Game game = createGameFromField(field, false);
     REQUIRE(game.whoWon() == Figur::None);
 }
+
+TEST_CASE("Test getting available moves", "[getAvailableMoves]") {
+    Field field = {
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{g, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{w, k, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{w, _, g, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+    };
+    Game game = createGameFromField(field, true);
+    std::vector<Move> availableMoves = game.getAvailableMoves();
+    REQUIRE(availableMoves[0].from.x == 0);
+    REQUIRE(availableMoves[0].from.y == 5);
+    REQUIRE(availableMoves[0].to.x == 1);
+    REQUIRE(availableMoves[0].to.y == 5);
+    REQUIRE(availableMoves.size() == 3);
+    REQUIRE(availableMoves[2].to.y == 7);
+}
+

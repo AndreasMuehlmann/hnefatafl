@@ -21,7 +21,7 @@ Run `git-clang-format` to format modified files before commiting them or run `cl
 
 ## TODO
 
-
+- Wenn könig neben thron feld kann er von drei wikingern gefangen genommen werden
 - Bug with field in Hnefatafl.cpp
 - Rule that not all corner can be blocked
 - Remis

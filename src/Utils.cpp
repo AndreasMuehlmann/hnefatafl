@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "Engine.hpp"
-#include "Game.hpp"
 
 auto sign(int x) -> int { return static_cast<int>(x > 0) - static_cast<int>(x < 0); }
 

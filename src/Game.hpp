@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 
 constexpr std::size_t FIELD_SIZE = 9;
 
@@ -26,9 +27,11 @@ class Game {
     [[nodiscard]] auto areWikingsToMove() const -> bool;
     [[nodiscard]] auto getFigurAt(Vec2D position) const -> Figur;
     [[nodiscard]] auto getField() const -> const Field &;
+    [[nodiscard]] auto getAvailableMoves() const -> std::vector<Move>;
     [[nodiscard]] auto getWikingCount() const -> unsigned int;
     [[nodiscard]] auto getGuardCount() const -> unsigned int;
     [[nodiscard]] static auto isPositionInBounds(Vec2D position) -> bool;
+
     auto moveUnchecked(Move move) -> void;
     auto move(Move move) -> void;
     auto updateField(Vec2D lastMovedTo) -> void;
@@ -42,7 +45,10 @@ class Game {
     unsigned int m_guardCount;
     unsigned int m_wikingCount;
 
-    void capture(Vec2D lastMovedTo, Vec2D direction);
+    [[nodiscard]] auto getFigursToMove() const -> std::vector<Vec2D>;
+    auto insertAvailableMovesFigurInDirection(std::vector<Move>& availableMoves, Vec2D from, Vec2D direction) const -> void;
+
+    auto capture(Vec2D lastMovedTo, Vec2D direction) -> void;
     [[nodiscard]] auto isBlocked(Move move) const -> bool;
-    void setFigurAt(Figur figur, Vec2D position);
+    auto setFigurAt(Figur figur, Vec2D position) -> void;
 };
