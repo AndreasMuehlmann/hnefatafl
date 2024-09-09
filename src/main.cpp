@@ -12,13 +12,17 @@ auto main(int argc, char* argv[]) -> int {
     std::string defendingPlayer;
     bool printAvailablePlayers = false;
     
-    program.add_argument("attackingPlayer")
-        .help("Pass who should be the attacker, so the player without the king.").store_into(attackingPlayer);
+    program.add_argument("--attackingPlayer")
+        .store_into(attackingPlayer)
+        .help("Pass who should be the attacker, so the player without the king.");
     
-    program.add_argument("defendingPlayer")
-        .help("Pass who should be the defender, so the player with the king.").store_into(defendingPlayer);
+    program.add_argument("--defendingPlayer")
+        .store_into(defendingPlayer)
+        .help("Pass who should be the defender, so the player with the king.");
     
-    program.add_argument("--printAvailablePlayers").store_into(printAvailablePlayers);
+    program.add_argument("--printAvailablePlayers")
+        .store_into(printAvailablePlayers)
+        .help("Prints all player types that can be used.");
     
     try {
         program.parse_args(argc, argv);
@@ -42,6 +46,9 @@ auto main(int argc, char* argv[]) -> int {
         return 1;
     }
 
+    if (attackingPlayer.empty() || defendingPlayer.empty()) {
+        throw std::invalid_argument("--attackingPlayer and --defendingPlayer have to be passed");
+    }
     if (!availablePlayers.contains(attackingPlayer)) {
         throw std::invalid_argument(attackingPlayer + " is not a known player.");
     }
