@@ -1,8 +1,5 @@
 #pragma once
 
-#include "Move.hpp"
-#include "Game.hpp"
-
 class GameManager {
 
 public:

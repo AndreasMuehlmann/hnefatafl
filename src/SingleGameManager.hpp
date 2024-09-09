@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "Game.hpp"
 #include "GameManager.hpp"
 #include "Player.hpp"
 

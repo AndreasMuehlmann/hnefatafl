@@ -2,7 +2,9 @@
 
 #include <cstdint>
 
+using Position = uint8_t;
+
 struct Move {
-    uint8_t from;
-    uint8_t to;
+    Position from;
+    Position to;
 };
