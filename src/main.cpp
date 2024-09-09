@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <unordered_set>
 
@@ -38,15 +39,14 @@ auto main(int argc, char* argv[]) -> int {
         for (const auto& player : availablePlayers) {
             std::cout << player << '\n';
         }
+        return 1;
     }
 
     if (!availablePlayers.contains(attackingPlayer)) {
-        std::cout << attackingPlayer << " is not a known player.\n";
-        return 1;
+        throw std::invalid_argument(attackingPlayer + " is not a known player.");
     }
     if (!availablePlayers.contains(defendingPlayer)) {
-        std::cout << defendingPlayer << " is not a known player.\n";
-        return 1;
+        throw std::invalid_argument(defendingPlayer + " is not a known player.");
     }
 
      
