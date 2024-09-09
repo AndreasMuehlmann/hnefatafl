@@ -5,8 +5,8 @@
 #include "GameUtils.hpp"
 #include "Human.hpp"
 
-auto Human::getMove(const Game& game) -> Move {
-    game.printField();
+auto Human::getMove(const Game &game) -> Move {
+    // game.printField();
 
     uint8_t xFrom = 0;
     uint8_t yFrom = 0;
@@ -24,6 +24,6 @@ auto Human::getMove(const Game& game) -> Move {
             break;
         }
     }
-    
+
     return {coordinatesToPosition({xFrom, yFrom}), coordinatesToPosition({xTo, yTo})};
 }

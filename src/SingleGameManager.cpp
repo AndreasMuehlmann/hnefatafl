@@ -1,10 +1,12 @@
 #include <memory>
 
-#include "SingleGameManager.hpp"
 #include "Game.hpp"
+#include "SingleGameManager.hpp"
 
-SingleGameManager::SingleGameManager(Game game, std::unique_ptr<Player> attackingPlayer, std::unique_ptr<Player> defendingPlayer) : 
-    m_game(game), m_defendingPlayer(std::move(defendingPlayer)), m_attackingPlayer(std::move(attackingPlayer)) {}
+SingleGameManager::SingleGameManager(Game game, std::unique_ptr<Player> attackingPlayer,
+                                     std::unique_ptr<Player> defendingPlayer)
+    : m_game(game), m_attackingPlayer(std::move(attackingPlayer)),
+      m_defendingPlayer(std::move(defendingPlayer)) {}
 
 auto SingleGameManager::run() -> void {
     Faction factionToMove = Faction::Attacker;
@@ -18,6 +20,6 @@ auto SingleGameManager::run() -> void {
             move = m_defendingPlayer->getMove(m_game);
             factionToMove = Faction::Attacker;
         }
-        winner = m_game.makeMove(move);
+        // winner = m_game.makeMove(move);
     }
 }

@@ -2,7 +2,7 @@
 
 class GameManager {
 
-public:
-  virtual ~GameManager() = default;
-  virtual auto run()-> void = 0;
+  public:
+    virtual ~GameManager() = default;
+    virtual auto run() -> void = 0;
 };

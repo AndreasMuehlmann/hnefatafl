@@ -20,6 +20,9 @@ endif()
 
 add_executable(hnefatafl 
     src/main.cpp
+    src/Human.cpp
+    src/SingleGameManager.cpp
+    src/GameUtils.cpp
 )
 
 target_include_directories(hnefatafl PRIVATE lib/argparse/include)

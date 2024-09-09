@@ -6,7 +6,7 @@ class Game;
 
 class Player {
 
-public:
-  virtual ~Player() = default;
-  virtual auto getMove(const Game& game)-> Move = 0;
+  public:
+    virtual ~Player() = default;
+    virtual auto getMove(const Game &game) -> Move = 0;
 };
