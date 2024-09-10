@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <iostream>
 #include <sstream>
 
@@ -8,10 +9,10 @@
 auto Human::getMove(const Game &game) -> Move {
     game.printField();
 
-    uint8_t xFrom = 0;
-    uint8_t yFrom = 0;
-    uint8_t xTo = 0;
-    uint8_t yTo = 0;
+    unsigned int xFrom = 0;
+    unsigned int yFrom = 0;
+    unsigned int xTo = 0;
+    unsigned int yTo = 0;
     char comma = 0;
     char semicolon = 0;
 

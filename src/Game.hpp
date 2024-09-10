@@ -2,8 +2,9 @@
 
 #include <array>
 #include <bitset>
+#include <vector>
 
-#include "Faction.hpp"
+#include "Winner.hpp"
 #include "Move.hpp"
 
 constexpr std::size_t FIELD_SIZE = 9;
@@ -28,16 +29,18 @@ class Game {
     Game();
     Game(Field field, bool wikingsToMove);
     [[nodiscard]] auto getFigurAt(Position position) const -> Figur;
-    auto makeMove(const Move &move) -> Faction;
-    auto unmakeMove() -> Faction;
-    auto validMove(const Move &move) -> std::string;
+    [[nodiscard]] auto areAttackersToMove() const -> bool;
+    auto makeMove(const Move &m) -> Winner;
+    auto unmakeMove() -> void;
+    auto validMove(const Move &m) -> std::string;
     auto printField() const -> void;
 
   private:
-    auto move(const Move &move) -> void;
+    auto move(const Move &m) -> void;
     auto updateField(const Position &lastMovedTo) -> void;
-    [[nodiscard]] auto whoWon() const -> Faction;
+    [[nodiscard]] auto whoWon() const -> Winner;
 
     InternalField m_field;
-    bool m_wikingsToMove;
+    bool m_attackersToMove;
+    std::vector<InternalField> m_history;
 };

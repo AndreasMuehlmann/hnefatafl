@@ -1,7 +1,9 @@
 #include <cstdint>
 #include <stdexcept>
+#include <iostream>
 
 #include "Game.hpp"
+#include "Move.hpp"
 #include "GameUtils.hpp"
 
 auto positionToCoordinates(const Position &position) -> Coordinates {
@@ -33,4 +35,16 @@ auto fieldToInternalField(const Field &field) -> InternalField {
         }
     }
     return internalField;
+}
+
+auto maskForPosition(Position position) -> InternalField {
+    constexpr InternalField mask(3);
+    return mask << position * BITS_PER_FIELD;
+}
+
+auto printMove(const Move& m) -> void {
+    Coordinates from = positionToCoordinates(m.from);
+    Coordinates to = positionToCoordinates(m.to);
+    std::cout << from.x << ", " << from.y << "; " << to.x << ", " << to.y;
+    std::cout  << " / " << static_cast<unsigned int>(m.from) << "; " << static_cast<unsigned int>(m.to) << '\n';
 }

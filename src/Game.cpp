@@ -3,8 +3,9 @@
 #include "Game.hpp"
 #include "FieldDefinitionHelper.hpp"
 #include "GameUtils.hpp"
+#include "Move.hpp"
 
-Game::Game() : m_wikingsToMove(true) {
+Game::Game() : m_attackersToMove(true) {
     Field field = {
         std::array<Figur, FIELD_SIZE>{_, _, _, w, w, w, _, _, _},
         std::array<Figur, FIELD_SIZE>{_, _, _, _, w, _, _, _, _},
@@ -19,13 +20,40 @@ Game::Game() : m_wikingsToMove(true) {
     m_field = fieldToInternalField(field);
 }
 
-Game::Game(Field field, bool wikingsToMove) : m_field(fieldToInternalField(field)), m_wikingsToMove(wikingsToMove) {}
+Game::Game(Field field, bool wikingsToMove) : m_field(fieldToInternalField(field)), m_attackersToMove(wikingsToMove) {}
 
 auto Game::getFigurAt(Position position) const -> Figur {
-    constexpr InternalField mask(3);
-    InternalField movedMask = (mask << position * BITS_PER_FIELD);
-    auto figur = static_cast<Figur>(((m_field & movedMask) >> position * BITS_PER_FIELD).to_ulong());
-    return figur;
+    return static_cast<Figur>(((m_field & maskForPosition(position)) >> position * BITS_PER_FIELD).to_ulong());
+}
+
+auto Game::areAttackersToMove() const -> bool {
+    return m_attackersToMove;
+}
+
+auto Game::makeMove(const Move &m) -> Winner {
+    m_history.push_back(m_field);
+    move(m);
+    updateField(m.to);
+    return whoWon();
+}
+
+auto Game::move(const Move &m) -> void {
+    const auto mask = maskForPosition(m.from);
+    const auto fieldWithOnlyFigurMoved = m_field & mask;
+    m_field &= ~mask;
+    if (m.to > m.from) {
+        m_field |= fieldWithOnlyFigurMoved << (m.to - m.from) * BITS_PER_FIELD;
+    } else {
+        m_field |= fieldWithOnlyFigurMoved >> (m.from - m.to) * BITS_PER_FIELD;
+    }
+}
+
+auto Game::updateField(const Position &lastMovedTo) -> void {
+
+}
+
+auto Game::whoWon() const -> Winner {
+    return Winner::NoWinner;
 }
 
 auto Game::printField() const -> void {

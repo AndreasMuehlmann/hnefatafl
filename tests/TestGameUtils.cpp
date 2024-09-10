@@ -6,6 +6,25 @@
 #include "FieldDefinitionHelper.hpp"
 #include "Game.hpp"
 #include "GameUtils.hpp"
+#include "Move.hpp"
+
+TEST_CASE("Check if coordinates (2D) are converted to position (1D) correctly",
+          "[coordinatesToPosition]") {
+    REQUIRE(coordinatesToPosition({4, 1}) == 13);
+    REQUIRE(coordinatesToPosition({0, 3}) == 27);
+}
+
+TEST_CASE("Check if positions (1D) are converted to coordinates (2D) correctly",
+          "[positionToCoordinates]") {
+    {
+        Coordinates coordinates = positionToCoordinates(13);
+        REQUIRE(coordinates.x == 4);
+        REQUIRE(coordinates.y == 1);
+    }
+    Coordinates coordinates = positionToCoordinates(27);
+    REQUIRE(coordinates.x == 0);
+    REQUIRE(coordinates.y == 3);
+}
 
 TEST_CASE("converting a 2D array of Figurs to the internal representation",
           "[fieldToInternalField]") {
