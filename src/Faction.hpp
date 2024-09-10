@@ -1,5 +1,5 @@
 enum Faction {
-    None,
+    NoFaction,
     Defender,
     Attacker,
 };

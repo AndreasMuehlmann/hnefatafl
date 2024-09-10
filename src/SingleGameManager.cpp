@@ -10,8 +10,8 @@ SingleGameManager::SingleGameManager(Game game, std::unique_ptr<Player> attackin
 
 auto SingleGameManager::run() -> void {
     Faction factionToMove = Faction::Attacker;
-    Faction winner = Faction::None;
-    while (winner == Faction::None) {
+    Faction winner = Faction::NoFaction;
+    while (winner == Faction::NoFaction) {
         Move move{};
         if (factionToMove == Faction::Attacker) {
             move = m_attackingPlayer->getMove(m_game);
