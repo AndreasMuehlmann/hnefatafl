@@ -1,3 +1,4 @@
+#include <iostream>
 #include <memory>
 
 #include "Game.hpp"
@@ -13,8 +14,10 @@ auto SingleGameManager::run() -> void {
     while (winner == Winner::NoWinner) {
         Move move{};
         if (m_game.areAttackersToMove()) {
+            std::cout << "Attackers to move\n";
             move = m_attackingPlayer->getMove(m_game);
         } else {
+            std::cout << "Defenders to move\n";
             move = m_defendingPlayer->getMove(m_game);
         }
         winner = m_game.makeMove(move);

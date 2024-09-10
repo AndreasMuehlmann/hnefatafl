@@ -7,6 +7,7 @@
 #include <argparse/argparse.hpp>
 
 #include "Human.hpp"
+#include "BitMasks.hpp"
 #include "SingleGameManager.hpp"
 
 auto main(int argc, char *argv[]) -> int {
@@ -58,6 +59,7 @@ auto main(int argc, char *argv[]) -> int {
     if (!availablePlayers.contains(defender)) {
         throw std::invalid_argument(defender + " is not a known player.");
     }
+
 
     Game game;
     std::unique_ptr<Player> attackingPlayer = std::make_unique<Human>();

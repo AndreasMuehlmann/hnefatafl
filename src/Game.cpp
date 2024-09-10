@@ -1,12 +1,16 @@
 #include <iostream>
 
+#include "BitMasks.hpp"
 #include "FieldDefinitionHelper.hpp"
 #include "Game.hpp"
 #include "GameUtils.hpp"
 #include "Move.hpp"
 
-Game::Game() : m_attackersToMove(true) {
-    Field field = {
+constexpr size_t INDEX_WIKINGS_TO_MOVE_FLAG = FIELDS * BITS_PER_FIELD + BITS_FOR_KING_POSITION;
+
+
+Game::Game() {
+    constexpr Field field = {
         std::array<Figur, FIELD_SIZE>{_, _, _, w, w, w, _, _, _},
         std::array<Figur, FIELD_SIZE>{_, _, _, _, w, _, _, _, _},
         std::array<Figur, FIELD_SIZE>{_, _, _, _, g, _, _, _, _},
@@ -18,28 +22,57 @@ Game::Game() : m_attackersToMove(true) {
         std::array<Figur, FIELD_SIZE>{_, _, _, w, w, w, _, _, _},
     };
     m_field = fieldToInternalField(field);
+    m_field.set(INDEX_WIKINGS_TO_MOVE_FLAG);
 }
 
 Game::Game(Field field, bool wikingsToMove)
-    : m_field(fieldToInternalField(field)), m_attackersToMove(wikingsToMove) {}
+    : m_field(fieldToInternalField(field)) {
+        if (wikingsToMove) {
+            m_field.set(INDEX_WIKINGS_TO_MOVE_FLAG);
+        } else {
+            m_field.reset(INDEX_WIKINGS_TO_MOVE_FLAG);
+        }
+    }
+
+Game::Game(InternalField internalField)
+    : m_field(internalField) {}
 
 auto Game::getFigurAt(Position position) const -> Figur {
     return static_cast<Figur>(
         ((m_field & maskForPosition(position)) >> position * BITS_PER_FIELD).to_ulong());
 }
 
-auto Game::areAttackersToMove() const -> bool { return m_attackersToMove; }
+auto Game::getKingPosition() const -> Position {
+    return static_cast<Position>(((m_field & MASK_KING_POSITION) >> FIELDS * BITS_PER_FIELD).to_ulong());
+}
+
+auto Game::setKingPosition(Position position) -> void {
+    m_field &= ~MASK_KING_POSITION;
+    InternalField kingPosition(position);
+    m_field |= kingPosition << FIELDS * BITS_PER_FIELD;
+}
+
+auto Game::areAttackersToMove() const -> bool { return m_field.test(INDEX_WIKINGS_TO_MOVE_FLAG); }
 
 auto Game::makeMove(const Move &m) -> Winner {
     m_history.push_back(m_field);
     move(m);
-    updateField(m.to);
-    return whoWon();
+    if (updateField(m.to)) {
+        return Winner::Attacker;
+    };
+    if (kingWon()) {
+        return Winner::Defender;
+    }
+    m_field.flip(INDEX_WIKINGS_TO_MOVE_FLAG);
+    return Winner::NoWinner;
 }
 
 auto Game::move(const Move &m) -> void {
     const auto mask = maskForPosition(m.from);
     const auto fieldWithOnlyFigurMoved = m_field & mask;
+    if (m.from == getKingPosition()) {
+        setKingPosition(m.to);
+    }
     m_field &= ~mask;
     if (m.to > m.from) {
         m_field |= fieldWithOnlyFigurMoved << (m.to - m.from) * BITS_PER_FIELD;
@@ -48,9 +81,19 @@ auto Game::move(const Move &m) -> void {
     }
 }
 
-auto Game::updateField(const Position &lastMovedTo) -> void {}
+auto Game::updateField(const Position &lastMovedTo) -> bool {
+    return false;
+}
 
-auto Game::whoWon() const -> Winner { return Winner::NoWinner; }
+auto Game::kingWon() const -> bool { 
+    return false;
+}
+
+auto Game::draw() const -> bool {
+    // check for repetition
+    // check if there is at least one move available
+    return false;
+}
 
 auto Game::printField() const -> void {
     for (Position position = 0; position < FIELD_SIZE * FIELD_SIZE; position++) {

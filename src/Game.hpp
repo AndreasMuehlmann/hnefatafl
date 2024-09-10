@@ -21,26 +21,30 @@ using Field = std::array<std::array<Figur, FIELD_SIZE>, FIELD_SIZE>;
 constexpr std::size_t FIELDS = FIELD_SIZE * FIELD_SIZE;
 constexpr std::size_t BITS_PER_FIELD = 2;
 constexpr std::size_t BITS_FOR_KING_POSITION = 8;
-using InternalField = std::bitset<FIELDS * BITS_PER_FIELD + BITS_FOR_KING_POSITION>;
+constexpr std::size_t BIT_FOR_WHOS_TO_MOVE = 1;
+using InternalField = std::bitset<FIELDS * BITS_PER_FIELD + BITS_FOR_KING_POSITION + BIT_FOR_WHOS_TO_MOVE>;
 
 class Game {
 
   public:
     Game();
     Game(Field field, bool wikingsToMove);
+    Game(InternalField internalField);
     [[nodiscard]] auto getFigurAt(Position position) const -> Figur;
+    [[nodiscard]] auto getKingPosition() const -> Position;
     [[nodiscard]] auto areAttackersToMove() const -> bool;
+    [[nodiscard]] auto validMove(const Move &m) const -> std::string;
     auto makeMove(const Move &m) -> Winner;
     auto unmakeMove() -> void;
-    auto validMove(const Move &m) -> std::string;
     auto printField() const -> void;
 
   private:
     auto move(const Move &m) -> void;
-    auto updateField(const Position &lastMovedTo) -> void;
-    [[nodiscard]] auto whoWon() const -> Winner;
+    [[nodiscard]] auto updateField(const Position &lastMovedTo) -> bool;
+    [[nodiscard]] auto kingWon() const -> bool;
+    [[nodiscard]] auto draw() const -> bool;
+    auto setKingPosition(Position position) -> void;
 
     InternalField m_field;
-    bool m_attackersToMove;
     std::vector<InternalField> m_history;
 };
