@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "Game.hpp"
 #include "FieldDefinitionHelper.hpp"
+#include "Game.hpp"
 #include "GameUtils.hpp"
 #include "Move.hpp"
 
@@ -20,15 +20,15 @@ Game::Game() : m_attackersToMove(true) {
     m_field = fieldToInternalField(field);
 }
 
-Game::Game(Field field, bool wikingsToMove) : m_field(fieldToInternalField(field)), m_attackersToMove(wikingsToMove) {}
+Game::Game(Field field, bool wikingsToMove)
+    : m_field(fieldToInternalField(field)), m_attackersToMove(wikingsToMove) {}
 
 auto Game::getFigurAt(Position position) const -> Figur {
-    return static_cast<Figur>(((m_field & maskForPosition(position)) >> position * BITS_PER_FIELD).to_ulong());
+    return static_cast<Figur>(
+        ((m_field & maskForPosition(position)) >> position * BITS_PER_FIELD).to_ulong());
 }
 
-auto Game::areAttackersToMove() const -> bool {
-    return m_attackersToMove;
-}
+auto Game::areAttackersToMove() const -> bool { return m_attackersToMove; }
 
 auto Game::makeMove(const Move &m) -> Winner {
     m_history.push_back(m_field);
@@ -48,31 +48,29 @@ auto Game::move(const Move &m) -> void {
     }
 }
 
-auto Game::updateField(const Position &lastMovedTo) -> void {
+auto Game::updateField(const Position &lastMovedTo) -> void {}
 
-}
-
-auto Game::whoWon() const -> Winner {
-    return Winner::NoWinner;
-}
+auto Game::whoWon() const -> Winner { return Winner::NoWinner; }
 
 auto Game::printField() const -> void {
     for (Position position = 0; position < FIELD_SIZE * FIELD_SIZE; position++) {
-        if (position % FIELD_SIZE == 0 && position != 0) { std::cout << '\n'; }
+        if (position % FIELD_SIZE == 0 && position != 0) {
+            std::cout << '\n';
+        }
         const auto figur = getFigurAt(position);
         switch (figur) {
-            case Figur::NoFigur:
-                std::cout << "_ ";
-                break;
-            case Figur::Wiking:
-                std::cout << "w ";
-                break;
-            case Figur::Guard:
-                std::cout << "g ";
-                break;
-            case Figur::King:
-                std::cout << "k ";
-                break;
+        case Figur::NoFigur:
+            std::cout << "_ ";
+            break;
+        case Figur::Wiking:
+            std::cout << "w ";
+            break;
+        case Figur::Guard:
+            std::cout << "g ";
+            break;
+        case Figur::King:
+            std::cout << "k ";
+            break;
         }
     }
     std::cout << '\n';

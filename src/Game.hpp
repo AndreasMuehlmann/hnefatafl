@@ -4,8 +4,8 @@
 #include <bitset>
 #include <vector>
 
-#include "Winner.hpp"
 #include "Move.hpp"
+#include "Winner.hpp"
 
 constexpr std::size_t FIELD_SIZE = 9;
 

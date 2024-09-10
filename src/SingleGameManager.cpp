@@ -1,8 +1,6 @@
 #include <memory>
-#include <iostream>
 
 #include "Game.hpp"
-#include "GameUtils.hpp"
 #include "SingleGameManager.hpp"
 
 SingleGameManager::SingleGameManager(Game game, std::unique_ptr<Player> attackingPlayer,
@@ -19,7 +17,6 @@ auto SingleGameManager::run() -> void {
         } else {
             move = m_defendingPlayer->getMove(m_game);
         }
-        printMove(move);
         winner = m_game.makeMove(move);
     }
 }

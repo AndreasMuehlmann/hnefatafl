@@ -1,10 +1,10 @@
 #include <cstdint>
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
 
 #include "Game.hpp"
-#include "Move.hpp"
 #include "GameUtils.hpp"
+#include "Move.hpp"
 
 auto positionToCoordinates(const Position &position) -> Coordinates {
     uint8_t x = position % static_cast<uint8_t>(FIELD_SIZE);
@@ -13,7 +13,7 @@ auto positionToCoordinates(const Position &position) -> Coordinates {
 }
 
 auto coordinatesToPosition(const Coordinates &coordinates) -> Position {
-    return coordinates.x + static_cast<uint8_t>(coordinates.y * FIELD_SIZE);
+    return static_cast<uint8_t>(coordinates.x) + static_cast<uint8_t>(coordinates.y * FIELD_SIZE);
 }
 
 auto fieldToInternalField(const Field &field) -> InternalField {
@@ -42,9 +42,10 @@ auto maskForPosition(Position position) -> InternalField {
     return mask << position * BITS_PER_FIELD;
 }
 
-auto printMove(const Move& m) -> void {
-    Coordinates from = positionToCoordinates(m.from);
-    Coordinates to = positionToCoordinates(m.to);
+auto printMove(const Move &m) -> void {
+    const auto from = positionToCoordinates(m.from);
+    const auto to = positionToCoordinates(m.to);
     std::cout << from.x << ", " << from.y << "; " << to.x << ", " << to.y;
-    std::cout  << " / " << static_cast<unsigned int>(m.from) << "; " << static_cast<unsigned int>(m.to) << '\n';
+    std::cout << " / " << static_cast<unsigned int>(m.from) << "; "
+              << static_cast<unsigned int>(m.to) << '\n';
 }
