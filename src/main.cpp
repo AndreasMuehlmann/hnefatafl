@@ -50,7 +50,7 @@ auto main(int argc, char *argv[]) -> int {
     }
 
     if (attacker.empty() || defender.empty()) {
-        throw std::invalid_argument("--attackingPlayer and --defendingPlayer have to be passed");
+        throw std::invalid_argument("--attacker and --defender have to be passed");
     }
     if (!availablePlayers.contains(attacker)) {
         throw std::invalid_argument(attacker + " is not a known player.");

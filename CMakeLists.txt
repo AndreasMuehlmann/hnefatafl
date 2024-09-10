@@ -45,6 +45,7 @@ if(NOT Catch2_FOUND)
 endif()
 
 add_executable(tests
+    tests/TestGame.cpp
     tests/TestGameUtils.cpp
 
     src/GameUtils.cpp

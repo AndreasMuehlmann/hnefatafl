@@ -6,7 +6,7 @@
 #include "Human.hpp"
 
 auto Human::getMove(const Game &game) -> Move {
-    // game.printField();
+    game.printField();
 
     uint8_t xFrom = 0;
     uint8_t yFrom = 0;

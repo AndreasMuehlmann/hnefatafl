@@ -21,7 +21,6 @@ TEST_CASE("converting a 2D array of Figurs to the internal representation",
         std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, k},
     };
     InternalField internalField = fieldToInternalField(field);
-    std::cout << internalField << '\n';
     REQUIRE(internalField.count() == 7);
     REQUIRE(internalField.test(2));
     REQUIRE(internalField.test(7));
