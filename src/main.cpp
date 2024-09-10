@@ -6,8 +6,8 @@
 
 #include <argparse/argparse.hpp>
 
-#include "Human.hpp"
 #include "BitMasks.hpp"
+#include "Human.hpp"
 #include "SingleGameManager.hpp"
 
 auto main(int argc, char *argv[]) -> int {
@@ -60,8 +60,7 @@ auto main(int argc, char *argv[]) -> int {
         throw std::invalid_argument(defender + " is not a known player.");
     }
 
-
-    Game game;
+    Game game(MASK_KING_SURROUNDED_IN_CASTLE);
     std::unique_ptr<Player> attackingPlayer = std::make_unique<Human>();
     std::unique_ptr<Player> defendingPlayer = std::make_unique<Human>();
     SingleGameManager singleGameManager(game, std::move(attackingPlayer),

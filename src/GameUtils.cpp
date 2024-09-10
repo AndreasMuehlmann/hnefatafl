@@ -42,6 +42,15 @@ auto maskForPosition(Position position) -> InternalField {
     return mask << position * BITS_PER_FIELD;
 }
 
+auto maskedFieldMatchesPosition(const InternalField &field, const InternalField &mask,
+                                const InternalField &position) -> bool {
+    return (field & mask) == position;
+}
+
+auto printCoordinates(const Coordinates &coordinates) -> void {
+    std::cout << coordinates.x << ", " << coordinates.y << '\n';
+}
+
 auto printMove(const Move &m) -> void {
     const auto from = positionToCoordinates(m.from);
     const auto to = positionToCoordinates(m.to);

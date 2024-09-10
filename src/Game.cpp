@@ -8,7 +8,6 @@
 
 constexpr size_t INDEX_WIKINGS_TO_MOVE_FLAG = FIELDS * BITS_PER_FIELD + BITS_FOR_KING_POSITION;
 
-
 Game::Game() {
     constexpr Field field = {
         std::array<Figur, FIELD_SIZE>{_, _, _, w, w, w, _, _, _},
@@ -25,17 +24,15 @@ Game::Game() {
     m_field.set(INDEX_WIKINGS_TO_MOVE_FLAG);
 }
 
-Game::Game(Field field, bool wikingsToMove)
-    : m_field(fieldToInternalField(field)) {
-        if (wikingsToMove) {
-            m_field.set(INDEX_WIKINGS_TO_MOVE_FLAG);
-        } else {
-            m_field.reset(INDEX_WIKINGS_TO_MOVE_FLAG);
-        }
+Game::Game(Field field, bool wikingsToMove) : m_field(fieldToInternalField(field)) {
+    if (wikingsToMove) {
+        m_field.set(INDEX_WIKINGS_TO_MOVE_FLAG);
+    } else {
+        m_field.reset(INDEX_WIKINGS_TO_MOVE_FLAG);
     }
+}
 
-Game::Game(InternalField internalField)
-    : m_field(internalField) {}
+Game::Game(InternalField internalField) : m_field(internalField) {}
 
 auto Game::getFigurAt(Position position) const -> Figur {
     return static_cast<Figur>(
@@ -43,7 +40,8 @@ auto Game::getFigurAt(Position position) const -> Figur {
 }
 
 auto Game::getKingPosition() const -> Position {
-    return static_cast<Position>(((m_field & MASK_KING_POSITION) >> FIELDS * BITS_PER_FIELD).to_ulong());
+    return static_cast<Position>(
+        ((m_field & MASK_KING_POSITION) >> FIELDS * BITS_PER_FIELD).to_ulong());
 }
 
 auto Game::setKingPosition(Position position) -> void {
@@ -54,17 +52,23 @@ auto Game::setKingPosition(Position position) -> void {
 
 auto Game::areAttackersToMove() const -> bool { return m_field.test(INDEX_WIKINGS_TO_MOVE_FLAG); }
 
+auto Game::validMove(const Move &m) const -> std::string {
+    (void)m;
+    return "";
+}
+
 auto Game::makeMove(const Move &m) -> Winner {
     m_history.push_back(m_field);
     move(m);
     if (updateField(m.to)) {
         return Winner::Attacker;
     };
-    if (kingWon()) {
-        return Winner::Defender;
+    Winner winner = whoWon();
+    if (winner != Winner::NoWinner && draw()) {
+        winner = Winner::Draw;
     }
     m_field.flip(INDEX_WIKINGS_TO_MOVE_FLAG);
-    return Winner::NoWinner;
+    return winner;
 }
 
 auto Game::move(const Move &m) -> void {
@@ -82,11 +86,26 @@ auto Game::move(const Move &m) -> void {
 }
 
 auto Game::updateField(const Position &lastMovedTo) -> bool {
+    (void)lastMovedTo;
     return false;
 }
 
-auto Game::kingWon() const -> bool { 
-    return false;
+auto Game::whoWon() const -> Winner {
+    Coordinates kingCoordinates = positionToCoordinates(getKingPosition());
+    printCoordinates(kingCoordinates);
+    if (kingCoordinates.x == 0 || kingCoordinates.x == FIELD_SIZE - 1 || kingCoordinates.y == 0 ||
+        kingCoordinates.y == FIELD_SIZE - 1) {
+        return Winner::Defender;
+    }
+    if (maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_IN_CASTLE, MASK_AROUND_CASTLE) ||
+        maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_LEFT_CASTLE, MASK_LEFT_CASTLE) ||
+        maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_RIGHT_CASTLE, MASK_RIGHT_CASTLE) ||
+        maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_BELOW_CASTLE, MASK_BELOW_CASTLE) ||
+        maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_ABOVE_CASTLE, MASK_ABOVE_CASTLE)) {
+        return Winner::Attacker;
+    }
+
+    return Winner::NoWinner;
 }
 
 auto Game::draw() const -> bool {

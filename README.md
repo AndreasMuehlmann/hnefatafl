@@ -21,9 +21,4 @@ Run `git-clang-format` to format modified files before commiting them or run `cl
 
 ## TODO
 
-- Rewrite:
-    - Interface for players and implement AlphaBetaSearch and human as player, also web api would be a player
-    - command line options with clipp
-    - version als ganzes kopieren und komplett neu anfangen
-- Wenn könig neben thron feld kann er von drei wikingern gefangen genommen werden
-- Wenn man keinen Zug mehr hat hat man verloren
+- tests für whoWon
