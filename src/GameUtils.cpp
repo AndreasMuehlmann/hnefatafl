@@ -37,7 +37,7 @@ auto fieldToInternalField(const Field &field) -> InternalField {
     return internalField;
 }
 
-auto maskForPosition(Position position) -> InternalField {
+auto maskForPosition(const Position& position) -> InternalField {
     constexpr InternalField mask(3);
     return mask << position * BITS_PER_FIELD;
 }

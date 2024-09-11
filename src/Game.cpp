@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <cstdlib>
 #include <iostream>
 
 #include "BitMasks.hpp"
@@ -136,7 +137,47 @@ auto Game::move(const Move &m) -> void {
 }
 
 auto Game::updateField(const Position &lastMovedTo) -> bool {
-    (void)lastMovedTo;
+    bool attackersWon = false;
+    attackersWon = capture(lastMovedTo, 1);
+    attackersWon = capture(lastMovedTo, -1);
+    attackersWon = capture(lastMovedTo, static_cast<int>(FIELD_SIZE));
+    attackersWon = capture(lastMovedTo, -static_cast<int>(FIELD_SIZE));
+    return attackersWon;
+}
+
+auto Game::capture(const Position &lastMovedTo, const int& shift) -> bool {
+    const auto coordinates = positionToCoordinates(lastMovedTo);
+    size_t lengthToCheck{};
+    if (shift == 1) {
+        lengthToCheck = FIELD_SIZE - coordinates.x - 2;
+    } else if (shift == FIELD_SIZE) {
+        lengthToCheck = FIELD_SIZE - coordinates.y - 2;
+    } else if (shift == -1) {
+        lengthToCheck = coordinates.x - 1;
+    } else {
+        lengthToCheck = coordinates.y - 1; // add max with 0
+    }
+    if (shift < 0) {
+        auto absShift = static_cast<size_t>(-shift);
+        auto mask = maskForPosition(lastMovedTo) >> absShift * BITS_PER_FIELD;
+        for (size_t i = 0; i < lengthToCheck; i++) {
+            mask |= maskForPosition(lastMovedTo);
+            mask >>= absShift * BITS_PER_FIELD;
+            Game game(mask);
+            game.printField();
+            std::cout << "\n\n";
+        }
+    } else {
+        auto absShift = static_cast<size_t>(shift);
+        auto mask = maskForPosition(lastMovedTo) << absShift * BITS_PER_FIELD;
+        for (size_t i = 0; i < lengthToCheck; i++) {
+            mask |= maskForPosition(lastMovedTo);
+            mask <<= absShift * BITS_PER_FIELD;
+            Game game(mask);
+            game.printField();
+            std::cout << "\n\n";
+        }
+    }
     return false;
 }
 
