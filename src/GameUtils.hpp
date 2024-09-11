@@ -11,3 +11,6 @@ auto maskedFieldMatchesPosition(const InternalField &field, const InternalField 
                                 const InternalField &position) -> bool;
 auto printCoordinates(const Coordinates &coordinates) -> void;
 auto printMove(const Move &m) -> void;
+auto positionInBounds(const Position &position) -> bool;
+auto isDefender(const Figur &figur) -> bool;
+auto isAttacker(const Figur &figur) -> bool;

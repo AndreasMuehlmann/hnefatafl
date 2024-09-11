@@ -8,8 +8,6 @@
 #include "Move.hpp"
 #include "Winner.hpp"
 
-constexpr std::size_t FIELD_SIZE = 9;
-
 enum Figur {
     NoFigur,
     Wiking,
@@ -17,12 +15,14 @@ enum Figur {
     King,
 };
 
-using Field = std::array<std::array<Figur, FIELD_SIZE>, FIELD_SIZE>;
-
+constexpr std::size_t FIELD_SIZE = 9;
 constexpr std::size_t FIELDS = FIELD_SIZE * FIELD_SIZE;
 constexpr std::size_t BITS_PER_FIELD = 2;
 constexpr std::size_t BITS_FOR_KING_POSITION = 8;
 constexpr std::size_t BIT_FOR_WHOS_TO_MOVE = 1;
+
+using Field = std::array<std::array<Figur, FIELD_SIZE>, FIELD_SIZE>;
+
 using InternalField =
     std::bitset<FIELDS * BITS_PER_FIELD + BITS_FOR_KING_POSITION + BIT_FOR_WHOS_TO_MOVE>;
 

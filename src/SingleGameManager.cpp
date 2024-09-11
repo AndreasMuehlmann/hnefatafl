@@ -20,6 +20,11 @@ auto SingleGameManager::run() -> void {
             std::cout << "Defenders to move\n";
             move = m_defendingPlayer->getMove(m_game);
         }
+        std::string error = m_game.validMove(move);
+        if (!error.empty()) {
+            std::cout << error << '\n';
+            continue;
+        }
         winner = m_game.makeMove(move);
     }
 }

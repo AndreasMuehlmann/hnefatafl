@@ -60,7 +60,7 @@ auto main(int argc, char *argv[]) -> int {
         throw std::invalid_argument(defender + " is not a known player.");
     }
 
-    Game game(MASK_KING_SURROUNDED_IN_CASTLE);
+    Game game;
     std::unique_ptr<Player> attackingPlayer = std::make_unique<Human>();
     std::unique_ptr<Player> defendingPlayer = std::make_unique<Human>();
     SingleGameManager singleGameManager(game, std::move(attackingPlayer),

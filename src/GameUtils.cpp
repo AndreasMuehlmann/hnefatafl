@@ -58,3 +58,11 @@ auto printMove(const Move &m) -> void {
     std::cout << " / " << static_cast<unsigned int>(m.from) << "; "
               << static_cast<unsigned int>(m.to) << '\n';
 }
+
+auto positionInBounds(const Position &position) -> bool { return position < FIELDS; }
+
+auto isDefender(const Figur &figur) -> bool {
+    return figur == Figur::Guard || figur == Figur::King;
+}
+
+auto isAttacker(const Figur &figur) -> bool { return figur == Figur::Wiking; }

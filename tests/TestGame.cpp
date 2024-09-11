@@ -55,7 +55,8 @@ TEST_CASE("Check if defender wins when king on the edge", "[makeMove]") {
             std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
         };
         Game game(field, false);
-        Winner winner = game.makeMove({coordinatesToPosition({3, 5}), coordinatesToPosition({8, 5})});
+        Winner winner =
+            game.makeMove({coordinatesToPosition({3, 5}), coordinatesToPosition({8, 5})});
         REQUIRE(winner == Winner::Defender);
     }
     {
@@ -71,7 +72,8 @@ TEST_CASE("Check if defender wins when king on the edge", "[makeMove]") {
             std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
         };
         Game game(field, false);
-        Winner winner = game.makeMove({coordinatesToPosition({3, 5}), coordinatesToPosition({3, 0})});
+        Winner winner =
+            game.makeMove({coordinatesToPosition({3, 5}), coordinatesToPosition({3, 0})});
         REQUIRE(winner == Winner::Defender);
     }
 }
@@ -107,7 +109,8 @@ TEST_CASE("Check if attacker wins when king surrounded next to castle", "[makeMo
             std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
         };
         Game game(field, true);
-        Winner winner = game.makeMove({coordinatesToPosition({7, 4}), coordinatesToPosition({6, 4})});
+        Winner winner =
+            game.makeMove({coordinatesToPosition({7, 4}), coordinatesToPosition({6, 4})});
         REQUIRE(winner == Winner::Attacker);
     }
     {
@@ -123,7 +126,8 @@ TEST_CASE("Check if attacker wins when king surrounded next to castle", "[makeMo
             std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
         };
         Game game(field, true);
-        Winner winner = game.makeMove({coordinatesToPosition({1, 4}), coordinatesToPosition({2, 4})});
+        Winner winner =
+            game.makeMove({coordinatesToPosition({1, 4}), coordinatesToPosition({2, 4})});
         REQUIRE(winner == Winner::Attacker);
     }
     {
@@ -139,7 +143,8 @@ TEST_CASE("Check if attacker wins when king surrounded next to castle", "[makeMo
             std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
         };
         Game game(field, true);
-        Winner winner = game.makeMove({coordinatesToPosition({4, 1}), coordinatesToPosition({4, 2})});
+        Winner winner =
+            game.makeMove({coordinatesToPosition({4, 1}), coordinatesToPosition({4, 2})});
         REQUIRE(winner == Winner::Attacker);
     }
     {
@@ -155,7 +160,8 @@ TEST_CASE("Check if attacker wins when king surrounded next to castle", "[makeMo
             std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
         };
         Game game(field, true);
-        Winner winner = game.makeMove({coordinatesToPosition({4, 7}), coordinatesToPosition({4, 6})});
+        Winner winner =
+            game.makeMove({coordinatesToPosition({4, 7}), coordinatesToPosition({4, 6})});
         REQUIRE(winner == Winner::Attacker);
     }
 }
@@ -184,11 +190,11 @@ TEST_CASE("Check for draw after three move repetions", "[makeMove]") {
     Move reversedMoveWiking = {toWiking, fromWiking};
 
     REQUIRE(game.makeMove(moveWiking) == Winner::NoWinner);
-    REQUIRE(game.makeMove(moveKing)  == Winner::NoWinner);
+    REQUIRE(game.makeMove(moveKing) == Winner::NoWinner);
     REQUIRE(game.makeMove(reversedMoveWiking) == Winner::NoWinner);
     REQUIRE(game.makeMove(reversedMoveKing) == Winner::NoWinner);
 
     REQUIRE(game.makeMove(moveWiking) == Winner::NoWinner);
-    REQUIRE(game.makeMove(moveKing)  == Winner::NoWinner);
+    REQUIRE(game.makeMove(moveKing) == Winner::NoWinner);
     REQUIRE(game.makeMove(reversedMoveWiking) == Winner::Draw);
 }

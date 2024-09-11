@@ -35,9 +35,7 @@ Game::Game(Field field, bool wikingsToMove) : m_field(fieldToInternalField(field
     construct();
 }
 
-Game::Game(InternalField internalField) : m_field(internalField) {
-    construct();
-}
+Game::Game(InternalField internalField) : m_field(internalField) { construct(); }
 
 auto Game::construct() -> void {
     constexpr size_t RESERVED_SIZE_HISTORY = 100;
@@ -65,7 +63,42 @@ auto Game::setKingPosition(Position position) -> void {
 auto Game::areAttackersToMove() const -> bool { return m_field.test(INDEX_WIKINGS_TO_MOVE_FLAG); }
 
 auto Game::validMove(const Move &m) const -> std::string {
-    (void)m;
+    if (!positionInBounds(m.from)) {
+        return "Position to move away from out of field range.";
+    }
+    if (!positionInBounds(m.to)) {
+        return "Position to move to out of field range.";
+    }
+    if (m.from == m.to) {
+        return "Position to move to and position to move from are equal.";
+    }
+
+    Figur figur = getFigurAt(m.from);
+    if (figur == Figur::NoFigur) {
+        return "On the position to move away from is no figur.";
+    }
+    if ((areAttackersToMove() && isDefender(getFigurAt(m.from))) ||
+        (!areAttackersToMove() && isAttacker(getFigurAt(m.from)))) {
+        return "The figur belongs to the other player.";
+    }
+    Coordinates fromCoordinates = positionToCoordinates(m.from);
+    Coordinates toCoordinates = positionToCoordinates(m.to);
+    if (fromCoordinates.x != toCoordinates.x && fromCoordinates.y != toCoordinates.y) {
+        return "Diagonal movement is not allowed.";
+    }
+    if ((toCoordinates.x == 0 || toCoordinates.x == FIELD_SIZE - 1 || toCoordinates.y == 0 ||
+         toCoordinates.y == FIELD_SIZE - 1) &&
+        figur != Figur::King) {
+        return "Cannot move into the corner unless the figur is the king.";
+    }
+
+    if (m.to == FIELDS / 2 && figur != Figur::King) {
+        return "Cannot move into the center position "
+               "unless the figur is the king.";
+    }
+
+    // check if move is blocked
+
     return "";
 }
 
@@ -128,15 +161,14 @@ auto Game::draw() const -> bool {
     if (m_positionCounts.at(m_field) >= 3) {
         return true;
     }
-    
+
     // check if there is at least one move available
-    
+
     return false;
 }
 
-
 auto Game::unmakeMove() -> void {
-    uint8_t& positionCount = m_positionCounts.at(m_field);
+    uint8_t &positionCount = m_positionCounts.at(m_field);
     positionCount -= 1;
     if (positionCount == 0) {
         m_positionCounts.erase(m_field);
