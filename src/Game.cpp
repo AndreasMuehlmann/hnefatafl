@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <iostream>
 
 #include "BitMasks.hpp"
@@ -22,6 +23,7 @@ Game::Game() {
     };
     m_field = fieldToInternalField(field);
     m_field.set(INDEX_WIKINGS_TO_MOVE_FLAG);
+    construct();
 }
 
 Game::Game(Field field, bool wikingsToMove) : m_field(fieldToInternalField(field)) {
@@ -30,9 +32,19 @@ Game::Game(Field field, bool wikingsToMove) : m_field(fieldToInternalField(field
     } else {
         m_field.reset(INDEX_WIKINGS_TO_MOVE_FLAG);
     }
+    construct();
 }
 
-Game::Game(InternalField internalField) : m_field(internalField) {}
+Game::Game(InternalField internalField) : m_field(internalField) {
+    construct();
+}
+
+auto Game::construct() -> void {
+    constexpr size_t RESERVED_SIZE_HISTORY = 100;
+    m_history.reserve(RESERVED_SIZE_HISTORY);
+
+    m_positionCounts[m_field] = 1;
+}
 
 auto Game::getFigurAt(Position position) const -> Figur {
     return static_cast<Figur>(
@@ -63,8 +75,13 @@ auto Game::makeMove(const Move &m) -> Winner {
     if (updateField(m.to)) {
         return Winner::Attacker;
     };
+    if (m_positionCounts.contains(m_field)) {
+        m_positionCounts[m_field] += 1;
+    } else {
+        m_positionCounts[m_field] = 1;
+    }
     Winner winner = whoWon();
-    if (winner != Winner::NoWinner && draw()) {
+    if (winner == Winner::NoWinner && draw()) {
         winner = Winner::Draw;
     }
     m_field.flip(INDEX_WIKINGS_TO_MOVE_FLAG);
@@ -92,7 +109,6 @@ auto Game::updateField(const Position &lastMovedTo) -> bool {
 
 auto Game::whoWon() const -> Winner {
     Coordinates kingCoordinates = positionToCoordinates(getKingPosition());
-    printCoordinates(kingCoordinates);
     if (kingCoordinates.x == 0 || kingCoordinates.x == FIELD_SIZE - 1 || kingCoordinates.y == 0 ||
         kingCoordinates.y == FIELD_SIZE - 1) {
         return Winner::Defender;
@@ -109,9 +125,24 @@ auto Game::whoWon() const -> Winner {
 }
 
 auto Game::draw() const -> bool {
-    // check for repetition
+    if (m_positionCounts.at(m_field) >= 3) {
+        return true;
+    }
+    
     // check if there is at least one move available
+    
     return false;
+}
+
+
+auto Game::unmakeMove() -> void {
+    uint8_t& positionCount = m_positionCounts.at(m_field);
+    positionCount -= 1;
+    if (positionCount == 0) {
+        m_positionCounts.erase(m_field);
+    }
+    m_field = m_history.at(m_history.size() - 1);
+    m_history.pop_back();
 }
 
 auto Game::printField() const -> void {

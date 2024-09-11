@@ -40,3 +40,155 @@ TEST_CASE("Check if figurs are moved correctly", "[makeMove]") {
     game.makeMove({from, to});
     REQUIRE(game.getKingPosition() == to);
 }
+
+TEST_CASE("Check if defender wins when king on the edge", "[makeMove]") {
+    {
+        constexpr Field field = {
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, k, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        };
+        Game game(field, false);
+        Winner winner = game.makeMove({coordinatesToPosition({3, 5}), coordinatesToPosition({8, 5})});
+        REQUIRE(winner == Winner::Defender);
+    }
+    {
+        constexpr Field field = {
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, k, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        };
+        Game game(field, false);
+        Winner winner = game.makeMove({coordinatesToPosition({3, 5}), coordinatesToPosition({3, 0})});
+        REQUIRE(winner == Winner::Defender);
+    }
+}
+
+TEST_CASE("Check if attacker wins when king surrounded in castle", "[makeMove]") {
+    constexpr Field field = {
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, w, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, w, k, _, w, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, w, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+    };
+    Game game(field, true);
+    Winner winner = game.makeMove({coordinatesToPosition({6, 4}), coordinatesToPosition({5, 4})});
+    REQUIRE(winner == Winner::Attacker);
+}
+
+TEST_CASE("Check if attacker wins when king surrounded next to castle", "[makeMove]") {
+    {
+        constexpr Field field = {
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, w, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, k, _, w, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, w, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        };
+        Game game(field, true);
+        Winner winner = game.makeMove({coordinatesToPosition({7, 4}), coordinatesToPosition({6, 4})});
+        REQUIRE(winner == Winner::Attacker);
+    }
+    {
+        constexpr Field field = {
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, w, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, w, _, k, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, w, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        };
+        Game game(field, true);
+        Winner winner = game.makeMove({coordinatesToPosition({1, 4}), coordinatesToPosition({2, 4})});
+        REQUIRE(winner == Winner::Attacker);
+    }
+    {
+        constexpr Field field = {
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, w, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, w, k, w, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        };
+        Game game(field, true);
+        Winner winner = game.makeMove({coordinatesToPosition({4, 1}), coordinatesToPosition({4, 2})});
+        REQUIRE(winner == Winner::Attacker);
+    }
+    {
+        constexpr Field field = {
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, w, k, w, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, w, _, _, _, _},
+            std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        };
+        Game game(field, true);
+        Winner winner = game.makeMove({coordinatesToPosition({4, 7}), coordinatesToPosition({4, 6})});
+        REQUIRE(winner == Winner::Attacker);
+    }
+}
+
+TEST_CASE("Check for draw after three move repetions", "[makeMove]") {
+    constexpr Field field = {
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, k, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, w, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+    };
+    Game game(field, true);
+
+    Position fromKing = coordinatesToPosition({6, 4});
+    Position toKing = coordinatesToPosition({7, 4});
+    Position fromWiking = coordinatesToPosition({6, 4});
+    Position toWiking = coordinatesToPosition({7, 4});
+    Move moveKing = {fromKing, toKing};
+    Move reversedMoveKing = {toKing, fromKing};
+    Move moveWiking = {fromWiking, toWiking};
+    Move reversedMoveWiking = {toWiking, fromWiking};
+
+    REQUIRE(game.makeMove(moveWiking) == Winner::NoWinner);
+    REQUIRE(game.makeMove(moveKing)  == Winner::NoWinner);
+    REQUIRE(game.makeMove(reversedMoveWiking) == Winner::NoWinner);
+    REQUIRE(game.makeMove(reversedMoveKing) == Winner::NoWinner);
+
+    REQUIRE(game.makeMove(moveWiking) == Winner::NoWinner);
+    REQUIRE(game.makeMove(moveKing)  == Winner::NoWinner);
+    REQUIRE(game.makeMove(reversedMoveWiking) == Winner::Draw);
+}

@@ -20,5 +20,3 @@ Run `clang-tidy src/* tests/* -p build/` to check for style improvements.
 Run `git-clang-format` to format modified files before commiting them or run `clang-format -i src/*`.
 
 ## TODO
-
-- tests für whoWon

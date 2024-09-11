@@ -2,6 +2,7 @@
 
 #include <array>
 #include <bitset>
+#include <unordered_map>
 #include <vector>
 
 #include "Move.hpp"
@@ -40,6 +41,7 @@ class Game {
     auto printField() const -> void;
 
   private:
+    auto construct() -> void;
     auto move(const Move &m) -> void;
     [[nodiscard]] auto updateField(const Position &lastMovedTo) -> bool;
     [[nodiscard]] auto whoWon() const -> Winner;
@@ -48,4 +50,5 @@ class Game {
 
     InternalField m_field;
     std::vector<InternalField> m_history;
+    std::unordered_map<InternalField, uint8_t> m_positionCounts;
 };

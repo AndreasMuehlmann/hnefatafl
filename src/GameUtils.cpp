@@ -44,7 +44,7 @@ auto maskForPosition(Position position) -> InternalField {
 
 auto maskedFieldMatchesPosition(const InternalField &field, const InternalField &mask,
                                 const InternalField &position) -> bool {
-    return (field & mask) == position;
+    return (field & position) == mask;
 }
 
 auto printCoordinates(const Coordinates &coordinates) -> void {
