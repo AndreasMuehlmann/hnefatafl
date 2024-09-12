@@ -87,12 +87,6 @@ auto Game::validMove(const Move &m) const -> std::string {
     if (fromCoordinates.x != toCoordinates.x && fromCoordinates.y != toCoordinates.y) {
         return "Diagonal movement is not allowed.";
     }
-    if ((toCoordinates.x == 0 || toCoordinates.x == FIELD_SIZE - 1 || toCoordinates.y == 0 ||
-         toCoordinates.y == FIELD_SIZE - 1) &&
-        figur != Figur::King) {
-        return "Cannot move into the corner unless the figur is the king.";
-    }
-
     if (m.to == FIELDS / 2 && figur != Figur::King) {
         return "Cannot move into the center position "
                "unless the figur is the king.";
@@ -140,23 +134,46 @@ auto Game::updateField(const Position &lastMovedTo) -> bool {
     if (!possibleCapture(m_field, lastMovedTo, areAttackersToMove())) {
         return false;
     }
-    bool attackersWon = false;
-    attackersWon = capture(lastMovedTo, 1, bitShiftLeft);
-    attackersWon = capture(lastMovedTo, 1, bitShiftRight);
-    attackersWon = capture(lastMovedTo, FIELD_SIZE, bitShiftLeft);
-    attackersWon = capture(lastMovedTo, FIELD_SIZE, bitShiftRight);
-    return attackersWon;
+    if (capture(lastMovedTo, 1)) { return true; }
+    if (capture(lastMovedTo, -1)) { return true; }
+    if (capture(lastMovedTo, static_cast<int>(FIELD_SIZE))) { return true; }
+    if (capture(lastMovedTo, -static_cast<int>(FIELD_SIZE))) { return true; }
+    return false;
 }
 
-auto Game::capture(const Position &lastMovedTo, const uint8_t& shift, InternalField (*bitShift)(const InternalField&, const uint8_t&)) -> bool {
-    auto mask = maskForPosition(lastMovedTo) >> shift * BITS_PER_FIELD;
-    for (size_t i = 0; i < FIELD_SIZE; i++) {
+auto Game::capture(const Position &lastMovedTo, const int& shift) -> bool {
+    auto bitShift = bitShiftLeft;
+    if (shift < 0) {
+        bitShift = bitShiftRight;
+    }
+    auto absShift = static_cast<size_t>(abs(shift));
+    InternalField mask;
+    if (areAttackersToMove()) {
+        bool capturingKing = false;
+        for (int position = lastMovedTo + shift; 0 < position && position < static_cast<int>(FIELDS); position += shift) {
+            Figur figur = getFigurAt(static_cast<Position>(position));
+            if (figur == Figur::NoFigur) { return false; }
+            if (figur == Figur::Wiking) {
+                m_field &= ~mask;
+                return capturingKing;
+            };
+            if (figur == Figur::King) { capturingKing = true; }
             mask |= maskForPosition(lastMovedTo);
-            mask >>= shift * BITS_PER_FIELD;
-            //Game game(mask);
-            //game.printField();
-            //std::cout << "\n\n";
+            mask = bitShift(mask, static_cast<uint8_t>(absShift * BITS_PER_FIELD)) ;
         }
+    } else {
+        for (int position = lastMovedTo + shift; 0 < position && position < static_cast<int>(FIELDS); position += shift) {
+            Figur figur = getFigurAt(static_cast<Position>(position));
+            if (figur == Figur::NoFigur) { return false; }
+            if (figur == Figur::Guard || figur == Figur::King) {
+                m_field &= ~mask;
+                return false;
+            };
+            mask |= maskForPosition(lastMovedTo);
+            mask = bitShift(mask, static_cast<uint8_t>(absShift * BITS_PER_FIELD)) ;
+        }
+
+    }
     return false;
 }
 

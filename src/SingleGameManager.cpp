@@ -27,4 +27,12 @@ auto SingleGameManager::run() -> void {
         }
         winner = m_game.makeMove(move);
     }
+
+    if (winner == Winner::Attacker) {
+        std::cout << "The attackers won\n";
+    } else if (winner == Winner::Defender) {
+        std::cout << "The defenders won\n";
+    } else {
+        std::cout << "The Game ended in a draw\n";
+    }
 }

@@ -98,8 +98,5 @@ auto possibleCapture(const InternalField& field, const Position &lastMovedTo, co
     if (attackersToMove) {
         mask <<= 1;
     }
-    Game game(mask);
-    game.printField();
-    std::cout << "\n\n\n";
     return (field & mask).any();
 }
