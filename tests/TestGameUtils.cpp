@@ -48,3 +48,23 @@ TEST_CASE("converting a 2D array of Figurs to the internal representation",
     REQUIRE(internalField.test(FIELD_SIZE * FIELD_SIZE * BITS_PER_FIELD + 4));
     REQUIRE(internalField.test(FIELD_SIZE * FIELD_SIZE * BITS_PER_FIELD + 6));
 }
+
+TEST_CASE("possibleCapture", "[fieldToInternalField]") {
+    Field field = {
+        std::array<Figur, FIELD_SIZE>{_, _, w, g, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{k, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, w},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, g, _, _, _, g},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{g, g, _, _, _, _, _, _, _},
+    };
+    InternalField internalField = fieldToInternalField(field);
+    REQUIRE(possibleCapture(internalField, coordinatesToPosition({3, 0}), false));
+    REQUIRE(!possibleCapture(internalField, coordinatesToPosition({4, 4}), false));
+    REQUIRE(possibleCapture(internalField, coordinatesToPosition({8, 3}), true));
+    REQUIRE(possibleCapture(internalField, coordinatesToPosition({0, 1}), true));
+    REQUIRE(!possibleCapture(internalField, coordinatesToPosition({0, 8}), false));
+}

@@ -44,8 +44,9 @@ class Game {
     auto construct() -> void;
     auto move(const Move &m) -> void;
     [[nodiscard]] auto updateField(const Position &lastMovedTo) -> bool;
-    [[nodiscard]] auto capture(const Position &lastMovedTo, const int& shift) -> bool;
-    [[nodiscard]] auto whoWon() const -> Winner;
+
+
+    [[nodiscard]] auto capture(const Position &lastMovedTo, const uint8_t& shift, InternalField (*bitShift)(const InternalField&, const uint8_t&)) -> bool;    [[nodiscard]] auto whoWon() const -> Winner;
     [[nodiscard]] auto draw() const -> bool;
     auto setKingPosition(Position position) -> void;
 

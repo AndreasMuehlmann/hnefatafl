@@ -42,6 +42,11 @@ auto maskForPosition(const Position& position) -> InternalField {
     return mask << position * BITS_PER_FIELD;
 }
 
+auto numberToPosition(const Position& position, const uint8_t& number) -> InternalField {
+    InternalField mask(number);
+    return mask << position * BITS_PER_FIELD;
+}
+
 auto maskedFieldMatchesPosition(const InternalField &field, const InternalField &mask,
                                 const InternalField &position) -> bool {
     return (field & position) == mask;
@@ -66,3 +71,35 @@ auto isDefender(const Figur &figur) -> bool {
 }
 
 auto isAttacker(const Figur &figur) -> bool { return figur == Figur::Wiking; }
+
+auto bitShiftLeft(const InternalField& field, const uint8_t& shift) -> InternalField {
+    return field << shift;
+}
+
+auto bitShiftRight(const InternalField& field, const uint8_t& shift) -> InternalField {
+    return field >> shift;
+}
+
+auto possibleCapture(const InternalField& field, const Position &lastMovedTo, const bool& attackersToMove) -> bool {
+    InternalField mask;
+    const auto coordinates = positionToCoordinates(lastMovedTo);
+    if (coordinates.x != FIELD_SIZE - 1) {
+        mask.set((lastMovedTo + 1) * BITS_PER_FIELD);
+    }
+    if (coordinates.x != 0) {
+        mask.set((lastMovedTo - 1) * BITS_PER_FIELD);
+    }
+    if (coordinates.y != FIELD_SIZE - 1) {
+        mask.set((lastMovedTo + FIELD_SIZE) * BITS_PER_FIELD);
+    }
+    if (coordinates.y != 0) {
+        mask.set((lastMovedTo - FIELD_SIZE) * BITS_PER_FIELD);
+    }
+    if (attackersToMove) {
+        mask <<= 1;
+    }
+    Game game(mask);
+    game.printField();
+    std::cout << "\n\n\n";
+    return (field & mask).any();
+}
