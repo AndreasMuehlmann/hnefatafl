@@ -152,18 +152,35 @@ auto Game::capture(const Position &lastMovedTo, const int& shift) -> bool {
         bool capturingKing = false;
         for (int position = lastMovedTo + shift; 0 < position && position < static_cast<int>(FIELDS); position += shift) {
             Figur figur = getFigurAt(static_cast<Position>(position));
+            if (position == FIELDS / 2) {
+                if (figur == Figur::King) { return false; }
+                m_field &= ~mask;
+                return capturingKing;
+            }
             if (figur == Figur::NoFigur) { return false; }
             if (figur == Figur::Wiking) {
                 m_field &= ~mask;
                 return capturingKing;
             };
-            if (figur == Figur::King) { capturingKing = true; }
+            if (figur == Figur::King) { 
+                if (position == FIELDS / 2 + 1
+                    || position == FIELDS / 2 - 1
+                    || position == FIELDS / 2 + FIELD_SIZE
+                    || position == FIELDS / 2 - FIELD_SIZE) {
+                    return false;
+                }
+                capturingKing = true;
+            }
             mask |= maskForPosition(lastMovedTo);
             mask = bitShift(mask, static_cast<uint8_t>(absShift * BITS_PER_FIELD)) ;
         }
     } else {
         for (int position = lastMovedTo + shift; 0 < position && position < static_cast<int>(FIELDS); position += shift) {
             Figur figur = getFigurAt(static_cast<Position>(position));
+            if (position == FIELDS / 2) {
+                m_field &= ~mask;
+                return false;
+            }
             if (figur == Figur::NoFigur) { return false; }
             if (figur == Figur::Guard || figur == Figur::King) {
                 m_field &= ~mask;
