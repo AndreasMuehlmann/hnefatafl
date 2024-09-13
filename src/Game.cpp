@@ -41,13 +41,16 @@ Game::Game(InternalField internalField) : m_field(internalField), m_availableMov
 auto Game::construct() -> void {
     constexpr size_t RESERVED_SIZE_HISTORY = 100;
     m_history.reserve(RESERVED_SIZE_HISTORY);
-
-    m_positionCounts[m_field] = 1;
 }
 
 auto Game::getFigurAt(Position position) const -> Figur {
-    return static_cast<Figur>(
-        ((m_field & maskForPosition(position)) >> position * BITS_PER_FIELD).to_ulong());
+    if (m_field._Unchecked_test(position * BITS_PER_FIELD)) {
+        if (m_field._Unchecked_test(position * BITS_PER_FIELD + 1)) { return Figur::King; }
+        return Figur::Wiking;
+    } if (m_field._Unchecked_test(position * BITS_PER_FIELD)) {
+        return Figur::Guard;
+    }
+    return Figur::NoFigur;
 }
 
 auto Game::getKingPosition() const -> Position {
@@ -61,9 +64,10 @@ auto Game::setKingPosition(Position position) -> void {
     m_field |= kingPosition << FIELDS * BITS_PER_FIELD;
 }
 
-auto Game::areAttackersToMove() const -> bool { return m_field.test(INDEX_WIKINGS_TO_MOVE_FLAG); }
+auto Game::areAttackersToMove() const -> bool { return m_field._Unchecked_test(INDEX_WIKINGS_TO_MOVE_FLAG); }
 
-auto Game::getAvailableMovesGenerator() -> AvailableMovesGenerator& {
+auto Game::getAvailableMovesGenerator() -> AvailableMovesGenerator {
+    // do this differently
     m_availableMovesGenerator.reset();
     return m_availableMovesGenerator;
 }
@@ -108,25 +112,20 @@ auto Game::makeMove(Move m) -> Winner {
     if (updateField(m.to)) {
         return Winner::Attacker;
     };
-    if (m_positionCounts.contains(m_field)) {
-        m_positionCounts[m_field] += 1;
-    } else {
-        m_positionCounts[m_field] = 1;
-    }
-    Winner winner = whoWon();
+    Winner winner = whoWon(m.to);
     if (winner == Winner::NoWinner && draw()) {
         winner = Winner::Draw;
     }
-    m_field.flip(INDEX_WIKINGS_TO_MOVE_FLAG);
+    m_field._Unchecked_flip(INDEX_WIKINGS_TO_MOVE_FLAG);
     return winner;
 }
 
 auto Game::move(Move m) -> void {
     const auto mask = maskForPosition(m.from);
     const auto fieldWithOnlyFigurMoved = m_field & mask;
-    if (m.from == getKingPosition()) {
-        setKingPosition(m.to);
-    }
+    //if (getFigurAt(m.from) == Figur::King) {
+    //    setKingPosition(m.to);
+    //}
     m_field &= ~mask;
     if (m.to > m.from) {
         m_field |= fieldWithOnlyFigurMoved << (m.to - m.from) * BITS_PER_FIELD;
@@ -158,7 +157,9 @@ auto Game::capture(Position lastMovedTo, int shift) -> bool {
         for (int position = lastMovedTo + shift; 0 < position && position < static_cast<int>(FIELDS); position += shift) {
             Figur figur = getFigurAt(static_cast<Position>(position));
             if (position == FIELDS / 2) {
-                if (figur == Figur::King) { return false; }
+                if (figur == Figur::King) { 
+                    return maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_IN_CASTLE, MASK_AROUND_CASTLE);
+                }
                 m_field &= ~mask;
                 return capturingKing;
             }
@@ -168,11 +169,17 @@ auto Game::capture(Position lastMovedTo, int shift) -> bool {
                 return capturingKing;
             };
             if (figur == Figur::King) { 
-                if (position == FIELDS / 2 + 1
-                    || position == FIELDS / 2 - 1
-                    || position == FIELDS / 2 + FIELD_SIZE
-                    || position == FIELDS / 2 - FIELD_SIZE) {
-                    return false;
+                if (position == FIELDS / 2 + 1) {
+                    return maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_RIGHT_CASTLE, MASK_RIGHT_CASTLE);
+                }
+                if (position == FIELDS / 2 - 1) {
+                    return maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_LEFT_CASTLE, MASK_LEFT_CASTLE);
+                }
+                if (position == FIELDS / 2 + FIELD_SIZE) {
+                    return maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_BELOW_CASTLE, MASK_BELOW_CASTLE);
+                }
+                if (position == FIELDS / 2 - FIELD_SIZE) {
+                    return maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_ABOVE_CASTLE, MASK_ABOVE_CASTLE);
                 }
                 capturingKing = true;
             }
@@ -194,44 +201,31 @@ auto Game::capture(Position lastMovedTo, int shift) -> bool {
             mask |= maskForPosition(lastMovedTo);
             mask = bitShift(mask, static_cast<uint8_t>(absShift * BITS_PER_FIELD)) ;
         }
-
     }
     return false;
 }
 
-auto Game::whoWon() const -> Winner {
-    Coordinates kingCoordinates = positionToCoordinates(getKingPosition());
+auto Game::whoWon(Position lastMovedTo) const -> Winner {
+    if (getFigurAt(lastMovedTo) != Figur::King) {
+        return Winner::NoWinner;
+    }
+    Coordinates kingCoordinates = positionToCoordinates(lastMovedTo);
     if (kingCoordinates.x == 0 || kingCoordinates.x == FIELD_SIZE - 1 || kingCoordinates.y == 0 ||
         kingCoordinates.y == FIELD_SIZE - 1) {
         return Winner::Defender;
     }
-    if (maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_IN_CASTLE, MASK_AROUND_CASTLE) ||
-        maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_LEFT_CASTLE, MASK_LEFT_CASTLE) ||
-        maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_RIGHT_CASTLE, MASK_RIGHT_CASTLE) ||
-        maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_BELOW_CASTLE, MASK_BELOW_CASTLE) ||
-        maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_ABOVE_CASTLE, MASK_ABOVE_CASTLE)) {
-        return Winner::Attacker;
-    }
-
     return Winner::NoWinner;
 }
 
 auto Game::draw() const -> bool {
-    if (m_positionCounts.at(m_field) >= 3) {
-        return true;
-    }
-
+    // check if current position occured 3 times, ignore who is to move
     // check if there is at least one move available
 
     return false;
 }
 
 auto Game::unmakeMove() -> void {
-    uint8_t &positionCount = m_positionCounts.at(m_field);
-    positionCount -= 1;
-    if (positionCount == 0) {
-        m_positionCounts.erase(m_field);
-    }
+    m_field._Unchecked_flip(INDEX_WIKINGS_TO_MOVE_FLAG);
     m_field = m_history.at(m_history.size() - 1);
     m_history.pop_back();
 }

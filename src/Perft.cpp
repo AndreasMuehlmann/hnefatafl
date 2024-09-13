@@ -7,9 +7,10 @@
 
 Perft::Perft(unsigned int maxDepth) : m_maxDepth(maxDepth) {}
 
-auto Perft::perft(Game game) const -> void {
+auto Perft::perft(Game _) const -> void {
+    Game game;
     auto start = std::chrono::high_resolution_clock::now();
-    auto& availableMovesGenerator = game.getAvailableMovesGenerator();
+    auto availableMovesGenerator = game.getAvailableMovesGenerator();
     unsigned long sumMoveCounts = 0;
     while (true) {
         auto moveOption = availableMovesGenerator.next();
@@ -18,6 +19,7 @@ auto Perft::perft(Game game) const -> void {
         const auto moveCount = perftHelper(game, m_maxDepth - 1);
         game.unmakeMove();
         printMove(*moveOption);
+        std::cout << moveCount << '\n';
         sumMoveCounts += moveCount;
     }
     auto stop = std::chrono::high_resolution_clock::now();
@@ -31,7 +33,7 @@ auto Perft::perftHelper(Game& game, unsigned int depth) -> unsigned long {
         return 1;
     }
 
-    auto& availableMovesGenerator = game.getAvailableMovesGenerator();
+    auto availableMovesGenerator = game.getAvailableMovesGenerator();
     unsigned long sumMoveCounts = 0;
     while (true) {
         auto moveOption = availableMovesGenerator.next();

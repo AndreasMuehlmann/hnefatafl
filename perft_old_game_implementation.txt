@@ -72,3 +72,7 @@
 8, 5; 8, 7: 17255144
 SUM: 1168653336
 Elapsed time: 9348600 µ
+
+125.00837943649316 Moves per Microsecond
+
+34.85260834786553 Moves per Microsecond, when returning 1 on depth 0

@@ -38,8 +38,10 @@ auto fieldToInternalField(const Field &field) -> InternalField {
 }
 
 auto maskForPosition(Position position) -> InternalField {
-    constexpr InternalField mask(3);
-    return mask << position * BITS_PER_FIELD;
+    InternalField mask;
+    mask._Unchecked_set(position * BITS_PER_FIELD);
+    mask._Unchecked_set(position * BITS_PER_FIELD + 1);
+    return mask;
 }
 
 auto numberToPosition(Position position, uint8_t number) -> InternalField {
@@ -84,16 +86,16 @@ auto possibleCapture(const InternalField& field, Position lastMovedTo, bool atta
     InternalField mask;
     const auto coordinates = positionToCoordinates(lastMovedTo);
     if (coordinates.x != FIELD_SIZE - 1) {
-        mask.set((lastMovedTo + 1) * BITS_PER_FIELD);
+        mask._Unchecked_set((lastMovedTo + 1) * BITS_PER_FIELD);
     }
     if (coordinates.x != 0) {
-        mask.set((lastMovedTo - 1) * BITS_PER_FIELD);
+        mask._Unchecked_set((lastMovedTo - 1) * BITS_PER_FIELD);
     }
     if (coordinates.y != FIELD_SIZE - 1) {
-        mask.set((lastMovedTo + FIELD_SIZE) * BITS_PER_FIELD);
+        mask._Unchecked_set((lastMovedTo + FIELD_SIZE) * BITS_PER_FIELD);
     }
     if (coordinates.y != 0) {
-        mask.set((lastMovedTo - FIELD_SIZE) * BITS_PER_FIELD);
+        mask._Unchecked_set((lastMovedTo - FIELD_SIZE) * BITS_PER_FIELD);
     }
     if (attackersToMove) {
         mask <<= 1;
