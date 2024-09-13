@@ -6,8 +6,8 @@
 
 #include <argparse/argparse.hpp>
 
-#include "BitMasks.hpp"
 #include "Human.hpp"
+#include "Perft.hpp"
 #include "SingleGameManager.hpp"
 
 auto main(int argc, char *argv[]) -> int {
@@ -16,6 +16,7 @@ auto main(int argc, char *argv[]) -> int {
     std::string attacker;
     std::string defender;
     bool printAvailablePlayers = false;
+    unsigned int perftDepth = 0;
 
     program.add_argument("--attacker")
         .store_into(attacker)
@@ -28,6 +29,11 @@ auto main(int argc, char *argv[]) -> int {
     program.add_argument("--printAvailablePlayers")
         .store_into(printAvailablePlayers)
         .help("Prints all player types that can be used.");
+
+    program.add_argument("--perft")
+        .scan<'i', unsigned int>()
+        .store_into(perftDepth)
+        .help("Run perft with a depth and print the output.");
 
     try {
         program.parse_args(argc, argv);
@@ -47,6 +53,14 @@ auto main(int argc, char *argv[]) -> int {
         for (const auto &player : availablePlayers) {
             std::cout << player << '\n';
         }
+        return 1;
+    }
+
+    if (perftDepth > 0) {
+        Perft perft(perftDepth);
+        Game game;
+        std::cout << "Running perft...\n";
+        perft.perft(game);
         return 1;
     }
 

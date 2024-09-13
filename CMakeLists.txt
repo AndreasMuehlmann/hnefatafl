@@ -27,6 +27,7 @@ add_executable(hnefatafl
     src/GameUtils.cpp
     src/Game.cpp
     src/AvailableMovesGenerator.cpp
+    src/Perft.cpp
 )
 
 target_include_directories(hnefatafl PRIVATE lib/argparse/include)
