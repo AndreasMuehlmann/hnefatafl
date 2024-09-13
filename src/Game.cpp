@@ -63,7 +63,7 @@ auto Game::setKingPosition(Position position) -> void {
 
 auto Game::areAttackersToMove() const -> bool { return m_field.test(INDEX_WIKINGS_TO_MOVE_FLAG); }
 
-auto Game::validMove(const Move &m) const -> std::string {
+auto Game::validMove(Move m) const -> std::string {
     if (!positionInBounds(m.from)) {
         return "Position to move away from out of field range.";
     }
@@ -97,7 +97,7 @@ auto Game::validMove(const Move &m) const -> std::string {
     return "";
 }
 
-auto Game::makeMove(const Move &m) -> Winner {
+auto Game::makeMove(Move m) -> Winner {
     m_history.push_back(m_field);
     move(m);
     if (updateField(m.to)) {
@@ -116,7 +116,7 @@ auto Game::makeMove(const Move &m) -> Winner {
     return winner;
 }
 
-auto Game::move(const Move &m) -> void {
+auto Game::move(Move m) -> void {
     const auto mask = maskForPosition(m.from);
     const auto fieldWithOnlyFigurMoved = m_field & mask;
     if (m.from == getKingPosition()) {
@@ -130,7 +130,7 @@ auto Game::move(const Move &m) -> void {
     }
 }
 
-auto Game::updateField(const Position &lastMovedTo) -> bool {
+auto Game::updateField(Position lastMovedTo) -> bool {
     if (!possibleCapture(m_field, lastMovedTo, areAttackersToMove())) {
         return false;
     }
@@ -141,7 +141,7 @@ auto Game::updateField(const Position &lastMovedTo) -> bool {
     return false;
 }
 
-auto Game::capture(const Position &lastMovedTo, const int& shift) -> bool {
+auto Game::capture(Position lastMovedTo, int shift) -> bool {
     auto bitShift = bitShiftLeft;
     if (shift < 0) {
         bitShift = bitShiftRight;

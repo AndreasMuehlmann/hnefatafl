@@ -6,13 +6,13 @@
 #include "GameUtils.hpp"
 #include "Move.hpp"
 
-auto positionToCoordinates(const Position &position) -> Coordinates {
+auto positionToCoordinates(Position position) -> Coordinates {
     uint8_t x = position % static_cast<uint8_t>(FIELD_SIZE);
     auto y = static_cast<uint8_t>(position / FIELD_SIZE);
     return {x, y};
 }
 
-auto coordinatesToPosition(const Coordinates &coordinates) -> Position {
+auto coordinatesToPosition(Coordinates coordinates) -> Position {
     return static_cast<uint8_t>(coordinates.x) + static_cast<uint8_t>(coordinates.y * FIELD_SIZE);
 }
 
@@ -37,12 +37,12 @@ auto fieldToInternalField(const Field &field) -> InternalField {
     return internalField;
 }
 
-auto maskForPosition(const Position& position) -> InternalField {
+auto maskForPosition(Position position) -> InternalField {
     constexpr InternalField mask(3);
     return mask << position * BITS_PER_FIELD;
 }
 
-auto numberToPosition(const Position& position, const uint8_t& number) -> InternalField {
+auto numberToPosition(Position position, uint8_t number) -> InternalField {
     InternalField mask(number);
     return mask << position * BITS_PER_FIELD;
 }
@@ -52,11 +52,11 @@ auto maskedFieldMatchesPosition(const InternalField &field, const InternalField 
     return (field & position) == mask;
 }
 
-auto printCoordinates(const Coordinates &coordinates) -> void {
+auto printCoordinates(Coordinates coordinates) -> void {
     std::cout << coordinates.x << ", " << coordinates.y << '\n';
 }
 
-auto printMove(const Move &m) -> void {
+auto printMove(Move m) -> void {
     const auto from = positionToCoordinates(m.from);
     const auto to = positionToCoordinates(m.to);
     std::cout << from.x << ", " << from.y << "; " << to.x << ", " << to.y;
@@ -64,23 +64,23 @@ auto printMove(const Move &m) -> void {
               << static_cast<unsigned int>(m.to) << '\n';
 }
 
-auto positionInBounds(const Position &position) -> bool { return position < FIELDS; }
+auto positionInBounds(Position position) -> bool { return position < FIELDS; }
 
-auto isDefender(const Figur &figur) -> bool {
+auto isDefender(Figur figur) -> bool {
     return figur == Figur::Guard || figur == Figur::King;
 }
 
-auto isAttacker(const Figur &figur) -> bool { return figur == Figur::Wiking; }
+auto isAttacker(Figur figur) -> bool { return figur == Figur::Wiking; }
 
-auto bitShiftLeft(const InternalField& field, const uint8_t& shift) -> InternalField {
+auto bitShiftLeft(const InternalField& field, uint8_t shift) -> InternalField {
     return field << shift;
 }
 
-auto bitShiftRight(const InternalField& field, const uint8_t& shift) -> InternalField {
+auto bitShiftRight(const InternalField& field, uint8_t shift) -> InternalField {
     return field >> shift;
 }
 
-auto possibleCapture(const InternalField& field, const Position &lastMovedTo, const bool& attackersToMove) -> bool {
+auto possibleCapture(const InternalField& field, Position lastMovedTo, bool attackersToMove) -> bool {
     InternalField mask;
     const auto coordinates = positionToCoordinates(lastMovedTo);
     if (coordinates.x != FIELD_SIZE - 1) {

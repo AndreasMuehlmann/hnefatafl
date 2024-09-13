@@ -35,18 +35,18 @@ class Game {
     [[nodiscard]] auto getFigurAt(Position position) const -> Figur;
     [[nodiscard]] auto getKingPosition() const -> Position;
     [[nodiscard]] auto areAttackersToMove() const -> bool;
-    [[nodiscard]] auto validMove(const Move &m) const -> std::string;
-    auto makeMove(const Move &m) -> Winner;
+    [[nodiscard]] auto validMove(Move m) const -> std::string;
+    auto makeMove(Move m) -> Winner;
     auto unmakeMove() -> void;
     auto printField() const -> void;
 
   private:
     auto construct() -> void;
-    auto move(const Move &m) -> void;
-    [[nodiscard]] auto updateField(const Position &lastMovedTo) -> bool;
+    auto move(Move m) -> void;
+    [[nodiscard]] auto updateField(Position lastMovedTo) -> bool;
 
 
-    [[nodiscard]] auto capture(const Position &lastMovedTo, const int& shift) -> bool;
+    [[nodiscard]] auto capture(Position lastMovedTo, int shift) -> bool;
     [[nodiscard]] auto whoWon() const -> Winner;
     [[nodiscard]] auto draw() const -> bool;
     auto setKingPosition(Position position) -> void;
