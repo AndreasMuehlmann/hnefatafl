@@ -26,6 +26,7 @@ add_executable(hnefatafl
     src/SingleGameManager.cpp
     src/GameUtils.cpp
     src/Game.cpp
+    src/AvailableMovesGenerator.cpp
 )
 
 target_include_directories(hnefatafl PRIVATE lib/argparse/include)
@@ -52,6 +53,7 @@ add_executable(tests
     src/Game.cpp
     src/SingleGameManager.cpp
     src/Human.cpp
+    src/AvailableMovesGenerator.cpp
 )
 
 target_include_directories(tests PRIVATE src)

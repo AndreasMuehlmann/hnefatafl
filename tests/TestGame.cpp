@@ -1,5 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
+#include <optional>
 
+#include "AvailableMovesGenerator.hpp"
 #include "FieldDefinitionHelper.hpp"
 #include "Game.hpp"
 #include "GameUtils.hpp"
@@ -317,4 +319,70 @@ TEST_CASE("Check if figurs are captured next to castle", "[makeMove]") {
 
     REQUIRE(game.makeMove({coordinatesToPosition({6, 3}), coordinatesToPosition({6, 4})}) == Winner::NoWinner);
     REQUIRE(game.getFigurAt(coordinatesToPosition({5, 4})) == Figur::NoFigur);
+}
+
+TEST_CASE("Check if move generator generates correct moves", "[next]") {
+    constexpr Field field = {
+        std::array<Figur, FIELD_SIZE>{w, _, g, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{g, _, _, g, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, g, _, w, _, g, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{g, _, _, g, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, k, _},
+        std::array<Figur, FIELD_SIZE>{w, _, g, _, _, _, _, _, _},
+    };
+    Game game(field, true);
+    auto& availableMovesGenerator = game.getAvailableMovesGenerator();
+    {
+        auto moveOption = availableMovesGenerator.next();
+        REQUIRE(moveOption != std::nullopt);
+        REQUIRE(moveOption->from == 0);
+        REQUIRE(moveOption->to == 1);
+    }
+    {
+        auto moveOption = availableMovesGenerator.next();
+        REQUIRE(moveOption != std::nullopt);
+        REQUIRE(moveOption->from == 0);
+        REQUIRE(moveOption->to == 9);
+    }
+    {
+        auto moveOption = availableMovesGenerator.next();
+        REQUIRE(moveOption != std::nullopt);
+        REQUIRE(moveOption->from == FIELDS / 2 - 1);
+        REQUIRE(moveOption->to == FIELDS / 2);
+    }
+    {
+        auto moveOption = availableMovesGenerator.next();
+        REQUIRE(moveOption != std::nullopt);
+        REQUIRE(moveOption->from == FIELDS / 2 - 1);
+        REQUIRE(moveOption->to == FIELDS / 2 - 2);
+    }
+    {
+        auto moveOption = availableMovesGenerator.next();
+        REQUIRE(moveOption != std::nullopt);
+        REQUIRE(moveOption->from == FIELDS / 2 - 1);
+        REQUIRE(moveOption->to == FIELDS / 2 - 1 + FIELD_SIZE);
+    }
+    {
+        auto moveOption = availableMovesGenerator.next();
+        REQUIRE(moveOption != std::nullopt);
+        REQUIRE(moveOption->from == FIELDS / 2 - 1);
+        REQUIRE(moveOption->to == FIELDS / 2 - 1 - FIELD_SIZE);
+    }
+    {
+        auto moveOption = availableMovesGenerator.next();
+        REQUIRE(moveOption != std::nullopt);
+        REQUIRE(moveOption->from == FIELDS - FIELD_SIZE);
+        REQUIRE(moveOption->to == FIELDS - FIELD_SIZE + 1);
+    }
+    {
+        auto moveOption = availableMovesGenerator.next();
+        REQUIRE(moveOption != std::nullopt);
+        REQUIRE(moveOption->from == FIELDS - FIELD_SIZE);
+        REQUIRE(moveOption->to == FIELDS - FIELD_SIZE * 2);
+    }
+    auto moveOption = availableMovesGenerator.next();
+    REQUIRE(moveOption == std::nullopt);
 }

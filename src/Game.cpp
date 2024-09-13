@@ -10,7 +10,7 @@
 
 constexpr size_t INDEX_WIKINGS_TO_MOVE_FLAG = FIELDS * BITS_PER_FIELD + BITS_FOR_KING_POSITION;
 
-Game::Game() {
+Game::Game() : m_availableMovesGenerator(*this) {
     constexpr Field field = {
         std::array<Figur, FIELD_SIZE>{_, _, _, w, w, w, _, _, _},
         std::array<Figur, FIELD_SIZE>{_, _, _, _, w, _, _, _, _},
@@ -27,7 +27,7 @@ Game::Game() {
     construct();
 }
 
-Game::Game(Field field, bool wikingsToMove) : m_field(fieldToInternalField(field)) {
+Game::Game(Field field, bool wikingsToMove) : m_field(fieldToInternalField(field)), m_availableMovesGenerator(*this) {
     if (wikingsToMove) {
         m_field.set(INDEX_WIKINGS_TO_MOVE_FLAG);
     } else {
@@ -36,7 +36,7 @@ Game::Game(Field field, bool wikingsToMove) : m_field(fieldToInternalField(field
     construct();
 }
 
-Game::Game(InternalField internalField) : m_field(internalField) { construct(); }
+Game::Game(InternalField internalField) : m_field(internalField), m_availableMovesGenerator(*this) { construct(); }
 
 auto Game::construct() -> void {
     constexpr size_t RESERVED_SIZE_HISTORY = 100;
@@ -62,6 +62,11 @@ auto Game::setKingPosition(Position position) -> void {
 }
 
 auto Game::areAttackersToMove() const -> bool { return m_field.test(INDEX_WIKINGS_TO_MOVE_FLAG); }
+
+auto Game::getAvailableMovesGenerator() -> AvailableMovesGenerator& {
+    m_availableMovesGenerator.reset();
+    return m_availableMovesGenerator;
+}
 
 auto Game::validMove(Move m) const -> std::string {
     if (!positionInBounds(m.from)) {

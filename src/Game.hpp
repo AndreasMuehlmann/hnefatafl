@@ -6,14 +6,9 @@
 #include <vector>
 
 #include "Move.hpp"
+#include "AvailableMovesGenerator.hpp"
+#include "Figur.hpp"
 #include "Winner.hpp"
-
-enum Figur {
-    NoFigur,
-    Wiking,
-    Guard,
-    King,
-};
 
 constexpr std::size_t FIELD_SIZE = 9;
 constexpr std::size_t FIELDS = FIELD_SIZE * FIELD_SIZE;
@@ -36,6 +31,7 @@ class Game {
     [[nodiscard]] auto getKingPosition() const -> Position;
     [[nodiscard]] auto areAttackersToMove() const -> bool;
     [[nodiscard]] auto validMove(Move m) const -> std::string;
+    [[nodiscard]] auto getAvailableMovesGenerator() -> AvailableMovesGenerator&;
     auto makeMove(Move m) -> Winner;
     auto unmakeMove() -> void;
     auto printField() const -> void;
@@ -44,8 +40,6 @@ class Game {
     auto construct() -> void;
     auto move(Move m) -> void;
     [[nodiscard]] auto updateField(Position lastMovedTo) -> bool;
-
-
     [[nodiscard]] auto capture(Position lastMovedTo, int shift) -> bool;
     [[nodiscard]] auto whoWon() const -> Winner;
     [[nodiscard]] auto draw() const -> bool;
@@ -54,4 +48,5 @@ class Game {
     InternalField m_field;
     std::vector<InternalField> m_history;
     std::unordered_map<InternalField, uint8_t> m_positionCounts;
+    AvailableMovesGenerator m_availableMovesGenerator;
 };
