@@ -334,7 +334,7 @@ TEST_CASE("Check if move generator generates correct moves", "[next]") {
         std::array<Figur, FIELD_SIZE>{w, _, g, _, _, _, _, _, _},
     };
     Game game(field, true);
-    auto availableMovesGenerator = game.getAvailableMovesGenerator();
+    auto availableMovesGenerator = AvailableMovesGenerator(game);
     {
         auto moveOption = availableMovesGenerator.next();
         REQUIRE(moveOption != std::nullopt);

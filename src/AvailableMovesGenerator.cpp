@@ -5,7 +5,16 @@
 #include "Move.hpp"
 
 AvailableMovesGenerator::AvailableMovesGenerator(const Game& game) :m_game(game), m_currentFigurPosition(0),
-    m_positionDeltaIndex(0), m_currentTargetPositionForMove(0), m_isToMove(isAttacker) {}
+    m_positionDeltaIndex(0), m_currentTargetPositionForMove(0), m_isToMove(isAttacker) {
+    if (!m_game.areAttackersToMove()) {
+        m_isToMove = isDefender;
+    }    
+    if (m_isToMove(m_game.getFigurAt(0))) {
+        m_currentTargetPositionForMove = m_currentFigurPosition + POSITION_DELTAS.at(m_positionDeltaIndex);
+    } else {
+        nextFigur();
+    }
+}
 
 auto AvailableMovesGenerator::next() -> std::optional<Move> {
     while (true) {
@@ -41,21 +50,3 @@ auto AvailableMovesGenerator::nextFigur() -> bool {
     }
     return false;
 }
-
-auto AvailableMovesGenerator::reset() -> void {
-    m_currentFigurPosition = 0;
-    m_positionDeltaIndex = 0;
-    m_currentTargetPositionForMove = 0;
-    if (m_game.areAttackersToMove()) {
-        m_isToMove = isAttacker;
-    } else {
-        m_isToMove = isDefender;
-    }
-    
-    if (m_isToMove(m_game.getFigurAt(0))) {
-        m_currentTargetPositionForMove = m_currentFigurPosition + POSITION_DELTAS.at(m_positionDeltaIndex);
-    } else {
-        nextFigur();
-    }
-}
-

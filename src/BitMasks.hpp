@@ -24,7 +24,7 @@ const InternalField MASK_AROUND_CASTLE(std::string("000000000"
                                                    "000000000000000000"
                                                    "000000000000000000"));
 
-const InternalField MASK_KING_SURROUNDED_LEFT_CASTLE(std::string("000000000"
+const InternalField MASK_KING_SURROUNDED_RIGHT_CASTLE(std::string("000000000"
                                                                  "000000000000000000"
                                                                  "000000000000000000"
                                                                  "000000000000000000"
@@ -35,7 +35,7 @@ const InternalField MASK_KING_SURROUNDED_LEFT_CASTLE(std::string("000000000"
                                                                  "000000000000000000"
                                                                  "000000000000000000"));
 
-const InternalField MASK_LEFT_CASTLE(std::string("000000000"
+const InternalField MASK_RIGHT_CASTLE(std::string("000000000"
                                                  "000000000000000000"
                                                  "000000000000000000"
                                                  "000000000000000000"
@@ -46,7 +46,7 @@ const InternalField MASK_LEFT_CASTLE(std::string("000000000"
                                                  "000000000000000000"
                                                  "000000000000000000"));
 
-const InternalField MASK_KING_SURROUNDED_RIGHT_CASTLE(std::string("000000000"
+const InternalField MASK_KING_SURROUNDED_LEFT_CASTLE(std::string("000000000"
                                                                   "000000000000000000"
                                                                   "000000000000000000"
                                                                   "000000000000000000"
@@ -57,16 +57,16 @@ const InternalField MASK_KING_SURROUNDED_RIGHT_CASTLE(std::string("000000000"
                                                                   "000000000000000000"
                                                                   "000000000000000000"));
 
-const InternalField MASK_RIGHT_CASTLE(std::string("000000000"
-                                                  "000000000000000000"
-                                                  "000000000000000000"
-                                                  "000000000000000000"
-                                                  "000000000011000000"
-                                                  "000000000011110000"
-                                                  "000000000011000000"
-                                                  "000000000000000000"
-                                                  "000000000000000000"
-                                                  "000000000000000000"));
+const InternalField MASK_LEFT_CASTLE(std::string("000000000"
+                                                 "000000000000000000"
+                                                 "000000000000000000"
+                                                 "000000000000000000"
+                                                 "000000000011000000"
+                                                 "000000000011110000"
+                                                 "000000000011000000"
+                                                 "000000000000000000"
+                                                 "000000000000000000"
+                                                 "000000000000000000"));
 
 const InternalField MASK_KING_SURROUNDED_BELOW_CASTLE(std::string("000000000"
                                                                   "000000000000000000"

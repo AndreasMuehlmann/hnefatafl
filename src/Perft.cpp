@@ -3,14 +3,14 @@
 #include <optional>
 
 #include "Perft.hpp"
+#include "AvailableMovesGenerator.hpp"
 #include "GameUtils.hpp"
 
 Perft::Perft(unsigned int maxDepth) : m_maxDepth(maxDepth) {}
 
-auto Perft::perft(Game _) const -> void {
-    Game game;
+auto Perft::perft(Game game) const -> void {
     auto start = std::chrono::high_resolution_clock::now();
-    auto availableMovesGenerator = game.getAvailableMovesGenerator();
+    auto availableMovesGenerator = AvailableMovesGenerator(game);
     unsigned long sumMoveCounts = 0;
     while (true) {
         auto moveOption = availableMovesGenerator.next();
@@ -33,7 +33,7 @@ auto Perft::perftHelper(Game& game, unsigned int depth) -> unsigned long {
         return 1;
     }
 
-    auto availableMovesGenerator = game.getAvailableMovesGenerator();
+    auto availableMovesGenerator = AvailableMovesGenerator(game);
     unsigned long sumMoveCounts = 0;
     while (true) {
         auto moveOption = availableMovesGenerator.next();

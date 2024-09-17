@@ -10,7 +10,7 @@
 
 constexpr size_t INDEX_WIKINGS_TO_MOVE_FLAG = FIELDS * BITS_PER_FIELD + BITS_FOR_KING_POSITION;
 
-Game::Game() : m_availableMovesGenerator(*this) {
+Game::Game() {
     constexpr Field field = {
         std::array<Figur, FIELD_SIZE>{_, _, _, w, w, w, _, _, _},
         std::array<Figur, FIELD_SIZE>{_, _, _, _, w, _, _, _, _},
@@ -27,7 +27,7 @@ Game::Game() : m_availableMovesGenerator(*this) {
     construct();
 }
 
-Game::Game(Field field, bool wikingsToMove) : m_field(fieldToInternalField(field)), m_availableMovesGenerator(*this) {
+Game::Game(Field field, bool wikingsToMove) : m_field(fieldToInternalField(field)) {
     if (wikingsToMove) {
         m_field.set(INDEX_WIKINGS_TO_MOVE_FLAG);
     } else {
@@ -36,7 +36,7 @@ Game::Game(Field field, bool wikingsToMove) : m_field(fieldToInternalField(field
     construct();
 }
 
-Game::Game(InternalField internalField) : m_field(internalField), m_availableMovesGenerator(*this) { construct(); }
+Game::Game(InternalField internalField) : m_field(internalField) { construct(); }
 
 auto Game::construct() -> void {
     constexpr size_t RESERVED_SIZE_HISTORY = 100;
@@ -44,13 +44,7 @@ auto Game::construct() -> void {
 }
 
 auto Game::getFigurAt(Position position) const -> Figur {
-    if (m_field._Unchecked_test(position * BITS_PER_FIELD)) {
-        if (m_field._Unchecked_test(position * BITS_PER_FIELD + 1)) { return Figur::King; }
-        return Figur::Wiking;
-    } if (m_field._Unchecked_test(position * BITS_PER_FIELD)) {
-        return Figur::Guard;
-    }
-    return Figur::NoFigur;
+    return static_cast<Figur>((static_cast<uint8_t>(m_field._Unchecked_test(position * BITS_PER_FIELD + 1)) << 1) + static_cast<uint8_t>(m_field._Unchecked_test(position * BITS_PER_FIELD)));
 }
 
 auto Game::getKingPosition() const -> Position {
@@ -65,12 +59,6 @@ auto Game::setKingPosition(Position position) -> void {
 }
 
 auto Game::areAttackersToMove() const -> bool { return m_field._Unchecked_test(INDEX_WIKINGS_TO_MOVE_FLAG); }
-
-auto Game::getAvailableMovesGenerator() -> AvailableMovesGenerator {
-    // do this differently
-    m_availableMovesGenerator.reset();
-    return m_availableMovesGenerator;
-}
 
 auto Game::validMove(Move m) const -> std::string {
     if (!positionInBounds(m.from)) {
@@ -123,9 +111,9 @@ auto Game::makeMove(Move m) -> Winner {
 auto Game::move(Move m) -> void {
     const auto mask = maskForPosition(m.from);
     const auto fieldWithOnlyFigurMoved = m_field & mask;
-    //if (getFigurAt(m.from) == Figur::King) {
-    //    setKingPosition(m.to);
-    //}
+    if (getFigurAt(m.from) == Figur::King) {
+        setKingPosition(m.to);
+    }
     m_field &= ~mask;
     if (m.to > m.from) {
         m_field |= fieldWithOnlyFigurMoved << (m.to - m.from) * BITS_PER_FIELD;

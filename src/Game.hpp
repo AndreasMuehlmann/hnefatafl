@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "Move.hpp"
-#include "AvailableMovesGenerator.hpp"
 #include "Figur.hpp"
 #include "Winner.hpp"
 
@@ -30,7 +29,6 @@ class Game {
     [[nodiscard]] auto getKingPosition() const -> Position;
     [[nodiscard]] auto areAttackersToMove() const -> bool;
     [[nodiscard]] auto validMove(Move m) const -> std::string;
-    [[nodiscard]] auto getAvailableMovesGenerator() -> AvailableMovesGenerator;
     auto makeMove(Move m) -> Winner;
     auto unmakeMove() -> void;
     auto printField() const -> void;
@@ -46,5 +44,4 @@ class Game {
 
     InternalField m_field;
     std::vector<InternalField> m_history;
-    AvailableMovesGenerator m_availableMovesGenerator;
 };

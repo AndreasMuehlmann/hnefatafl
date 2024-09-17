@@ -83,22 +83,23 @@ auto bitShiftRight(const InternalField& field, uint8_t shift) -> InternalField {
 }
 
 auto possibleCapture(const InternalField& field, Position lastMovedTo, bool attackersToMove) -> bool {
-    InternalField mask;
     const auto coordinates = positionToCoordinates(lastMovedTo);
+    Position offset = 0;
+    if (attackersToMove) { 
+        offset = 1;
+    }
+    bool possibleCatpure = false;
     if (coordinates.x != FIELD_SIZE - 1) {
-        mask._Unchecked_set((lastMovedTo + 1) * BITS_PER_FIELD);
+        possibleCatpure |= field._Unchecked_test((lastMovedTo + 1) * BITS_PER_FIELD + offset);
     }
     if (coordinates.x != 0) {
-        mask._Unchecked_set((lastMovedTo - 1) * BITS_PER_FIELD);
+        possibleCatpure |= field._Unchecked_test((lastMovedTo - 1) * BITS_PER_FIELD + offset);
     }
     if (coordinates.y != FIELD_SIZE - 1) {
-        mask._Unchecked_set((lastMovedTo + FIELD_SIZE) * BITS_PER_FIELD);
+        possibleCatpure |= field._Unchecked_test((lastMovedTo + FIELD_SIZE) * BITS_PER_FIELD + offset);
     }
     if (coordinates.y != 0) {
-        mask._Unchecked_set((lastMovedTo - FIELD_SIZE) * BITS_PER_FIELD);
+        possibleCatpure |= field._Unchecked_test((lastMovedTo - FIELD_SIZE) * BITS_PER_FIELD + offset);
     }
-    if (attackersToMove) {
-        mask <<= 1;
-    }
-    return (field & mask).any();
+    return possibleCatpure;
 }
