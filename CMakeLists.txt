@@ -25,6 +25,7 @@ endif()
 add_executable(hnefatafl 
     src/main.cpp
     src/Human.cpp
+    src/RandomMovesGenerator.cpp
     src/SingleGameManager.cpp
     src/GameUtils.cpp
     src/Game.cpp

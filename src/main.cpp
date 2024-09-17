@@ -7,6 +7,7 @@
 #include <argparse/argparse.hpp>
 
 #include "Human.hpp"
+#include "RandomMovesGenerator.hpp"
 #include "Perft.hpp"
 #include "SingleGameManager.hpp"
 
@@ -76,7 +77,7 @@ auto main(int argc, char *argv[]) -> int {
 
     Game game;
     std::unique_ptr<Player> attackingPlayer = std::make_unique<Human>();
-    std::unique_ptr<Player> defendingPlayer = std::make_unique<Human>();
+    std::unique_ptr<Player> defendingPlayer = std::make_unique<RandomMovesGenerator>();
     SingleGameManager singleGameManager(game, std::move(attackingPlayer),
                                         std::move(defendingPlayer));
     singleGameManager.run();
