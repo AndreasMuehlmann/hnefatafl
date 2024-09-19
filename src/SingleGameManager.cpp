@@ -3,11 +3,13 @@
 
 #include "Game.hpp"
 #include "SingleGameManager.hpp"
+#include "Utils.hpp"
 
-SingleGameManager::SingleGameManager(Game game, std::unique_ptr<Player> attackingPlayer,
-                                     std::unique_ptr<Player> defendingPlayer, bool commandLineOuptut)
-    : m_game(std::move(game)), m_attackingPlayer(std::move(attackingPlayer)),
-      m_defendingPlayer(std::move(defendingPlayer)), m_commandLineOuptut(commandLineOuptut) {}
+SingleGameManager::SingleGameManager(Game game, const std::string& attackingPlayer,
+                                     const std::string& defendingPlayer, bool commandLineOuptut)
+    : m_game(std::move(game)), m_attackingPlayer(createPlayerFromIdentifier(attackingPlayer)),
+      m_defendingPlayer(createPlayerFromIdentifier(defendingPlayer)), m_commandLineOuptut(commandLineOuptut) {
+}
 
 auto SingleGameManager::run() -> Winner {
     Winner winner = Winner::NoWinner;

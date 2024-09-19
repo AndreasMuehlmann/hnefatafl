@@ -14,8 +14,35 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Wshadow -Wform
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -ggdb -O0")
+
+    find_package(Catch2 3)
+
+    if(NOT Catch2_FOUND)
+        Include(FetchContent)
+
+        FetchContent_Declare(
+          Catch2
+          GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+          GIT_TAG        v3.4.0
+        )
+
+        FetchContent_MakeAvailable(Catch2)
+    endif()
+
+    add_executable(tests
+        tests/TestGame.cpp
+        tests/TestGameUtils.cpp
+
+        src/GameUtils.cpp
+        src/Game.cpp
+        src/AvailableMovesGenerator.cpp
+    )
+
+    target_include_directories(tests PRIVATE src)
+    target_include_directories(tests PRIVATE tests)
+    target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 elseif(CMAKE_BUILD_TYPE STREQUAL "DebugSan")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -ggdb -O1")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O1 -fsanitize=address,undefined")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Gprof")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg -O3")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -27,6 +54,7 @@ add_executable(hnefatafl
     src/Human.cpp
     src/RandomMovesGenerator.cpp
     src/SingleGameManager.cpp
+    src/MultipleGameManager.cpp
     src/GameUtils.cpp
     src/Game.cpp
     src/AvailableMovesGenerator.cpp
@@ -35,35 +63,6 @@ add_executable(hnefatafl
 )
 
 target_include_directories(hnefatafl PRIVATE lib/argparse/include)
-
-find_package(Catch2 3)
-
-if(NOT Catch2_FOUND)
-    Include(FetchContent)
-
-    FetchContent_Declare(
-      Catch2
-      GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-      GIT_TAG        v3.4.0
-    )
-
-    FetchContent_MakeAvailable(Catch2)
-endif()
-
-add_executable(tests
-    tests/TestGame.cpp
-    tests/TestGameUtils.cpp
-
-    src/GameUtils.cpp
-    src/Game.cpp
-    src/SingleGameManager.cpp
-    src/Human.cpp
-    src/AvailableMovesGenerator.cpp
-)
-
-target_include_directories(tests PRIVATE src)
-target_include_directories(tests PRIVATE tests)
-target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 
 
 install(

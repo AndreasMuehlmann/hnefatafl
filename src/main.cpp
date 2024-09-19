@@ -1,14 +1,13 @@
 #include <iostream>
-#include <memory>
 #include <stdexcept>
 #include <string>
 #include <unordered_set>
 
 #include <argparse/argparse.hpp>
 
+#include "MultipleGameManager.hpp"
 #include "Perft.hpp"
 #include "SingleGameManager.hpp"
-#include "Utils.hpp"
 
 auto main(int argc, char *argv[]) -> int {
     argparse::ArgumentParser program("hnefatafl", "v0.0.1");
@@ -16,8 +15,8 @@ auto main(int argc, char *argv[]) -> int {
     std::string attacker;
     std::string defender;
     bool printAvailablePlayers = false;
-    bool noCommandLineOutput = false;
     unsigned int perftDepth = 0;
+    unsigned int games = 1;
 
     program.add_argument("-a", "--attacker")
         .store_into(attacker)
@@ -31,14 +30,16 @@ auto main(int argc, char *argv[]) -> int {
         .store_into(printAvailablePlayers)
         .help("Prints all player types that can be used.");
 
-    program.add_argument("-n", "--no-command-line-output")
-        .store_into(noCommandLineOutput)
-        .help("Removes all output to the command line from single game manager");
-
     program.add_argument("-p", "--perft")
         .scan<'i', unsigned int>()
         .store_into(perftDepth)
         .help("Run perft with a depth and print the output.");
+
+    program.add_argument("-g", "--games")
+        .scan<'i', unsigned int>()
+        .store_into(games)
+        .help("Run players play the passed amount of games against each other."
+              "If more than one game is played the command line output is disabled and in the end a summary is printed.");
 
     try {
         program.parse_args(argc, argv);
@@ -79,10 +80,12 @@ auto main(int argc, char *argv[]) -> int {
         throw std::invalid_argument(defender + " is not a known player.");
     }
 
-    Game game;
-    std::unique_ptr<Player> attackingPlayer = createPlayerFromIdentifier(attacker);
-    std::unique_ptr<Player> defendingPlayer = createPlayerFromIdentifier(defender);
-    SingleGameManager singleGameManager(game, std::move(attackingPlayer),
-                                        std::move(defendingPlayer), !noCommandLineOutput);
-    singleGameManager.run();
+    if (games == 1) {
+        Game game;
+        SingleGameManager singleGameManager(game, attacker, defender, true);
+        singleGameManager.run();
+    } else {
+        MultipleGameManager multipleGameManager(attacker, defender, games);
+        multipleGameManager.run();
+    }
 }

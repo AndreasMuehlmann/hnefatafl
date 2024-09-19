@@ -14,3 +14,11 @@ auto createPlayerFromIdentifier(const std::string& identifier) -> std::unique_pt
     }
     throw std::invalid_argument("Given identifier is in availablePlayers but not handled.");
 }
+
+auto rightPad(std::string string, size_t paddedLength) -> std::string {
+  if (paddedLength < string.size()) {
+    return string;
+  }
+  string.insert(string.end(), paddedLength - string.length(), ' ');
+  return string;
+}

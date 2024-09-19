@@ -23,6 +23,10 @@ auto AvailableMovesGenerator::next() -> std::optional<Move> {
             if ((m_positionDeltaIndex == 0 || m_positionDeltaIndex == 1) && static_cast<size_t>(m_currentTargetPositionForMove) / FIELD_SIZE != m_currentFigurPosition / FIELD_SIZE) {
                 break;
             }
+            if (m_currentTargetPositionForMove == FIELDS / 2) { 
+                m_currentTargetPositionForMove = m_currentTargetPositionForMove + POSITION_DELTAS.at(m_positionDeltaIndex);
+                continue;
+            }
             Move move = {m_currentFigurPosition, static_cast<Position>(m_currentTargetPositionForMove)};
             m_currentTargetPositionForMove = m_currentTargetPositionForMove + POSITION_DELTAS.at(m_positionDeltaIndex);
             return move;
