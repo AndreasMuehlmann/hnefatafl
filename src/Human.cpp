@@ -7,6 +7,11 @@
 
 auto Human::getMove(const Game &game) -> Move {
     game.printField();
+    if (game.areAttackersToMove()) {
+        std::cout << "Attackers to move\n";
+    } else {
+        std::cout << "Defenders to move\n";
+    }
 
     unsigned int xFrom = 0;
     unsigned int yFrom = 0;

@@ -16,13 +16,14 @@ auto main(int argc, char *argv[]) -> int {
     std::string attacker;
     std::string defender;
     bool printAvailablePlayers = false;
+    bool noCommandLineOutput = false;
     unsigned int perftDepth = 0;
 
-    program.add_argument("--attacker")
+    program.add_argument("-a", "--attacker")
         .store_into(attacker)
         .help("Pass who should be the attacker, so the player without the king.");
 
-    program.add_argument("--defender")
+    program.add_argument("-d", "--defender")
         .store_into(defender)
         .help("Pass who should be the defender, so the player with the king.");
 
@@ -30,7 +31,11 @@ auto main(int argc, char *argv[]) -> int {
         .store_into(printAvailablePlayers)
         .help("Prints all player types that can be used.");
 
-    program.add_argument("--perft")
+    program.add_argument("-n", "--no-command-line-output")
+        .store_into(noCommandLineOutput)
+        .help("Removes all output to the command line from single game manager");
+
+    program.add_argument("-p", "--perft")
         .scan<'i', unsigned int>()
         .store_into(perftDepth)
         .help("Run perft with a depth and print the output.");
@@ -78,6 +83,6 @@ auto main(int argc, char *argv[]) -> int {
     std::unique_ptr<Player> attackingPlayer = createPlayerFromIdentifier(attacker);
     std::unique_ptr<Player> defendingPlayer = createPlayerFromIdentifier(defender);
     SingleGameManager singleGameManager(game, std::move(attackingPlayer),
-                                        std::move(defendingPlayer));
+                                        std::move(defendingPlayer), !noCommandLineOutput);
     singleGameManager.run();
 }

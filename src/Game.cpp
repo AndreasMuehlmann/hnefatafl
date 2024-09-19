@@ -90,9 +90,16 @@ auto Game::validMove(Move m) const -> std::string {
                "unless the figur is the king.";
     }
 
-    // check if move is blocked
+    AvailableMovesGenerator availableMovesGenerator(*this);
+    while (true) {
+        auto moveOption = availableMovesGenerator.next();
+        if (moveOption == std::nullopt) { break; }
+        if (m.from == moveOption->from && m.to == moveOption->to) {
+            return "";
+        }
+    }
 
-    return "";
+    return "Cannot move because figur is in the way.";
 }
 
 auto Game::makeMove(Move m) -> Winner {
