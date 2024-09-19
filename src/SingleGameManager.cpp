@@ -35,4 +35,5 @@ auto SingleGameManager::run() -> void {
     } else {
         std::cout << "The Game ended in a draw\n";
     }
+    m_game.printField();
 }

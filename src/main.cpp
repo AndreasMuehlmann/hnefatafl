@@ -6,10 +6,9 @@
 
 #include <argparse/argparse.hpp>
 
-#include "Human.hpp"
-#include "RandomMovesGenerator.hpp"
 #include "Perft.hpp"
 #include "SingleGameManager.hpp"
+#include "Utils.hpp"
 
 auto main(int argc, char *argv[]) -> int {
     argparse::ArgumentParser program("hnefatafl", "v0.0.1");
@@ -46,7 +45,7 @@ auto main(int argc, char *argv[]) -> int {
 
     std::unordered_set<std::string> availablePlayers = {
         "human",
-        "computer",
+        "random",
     };
 
     if (printAvailablePlayers) {
@@ -76,8 +75,8 @@ auto main(int argc, char *argv[]) -> int {
     }
 
     Game game;
-    std::unique_ptr<Player> attackingPlayer = std::make_unique<Human>();
-    std::unique_ptr<Player> defendingPlayer = std::make_unique<RandomMovesGenerator>();
+    std::unique_ptr<Player> attackingPlayer = createPlayerFromIdentifier(attacker);
+    std::unique_ptr<Player> defendingPlayer = createPlayerFromIdentifier(defender);
     SingleGameManager singleGameManager(game, std::move(attackingPlayer),
                                         std::move(defendingPlayer));
     singleGameManager.run();

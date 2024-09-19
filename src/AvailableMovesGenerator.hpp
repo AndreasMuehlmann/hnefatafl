@@ -3,9 +3,8 @@
 #include <array>
 #include <optional>
 
-class Game;
-
 #include "Figur.hpp"
+#include "Game.hpp"
 #include "Move.hpp"
 
 constexpr std::size_t DIRECTIONS = 4;

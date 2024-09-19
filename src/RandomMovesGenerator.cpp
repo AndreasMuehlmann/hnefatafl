@@ -2,8 +2,9 @@
 #include <ctime>
 #include <vector>
 
-#include "Move.hpp"
+#include "Game.hpp"
 #include "AvailableMovesGenerator.hpp"
+#include "Move.hpp"
 #include "RandomMovesGenerator.hpp"
 
 RandomMovesGenerator::RandomMovesGenerator() {

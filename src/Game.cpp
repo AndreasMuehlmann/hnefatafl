@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "AvailableMovesGenerator.hpp"
 #include "BitMasks.hpp"
 #include "FieldDefinitionHelper.hpp"
 #include "Game.hpp"
