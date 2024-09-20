@@ -1,19 +1,16 @@
 #pragma once
 
-#include "Game.hpp"
-#include "Player.hpp"
+#include "PlayerFactory.hpp"
 
 constexpr size_t TABLE_WIDTH = 20;
 
 class MultipleGameManager {
 
   public:
-    MultipleGameManager(std::string attackingPlayer, std::string defendingPlayer, size_t games);
-    auto run() -> void;
+    MultipleGameManager(PlayerFactory playerFactory, size_t games);
+    auto run() const -> void;
 
   private:
-    Game m_game;
-    std::string m_attackingPlayer;
-    std::string m_defendingPlayer;
+    PlayerFactory m_playerFactory;
     size_t m_games;
 };

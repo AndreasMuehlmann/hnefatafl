@@ -51,8 +51,10 @@ endif()
 
 add_executable(hnefatafl 
     src/main.cpp
+    src/PlayerFactory.cpp
     src/Human.cpp
     src/RandomMovesGenerator.cpp
+    src/Negamax.cpp
     src/SingleGameManager.cpp
     src/MultipleGameManager.cpp
     src/GameUtils.cpp

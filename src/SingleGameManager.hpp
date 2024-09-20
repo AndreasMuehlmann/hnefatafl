@@ -8,8 +8,8 @@
 class SingleGameManager {
 
   public:
-    SingleGameManager(Game game, const std::string& attackingPlayer,
-                      const std::string& defendingPlayer, bool commandLineOuptut);
+    SingleGameManager(Game game, std::unique_ptr<Player> attackingPlayer,
+                      std::unique_ptr<Player> defendingPlayer, bool commandLineOuptut);
     auto run() -> Winner;
 
   private:

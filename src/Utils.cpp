@@ -3,6 +3,7 @@
 
 #include "Player.hpp"
 #include "Human.hpp"
+#include "Negamax.hpp"
 #include "RandomMovesGenerator.hpp"
 
 auto createPlayerFromIdentifier(const std::string& identifier) -> std::unique_ptr<Player> {

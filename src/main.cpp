@@ -7,24 +7,30 @@
 
 #include "MultipleGameManager.hpp"
 #include "Perft.hpp"
+#include "PlayerCreationArguments.hpp"
+#include "PlayerFactory.hpp"
 #include "SingleGameManager.hpp"
 
 auto main(int argc, char *argv[]) -> int {
     argparse::ArgumentParser program("hnefatafl", "v0.0.1");
 
-    std::string attacker;
-    std::string defender;
+    PlayerCreationArguments playerCreationArguments{};
     bool printAvailablePlayers = false;
     unsigned int perftDepth = 0;
     unsigned int games = 1;
 
     program.add_argument("-a", "--attacker")
-        .store_into(attacker)
+        .store_into(playerCreationArguments.attacker)
         .help("Pass who should be the attacker, so the player without the king.");
 
     program.add_argument("-d", "--defender")
-        .store_into(defender)
+        .store_into(playerCreationArguments.defender)
         .help("Pass who should be the defender, so the player with the king.");
+
+    program.add_argument("-t", "--time-to-think")
+        .store_into(playerCreationArguments.timeToThink)
+        .help("Pass who should be the defender, so the player with the king.");
+
 
     program.add_argument("--printAvailablePlayers")
         .store_into(printAvailablePlayers)
@@ -52,6 +58,7 @@ auto main(int argc, char *argv[]) -> int {
     std::unordered_set<std::string> availablePlayers = {
         "human",
         "random",
+        "negamax",
     };
 
     if (printAvailablePlayers) {
@@ -70,22 +77,23 @@ auto main(int argc, char *argv[]) -> int {
         return 1;
     }
 
-    if (attacker.empty() || defender.empty()) {
+    if (playerCreationArguments.attacker.empty() || playerCreationArguments.defender.empty()) {
         throw std::invalid_argument("--attacker and --defender have to be passed");
     }
-    if (!availablePlayers.contains(attacker)) {
-        throw std::invalid_argument(attacker + " is not a known player.");
+    if (!availablePlayers.contains(playerCreationArguments.attacker)) {
+        throw std::invalid_argument(playerCreationArguments.attacker + " is not a known player.");
     }
-    if (!availablePlayers.contains(defender)) {
-        throw std::invalid_argument(defender + " is not a known player.");
+    if (!availablePlayers.contains(playerCreationArguments.defender)) {
+        throw std::invalid_argument(playerCreationArguments.defender + " is not a known player.");
     }
 
+    PlayerFactory playerFactory(playerCreationArguments);
     if (games == 1) {
         Game game;
-        SingleGameManager singleGameManager(game, attacker, defender, true);
+        SingleGameManager singleGameManager(game, playerFactory.createAttacker(), playerFactory.createDefender(), true);
         singleGameManager.run();
     } else {
-        MultipleGameManager multipleGameManager(attacker, defender, games);
+        MultipleGameManager multipleGameManager(playerFactory, games);
         multipleGameManager.run();
     }
 }
