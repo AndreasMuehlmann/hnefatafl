@@ -1,9 +1,10 @@
 #include <chrono>
 #include <limits>
-#include <iostream>
 
 #include "Negamax.hpp"
+#include "AvailableMovesGenerator.hpp"
 #include "Game.hpp"
+#include "SearchUtils.hpp"
 
 Negamax::Negamax(unsigned int thinkingTimeMs)
     : m_thinkingTimeMs(thinkingTimeMs), m_maxDepth(std::numeric_limits<unsigned int>::max()) {}
@@ -20,14 +21,28 @@ auto Negamax::getMove(const Game& game) -> Move {
             break;
         }
         Game localGame = game;
-        const EvaluatedMove evaluatedMove = negamax(localGame, depth);
+        const EvaluatedMove evaluatedMove = negamax(localGame, {FIELDS, FIELDS}, depth);
         bestEvaluatedMove = evaluatedMove;
     }
     return bestEvaluatedMove.move;
 }
 
-auto Negamax::negamax(Game& game, unsigned int depth) -> EvaluatedMove {
-    (void)game;
-    (void)depth;
-    return EvaluatedMove{};
+auto Negamax::negamax(Game& game, Move move, unsigned int depth) -> EvaluatedMove {
+    if (move.from != FIELDS) {
+        game.makeMove(move);
+        if (depth == 0) { return {move, evaluate(game)}; };
+    }
+    int max = std::numeric_limits<int>::min();
+    EvaluatedMove bestEvaluatedMove{};
+    AvailableMovesGenerator availableMovesGenerator(game);
+    while (true) {
+        auto moveOption = availableMovesGenerator.next();
+        if (moveOption == std::nullopt) { break; }
+        EvaluatedMove evaluatedMove = negamax(game, *moveOption, depth - 1);
+        if (evaluatedMove.evaluation > max) {
+            bestEvaluatedMove = evaluatedMove;
+        }
+    }
+    bestEvaluatedMove.evaluation *= -1;
+    return bestEvaluatedMove;
 }
