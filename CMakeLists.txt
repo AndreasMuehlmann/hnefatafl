@@ -55,6 +55,7 @@ add_executable(hnefatafl
     src/Human.cpp
     src/RandomMovesGenerator.cpp
     src/Negamax.cpp
+    src/SearchUtils.cpp
     src/SingleGameManager.cpp
     src/MultipleGameManager.cpp
     src/GameUtils.cpp

@@ -28,6 +28,7 @@ class Game {
     [[nodiscard]] auto getFigurAt(Position position) const -> Figur;
     [[nodiscard]] auto getKingPosition() const -> Position;
     [[nodiscard]] auto areAttackersToMove() const -> bool;
+    [[nodiscard]] auto getInternalField() const -> InternalField;
     [[nodiscard]] auto validMove(Move m) const -> std::string;
     auto makeMove(Move m) -> Winner;
     auto unmakeMove() -> void;

@@ -61,6 +61,8 @@ auto Game::setKingPosition(Position position) -> void {
 
 auto Game::areAttackersToMove() const -> bool { return m_field._Unchecked_test(INDEX_WIKINGS_TO_MOVE_FLAG); }
 
+auto Game::getInternalField() const -> InternalField { return m_field; }
+
 auto Game::validMove(Move m) const -> std::string {
     if (!positionInBounds(m.from)) {
         return "Position to move away from out of field range.";
