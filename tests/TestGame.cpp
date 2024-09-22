@@ -358,12 +358,6 @@ TEST_CASE("Check if move generator generates correct moves", "[next]") {
         auto moveOption = availableMovesGenerator.next();
         REQUIRE(moveOption != std::nullopt);
         REQUIRE(moveOption->from == FIELDS / 2 - 1);
-        REQUIRE(moveOption->to == FIELDS / 2);
-    }
-    {
-        auto moveOption = availableMovesGenerator.next();
-        REQUIRE(moveOption != std::nullopt);
-        REQUIRE(moveOption->from == FIELDS / 2 - 1);
         REQUIRE(moveOption->to == FIELDS / 2 - 2);
     }
     {
@@ -392,4 +386,35 @@ TEST_CASE("Check if move generator generates correct moves", "[next]") {
     }
     auto moveOption = availableMovesGenerator.next();
     REQUIRE(moveOption == std::nullopt);
+}
+
+
+TEST_CASE("Check unmake move", "[unmakeMove]") {
+    constexpr Field field = {
+        std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, g, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{g, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, k, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+    };
+    Game game(field, false);
+    InternalField initialField = game.getInternalField();
+
+    Position fromGuard = coordinatesToPosition({1, 2});
+    Position toGuard = coordinatesToPosition({0, 2});
+    Move moveGuard = {fromGuard, toGuard};
+    game.makeMove(moveGuard);
+    Position fromWiking = coordinatesToPosition({0, 0});
+    Position toWiking = coordinatesToPosition({0, 1});
+    Move moveWiking = {fromWiking, toWiking};
+    game.makeMove(moveWiking);
+
+    game.unmakeMove();
+    game.unmakeMove();
+
+    REQUIRE(initialField == game.getInternalField());
 }

@@ -21,6 +21,4 @@ Run `git-clang-format` to format modified files before commiting them or run `cl
 
 ## TODO
 
-- getAvailableMoves => check if move is blocked; check if at least one move is available
 - reimplement draw only with the history for the current move
-- check if a move is blocked in valid move

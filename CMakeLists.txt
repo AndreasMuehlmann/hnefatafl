@@ -32,10 +32,20 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_executable(tests
         tests/TestGame.cpp
         tests/TestGameUtils.cpp
+        tests/TestSearch.cpp
 
+        src/PlayerFactory.cpp
+        src/Human.cpp
+        src/RandomMovesGenerator.cpp
+        src/Negamax.cpp
+        src/SearchUtils.cpp
+        src/SingleGameManager.cpp
+        src/MultipleGameManager.cpp
         src/GameUtils.cpp
         src/Game.cpp
         src/AvailableMovesGenerator.cpp
+        src/Perft.cpp
+        src/Utils.cpp
     )
 
     target_include_directories(tests PRIVATE src)

@@ -29,7 +29,7 @@ auto main(int argc, char *argv[]) -> int {
 
     program.add_argument("-t", "--time-to-think")
         .store_into(playerCreationArguments.timeToThink)
-        .help("Pass who should be the defender, so the player with the king.");
+        .help("Pass how much the computer has to think.");
 
     program.add_argument("--printAvailablePlayers")
         .store_into(printAvailablePlayers)

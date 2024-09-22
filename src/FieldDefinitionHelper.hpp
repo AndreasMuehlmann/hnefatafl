@@ -1,4 +1,4 @@
-#include "Game.hpp"
+#include "Figur.hpp"
 
 constexpr Figur _ = Figur::NoFigur;
 constexpr Figur w = Figur::Wiking;

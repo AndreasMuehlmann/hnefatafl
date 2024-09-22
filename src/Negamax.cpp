@@ -17,7 +17,7 @@ Negamax::Negamax(unsigned int thinkingTimeMs, unsigned int maxDepth)
 auto Negamax::getMove(const Game &game) -> Move {
     m_searchStart = Clock::now();
     EvaluatedMove bestEvaluatedMove{};
-    for (unsigned int depth = 1; depth < m_maxDepth; depth++) {
+    for (unsigned int depth = 1; depth <= m_maxDepth; depth++) {
         auto duration =
             std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - m_searchStart);
         if (duration.count() > m_thinkingTimeMs) {
@@ -39,8 +39,8 @@ auto Negamax::negamax(Game &game, Move move, unsigned int depth) -> EvaluatedMov
     if (depth == 0) {
         return {move, evaluate(game)};
     };
-    int max = std::numeric_limits<int>::min();
     EvaluatedMove bestEvaluatedMove{};
+    bestEvaluatedMove.evaluation = std::numeric_limits<int>::min();
     AvailableMovesGenerator availableMovesGenerator(game);
     while (true) {
         auto moveOption = availableMovesGenerator.next();
@@ -48,7 +48,8 @@ auto Negamax::negamax(Game &game, Move move, unsigned int depth) -> EvaluatedMov
             break;
         }
         EvaluatedMove evaluatedMove = negamax(game, *moveOption, depth - 1);
-        if (evaluatedMove.evaluation > max) {
+        game.unmakeMove();
+        if (evaluatedMove.evaluation > bestEvaluatedMove.evaluation) {
             bestEvaluatedMove = evaluatedMove;
         }
     }
