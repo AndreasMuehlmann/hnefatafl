@@ -21,8 +21,14 @@ Run `git-clang-format` to format modified files before commiting them or run `cl
 
 ## TODO
 
-- reimplement draw only with the history for the current move
+- In static evaluation it matters who was to move first initially and not at depth 0  
+- To remove checks for who is to move, cache the value in game
+- reimplement draw only with the history for the current move and check if no move is available
 
+
+## Testcases
+
+```
 Cannot move because figur is in the way.
 _ _ _ _ _ _ _ _ _ 
 _ _ _ _ _ _ _ _ _ 
@@ -33,3 +39,18 @@ w _ _ _ _ _ _ _ _
 _ _ _ _ g _ _ g _ 
 _ _ _ k _ _ _ _ _ 
 _ _ _ _ _ _ _ _ _ 
+```
+
+
+```
+Guards to move
+_ w w w w w _ _ _ 
+_ _ _ _ _ _ _ _ _ 
+_ _ _ _ _ _ _ _ g 
+w _ _ _ g _ _ _ w 
+_ _ g g k g g w w 
+_ _ _ _ g _ _ _ w 
+_ _ _ _ g _ _ _ _ 
+w _ _ _ _ _ _ w _ 
+w w _ _ w _ _ _ w 
+```

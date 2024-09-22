@@ -1,12 +1,13 @@
 #include <chrono>
-#include <iostream>
 #include <limits>
+#include <iostream>
 
 #include "AvailableMovesGenerator.hpp"
 #include "Game.hpp"
 #include "Negamax.hpp"
-#include "GameUtils.hpp"
 #include "SearchUtils.hpp"
+
+constexpr int winning_value = 10000;
 
 Negamax::Negamax(unsigned int thinkingTimeMs)
     : m_thinkingTimeMs(thinkingTimeMs), m_maxDepth(std::numeric_limits<unsigned int>::max()) {}
@@ -25,6 +26,11 @@ auto Negamax::getMove(const Game &game) -> Move {
         }
         Game localGame = game;
         const EvaluatedMove evaluatedMove = negamax(localGame, {FIELDS, FIELDS}, depth);
+        std::cout << "depth: " << depth << '\n';
+        //std::cout << "eval: " << evaluatedMove.evaluation << '\n';
+        if (evaluatedMove.evaluation == winning_value) { 
+            return evaluatedMove.move;
+        }
         bestEvaluatedMove = evaluatedMove;
     }
     return bestEvaluatedMove.move;
@@ -34,10 +40,10 @@ auto Negamax::negamax(Game &game, Move move, unsigned int depth) -> EvaluatedMov
     if (move.from != FIELDS) {
         Winner winner = game.makeMove(move);
         if (winner == Winner::Attacker) {
-            return {move, std::numeric_limits<int>::max() - 1};
+            return {move, winning_value};
         } 
         if (winner == Winner::Defender) {
-            return {move, std::numeric_limits<int>::min() + 1};
+            return {move, -winning_value};
         } 
         if (winner == Winner::Draw) {
             return {move, 0};
@@ -63,10 +69,8 @@ auto Negamax::negamax(Game &game, Move move, unsigned int depth) -> EvaluatedMov
         if (moveOption == std::nullopt) {
             break;
         }
-        printMove(*moveOption);
         EvaluatedMove evaluatedMove = negamax(game, *moveOption, depth - 1);
         evaluatedMove.evaluation *= -1;
-        std::cout << evaluatedMove.evaluation << '\n'; 
         game.unmakeMove();
         if (evaluatedMove.evaluation > bestEvaluatedMove.evaluation) {
             bestEvaluatedMove.move = *moveOption;

@@ -14,7 +14,16 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Wshadow -Wform
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -ggdb -O0")
+elseif(CMAKE_BUILD_TYPE STREQUAL "DebugSan")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O1 -fsanitize=address,undefined")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Gprof")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg -O3")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+endif()
 
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "DebugSan")
     find_package(Catch2 3)
 
     if(NOT Catch2_FOUND)
@@ -51,12 +60,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_include_directories(tests PRIVATE src)
     target_include_directories(tests PRIVATE tests)
     target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
-elseif(CMAKE_BUILD_TYPE STREQUAL "DebugSan")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O1 -fsanitize=address,undefined")
-elseif(CMAKE_BUILD_TYPE STREQUAL "Gprof")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg -O3")
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 endif()
 
 add_executable(hnefatafl 
