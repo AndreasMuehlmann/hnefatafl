@@ -2,7 +2,6 @@
 
 #include "Player.hpp"
 
-
 class RandomMovesGenerator : public Player {
 
   public:

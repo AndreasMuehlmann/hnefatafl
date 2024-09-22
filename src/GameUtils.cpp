@@ -68,24 +68,23 @@ auto printMove(Move m) -> void {
 
 auto positionInBounds(Position position) -> bool { return position < FIELDS; }
 
-auto isDefender(Figur figur) -> bool {
-    return figur == Figur::Guard || figur == Figur::King;
-}
+auto isDefender(Figur figur) -> bool { return figur == Figur::Guard || figur == Figur::King; }
 
 auto isAttacker(Figur figur) -> bool { return figur == Figur::Wiking; }
 
-auto bitShiftLeft(const InternalField& field, uint8_t shift) -> InternalField {
+auto bitShiftLeft(const InternalField &field, uint8_t shift) -> InternalField {
     return field << shift;
 }
 
-auto bitShiftRight(const InternalField& field, uint8_t shift) -> InternalField {
+auto bitShiftRight(const InternalField &field, uint8_t shift) -> InternalField {
     return field >> shift;
 }
 
-auto possibleCapture(const InternalField& field, Position lastMovedTo, bool attackersToMove) -> bool {
+auto possibleCapture(const InternalField &field, Position lastMovedTo,
+                     bool attackersToMove) -> bool {
     const auto coordinates = positionToCoordinates(lastMovedTo);
     Position offset = 0;
-    if (attackersToMove) { 
+    if (attackersToMove) {
         offset = 1;
     }
     bool possibleCatpure = false;
@@ -96,10 +95,12 @@ auto possibleCapture(const InternalField& field, Position lastMovedTo, bool atta
         possibleCatpure |= field._Unchecked_test((lastMovedTo - 1) * BITS_PER_FIELD + offset);
     }
     if (coordinates.y != FIELD_SIZE - 1) {
-        possibleCatpure |= field._Unchecked_test((lastMovedTo + FIELD_SIZE) * BITS_PER_FIELD + offset);
+        possibleCatpure |=
+            field._Unchecked_test((lastMovedTo + FIELD_SIZE) * BITS_PER_FIELD + offset);
     }
     if (coordinates.y != 0) {
-        possibleCatpure |= field._Unchecked_test((lastMovedTo - FIELD_SIZE) * BITS_PER_FIELD + offset);
+        possibleCatpure |=
+            field._Unchecked_test((lastMovedTo - FIELD_SIZE) * BITS_PER_FIELD + offset);
     }
     return possibleCatpure;
 }

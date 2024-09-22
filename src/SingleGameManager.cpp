@@ -5,10 +5,10 @@
 #include "SingleGameManager.hpp"
 
 SingleGameManager::SingleGameManager(Game game, std::unique_ptr<Player> attackingPlayer,
-                                     std::unique_ptr<Player> defendingPlayer, bool commandLineOuptut)
+                                     std::unique_ptr<Player> defendingPlayer,
+                                     bool commandLineOuptut)
     : m_game(std::move(game)), m_attackingPlayer(std::move(attackingPlayer)),
-      m_defendingPlayer(std::move(defendingPlayer)), m_commandLineOuptut(commandLineOuptut) {
-}
+      m_defendingPlayer(std::move(defendingPlayer)), m_commandLineOuptut(commandLineOuptut) {}
 
 auto SingleGameManager::run() -> Winner {
     Winner winner = Winner::NoWinner;

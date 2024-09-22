@@ -1,8 +1,8 @@
 #include <memory>
 
-#include "PlayerFactory.hpp"
 #include "Human.hpp"
 #include "Negamax.hpp"
+#include "PlayerFactory.hpp"
 #include "RandomMovesGenerator.hpp"
 
 constexpr unsigned int oneSecond = 1000;
@@ -17,10 +17,10 @@ auto PlayerFactory::createAttacker() const -> std::unique_ptr<Player> {
 auto PlayerFactory::createDefender() const -> std::unique_ptr<Player> {
     return create(m_playerCreationArguments.defender);
 }
-auto PlayerFactory::create(const std::string& identifier) const -> std::unique_ptr<Player> {
+auto PlayerFactory::create(const std::string &identifier) const -> std::unique_ptr<Player> {
     if (identifier == "human") {
         return std::make_unique<Human>();
-    } 
+    }
     if (identifier == "random") {
         return std::make_unique<RandomMovesGenerator>();
     }

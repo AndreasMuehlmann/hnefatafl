@@ -2,9 +2,9 @@
 #include <iostream>
 #include <optional>
 
-#include "Perft.hpp"
 #include "AvailableMovesGenerator.hpp"
 #include "GameUtils.hpp"
+#include "Perft.hpp"
 
 Perft::Perft(unsigned int maxDepth) : m_maxDepth(maxDepth) {}
 
@@ -14,7 +14,9 @@ auto Perft::perft(Game game) const -> void {
     unsigned long sumMoveCounts = 0;
     while (true) {
         auto moveOption = availableMovesGenerator.next();
-        if (moveOption == std::nullopt) { break; }
+        if (moveOption == std::nullopt) {
+            break;
+        }
         game.makeMove(*moveOption);
         const auto moveCount = perftHelper(game, m_maxDepth - 1);
         game.unmakeMove();
@@ -28,7 +30,7 @@ auto Perft::perft(Game game) const -> void {
     std::cout << "Elapsed time: " << duration.count() << " µ" << '\n';
 }
 
-auto Perft::perftHelper(Game& game, unsigned int depth) -> unsigned long {
+auto Perft::perftHelper(Game &game, unsigned int depth) -> unsigned long {
     if (depth == 0) {
         return 1;
     }
@@ -37,7 +39,9 @@ auto Perft::perftHelper(Game& game, unsigned int depth) -> unsigned long {
     unsigned long sumMoveCounts = 0;
     while (true) {
         auto moveOption = availableMovesGenerator.next();
-        if (moveOption == std::nullopt) { break; }
+        if (moveOption == std::nullopt) {
+            break;
+        }
         game.makeMove(*moveOption);
         sumMoveCounts += perftHelper(game, depth - 1);
         game.unmakeMove();

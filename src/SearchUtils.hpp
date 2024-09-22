@@ -1,3 +1,3 @@
 #include "Game.hpp"
 
-auto evaluate(Game& game) -> int;
+auto evaluate(Game &game) -> int;

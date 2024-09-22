@@ -215,7 +215,8 @@ TEST_CASE("Check if figurs are captured correctly", "[makeMove]") {
     };
     Game game(field, false);
 
-    REQUIRE(game.makeMove({coordinatesToPosition({2, 3}), coordinatesToPosition({2, 2})}) == Winner::NoWinner);
+    REQUIRE(game.makeMove({coordinatesToPosition({2, 3}), coordinatesToPosition({2, 2})}) ==
+            Winner::NoWinner);
     REQUIRE(game.getFigurAt(coordinatesToPosition({3, 2})) == Figur::NoFigur);
     REQUIRE(game.getFigurAt(coordinatesToPosition({4, 2})) == Figur::NoFigur);
     REQUIRE(game.getFigurAt(coordinatesToPosition({5, 2})) == Figur::Guard);
@@ -235,7 +236,8 @@ TEST_CASE("Check if king is captured", "[makeMove]") {
     };
     Game game(field, true);
 
-    REQUIRE(game.makeMove({coordinatesToPosition({2, 3}), coordinatesToPosition({2, 2})}) == Winner::Attacker);
+    REQUIRE(game.makeMove({coordinatesToPosition({2, 3}), coordinatesToPosition({2, 2})}) ==
+            Winner::Attacker);
     REQUIRE(game.getFigurAt(coordinatesToPosition({3, 2})) == Figur::NoFigur);
     REQUIRE(game.getFigurAt(coordinatesToPosition({4, 2})) == Figur::NoFigur);
     REQUIRE(game.getFigurAt(coordinatesToPosition({5, 2})) == Figur::Wiking);
@@ -257,7 +259,8 @@ TEST_CASE("Check if king can take part in a capture", "[makeMove]") {
     };
     Game game(field, false);
 
-    REQUIRE(game.makeMove({coordinatesToPosition({2, 1}), coordinatesToPosition({3, 1})}) == Winner::NoWinner);
+    REQUIRE(game.makeMove({coordinatesToPosition({2, 1}), coordinatesToPosition({3, 1})}) ==
+            Winner::NoWinner);
     REQUIRE(game.getFigurAt(coordinatesToPosition({3, 2})) == Figur::NoFigur);
     REQUIRE(game.getFigurAt(coordinatesToPosition({3, 3})) == Figur::NoFigur);
     REQUIRE(game.getFigurAt(coordinatesToPosition({3, 4})) == Figur::NoFigur);
@@ -278,7 +281,8 @@ TEST_CASE("Check if king is not captured in the castle", "[makeMove]") {
     };
     Game game(field, true);
 
-    REQUIRE(game.makeMove({coordinatesToPosition({5, 3}), coordinatesToPosition({5, 4})}) == Winner::NoWinner);
+    REQUIRE(game.makeMove({coordinatesToPosition({5, 3}), coordinatesToPosition({5, 4})}) ==
+            Winner::NoWinner);
     REQUIRE(game.getFigurAt(coordinatesToPosition({4, 4})) == Figur::King);
 }
 
@@ -296,7 +300,8 @@ TEST_CASE("Check if king is not captured next to the castle", "[makeMove]") {
     };
     Game game(field, true);
 
-    REQUIRE(game.makeMove({coordinatesToPosition({4, 5}), coordinatesToPosition({5, 5})}) == Winner::NoWinner);
+    REQUIRE(game.makeMove({coordinatesToPosition({4, 5}), coordinatesToPosition({5, 5})}) ==
+            Winner::NoWinner);
     REQUIRE(game.getFigurAt(coordinatesToPosition({5, 4})) == Figur::King);
 }
 
@@ -314,10 +319,12 @@ TEST_CASE("Check if figurs are captured next to castle", "[makeMove]") {
     };
     Game game(field, true);
 
-    REQUIRE(game.makeMove({coordinatesToPosition({3, 6}), coordinatesToPosition({4, 6})}) == Winner::NoWinner);
+    REQUIRE(game.makeMove({coordinatesToPosition({3, 6}), coordinatesToPosition({4, 6})}) ==
+            Winner::NoWinner);
     REQUIRE(game.getFigurAt(coordinatesToPosition({4, 5})) == Figur::NoFigur);
 
-    REQUIRE(game.makeMove({coordinatesToPosition({6, 3}), coordinatesToPosition({6, 4})}) == Winner::NoWinner);
+    REQUIRE(game.makeMove({coordinatesToPosition({6, 3}), coordinatesToPosition({6, 4})}) ==
+            Winner::NoWinner);
     REQUIRE(game.getFigurAt(coordinatesToPosition({5, 4})) == Figur::NoFigur);
 }
 

@@ -31,7 +31,6 @@ auto main(int argc, char *argv[]) -> int {
         .store_into(playerCreationArguments.timeToThink)
         .help("Pass who should be the defender, so the player with the king.");
 
-
     program.add_argument("--printAvailablePlayers")
         .store_into(printAvailablePlayers)
         .help("Prints all player types that can be used.");
@@ -45,7 +44,8 @@ auto main(int argc, char *argv[]) -> int {
         .scan<'i', unsigned int>()
         .store_into(games)
         .help("Run players play the passed amount of games against each other."
-              "If more than one game is played the command line output is disabled and in the end a summary is printed.");
+              "If more than one game is played the command line output is disabled and in the end "
+              "a summary is printed.");
 
     try {
         program.parse_args(argc, argv);
@@ -90,7 +90,8 @@ auto main(int argc, char *argv[]) -> int {
     PlayerFactory playerFactory(playerCreationArguments);
     if (games == 1) {
         Game game;
-        SingleGameManager singleGameManager(game, playerFactory.createAttacker(), playerFactory.createDefender(), true);
+        SingleGameManager singleGameManager(game, playerFactory.createAttacker(),
+                                            playerFactory.createDefender(), true);
         singleGameManager.run();
     } else {
         MultipleGameManager multipleGameManager(playerFactory, games);

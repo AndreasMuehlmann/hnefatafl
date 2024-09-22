@@ -45,7 +45,9 @@ auto Game::construct() -> void {
 }
 
 auto Game::getFigurAt(Position position) const -> Figur {
-    return static_cast<Figur>((static_cast<uint8_t>(m_field._Unchecked_test(position * BITS_PER_FIELD + 1)) << 1) + static_cast<uint8_t>(m_field._Unchecked_test(position * BITS_PER_FIELD)));
+    return static_cast<Figur>(
+        (static_cast<uint8_t>(m_field._Unchecked_test(position * BITS_PER_FIELD + 1)) << 1) +
+        static_cast<uint8_t>(m_field._Unchecked_test(position * BITS_PER_FIELD)));
 }
 
 auto Game::getKingPosition() const -> Position {
@@ -59,7 +61,9 @@ auto Game::setKingPosition(Position position) -> void {
     m_field |= kingPosition << FIELDS * BITS_PER_FIELD;
 }
 
-auto Game::areAttackersToMove() const -> bool { return m_field._Unchecked_test(INDEX_WIKINGS_TO_MOVE_FLAG); }
+auto Game::areAttackersToMove() const -> bool {
+    return m_field._Unchecked_test(INDEX_WIKINGS_TO_MOVE_FLAG);
+}
 
 auto Game::getInternalField() const -> InternalField { return m_field; }
 
@@ -95,7 +99,9 @@ auto Game::validMove(Move m) const -> std::string {
     AvailableMovesGenerator availableMovesGenerator(*this);
     while (true) {
         auto moveOption = availableMovesGenerator.next();
-        if (moveOption == std::nullopt) { break; }
+        if (moveOption == std::nullopt) {
+            break;
+        }
         if (m.from == moveOption->from && m.to == moveOption->to) {
             return "";
         }
@@ -136,10 +142,18 @@ auto Game::updateField(Position lastMovedTo) -> bool {
     if (!possibleCapture(m_field, lastMovedTo, areAttackersToMove())) {
         return false;
     }
-    if (capture(lastMovedTo, 1)) { return true; }
-    if (capture(lastMovedTo, -1)) { return true; }
-    if (capture(lastMovedTo, static_cast<int>(FIELD_SIZE))) { return true; }
-    if (capture(lastMovedTo, -static_cast<int>(FIELD_SIZE))) { return true; }
+    if (capture(lastMovedTo, 1)) {
+        return true;
+    }
+    if (capture(lastMovedTo, -1)) {
+        return true;
+    }
+    if (capture(lastMovedTo, static_cast<int>(FIELD_SIZE))) {
+        return true;
+    }
+    if (capture(lastMovedTo, -static_cast<int>(FIELD_SIZE))) {
+        return true;
+    }
     return false;
 }
 
@@ -152,52 +166,63 @@ auto Game::capture(Position lastMovedTo, int shift) -> bool {
     InternalField mask;
     if (areAttackersToMove()) {
         bool capturingKing = false;
-        for (int position = lastMovedTo + shift; 0 < position && position < static_cast<int>(FIELDS); position += shift) {
+        for (int position = lastMovedTo + shift;
+             0 < position && position < static_cast<int>(FIELDS); position += shift) {
             Figur figur = getFigurAt(static_cast<Position>(position));
             if (position == FIELDS / 2) {
-                if (figur == Figur::King) { 
-                    return maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_IN_CASTLE, MASK_AROUND_CASTLE);
+                if (figur == Figur::King) {
+                    return maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_IN_CASTLE,
+                                                      MASK_AROUND_CASTLE);
                 }
                 m_field &= ~mask;
                 return capturingKing;
             }
-            if (figur == Figur::NoFigur) { return false; }
+            if (figur == Figur::NoFigur) {
+                return false;
+            }
             if (figur == Figur::Wiking) {
                 m_field &= ~mask;
                 return capturingKing;
             };
-            if (figur == Figur::King) { 
+            if (figur == Figur::King) {
                 if (position == FIELDS / 2 + 1) {
-                    return maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_RIGHT_CASTLE, MASK_RIGHT_CASTLE);
+                    return maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_RIGHT_CASTLE,
+                                                      MASK_RIGHT_CASTLE);
                 }
                 if (position == FIELDS / 2 - 1) {
-                    return maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_LEFT_CASTLE, MASK_LEFT_CASTLE);
+                    return maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_LEFT_CASTLE,
+                                                      MASK_LEFT_CASTLE);
                 }
                 if (position == FIELDS / 2 + FIELD_SIZE) {
-                    return maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_BELOW_CASTLE, MASK_BELOW_CASTLE);
+                    return maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_BELOW_CASTLE,
+                                                      MASK_BELOW_CASTLE);
                 }
                 if (position == FIELDS / 2 - FIELD_SIZE) {
-                    return maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_ABOVE_CASTLE, MASK_ABOVE_CASTLE);
+                    return maskedFieldMatchesPosition(m_field, MASK_KING_SURROUNDED_ABOVE_CASTLE,
+                                                      MASK_ABOVE_CASTLE);
                 }
                 capturingKing = true;
             }
             mask |= maskForPosition(lastMovedTo);
-            mask = bitShift(mask, static_cast<uint8_t>(absShift * BITS_PER_FIELD)) ;
+            mask = bitShift(mask, static_cast<uint8_t>(absShift * BITS_PER_FIELD));
         }
     } else {
-        for (int position = lastMovedTo + shift; 0 < position && position < static_cast<int>(FIELDS); position += shift) {
+        for (int position = lastMovedTo + shift;
+             0 < position && position < static_cast<int>(FIELDS); position += shift) {
             Figur figur = getFigurAt(static_cast<Position>(position));
             if (position == FIELDS / 2) {
                 m_field &= ~mask;
                 return false;
             }
-            if (figur == Figur::NoFigur) { return false; }
+            if (figur == Figur::NoFigur) {
+                return false;
+            }
             if (figur == Figur::Guard || figur == Figur::King) {
                 m_field &= ~mask;
                 return false;
             };
             mask |= maskForPosition(lastMovedTo);
-            mask = bitShift(mask, static_cast<uint8_t>(absShift * BITS_PER_FIELD)) ;
+            mask = bitShift(mask, static_cast<uint8_t>(absShift * BITS_PER_FIELD));
         }
     }
     return false;
