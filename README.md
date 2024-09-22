@@ -22,3 +22,14 @@ Run `git-clang-format` to format modified files before commiting them or run `cl
 ## TODO
 
 - reimplement draw only with the history for the current move
+
+Cannot move because figur is in the way.
+_ _ _ _ _ _ _ _ _ 
+_ _ _ _ _ _ _ _ _ 
+_ _ _ _ _ _ _ _ _ 
+_ _ _ _ _ _ _ _ _ 
+_ _ _ _ _ _ g g _ 
+w _ _ _ _ _ _ _ _ 
+_ _ _ _ g _ _ g _ 
+_ _ _ k _ _ _ _ _ 
+_ _ _ _ _ _ _ _ _ 

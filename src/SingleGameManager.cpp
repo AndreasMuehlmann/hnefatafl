@@ -13,6 +13,7 @@ SingleGameManager::SingleGameManager(Game game, std::unique_ptr<Player> attackin
 auto SingleGameManager::run() -> Winner {
     Winner winner = Winner::NoWinner;
     while (winner == Winner::NoWinner) {
+        m_game.printField();
         Move move{};
         if (m_game.areAttackersToMove()) {
             move = m_attackingPlayer->getMove(m_game);

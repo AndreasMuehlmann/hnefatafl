@@ -4,8 +4,8 @@
 
 #include "AvailableMovesGenerator.hpp"
 #include "Game.hpp"
-#include "GameUtils.hpp"
 #include "Negamax.hpp"
+#include "GameUtils.hpp"
 #include "SearchUtils.hpp"
 
 Negamax::Negamax(unsigned int thinkingTimeMs)
@@ -24,21 +24,37 @@ auto Negamax::getMove(const Game &game) -> Move {
             break;
         }
         Game localGame = game;
-        std::cout << "depth: " << depth << '\n';
         const EvaluatedMove evaluatedMove = negamax(localGame, {FIELDS, FIELDS}, depth);
         bestEvaluatedMove = evaluatedMove;
     }
-    printMove(bestEvaluatedMove.move);
     return bestEvaluatedMove.move;
 }
 
 auto Negamax::negamax(Game &game, Move move, unsigned int depth) -> EvaluatedMove {
     if (move.from != FIELDS) {
-        game.makeMove(move);
+        Winner winner = game.makeMove(move);
+        if (winner == Winner::Attacker) {
+            return {move, std::numeric_limits<int>::max() - 1};
+        } 
+        if (winner == Winner::Defender) {
+            return {move, std::numeric_limits<int>::min() + 1};
+        } 
+        if (winner == Winner::Draw) {
+            return {move, 0};
+        } 
     }
     if (depth == 0) {
         return {move, evaluate(game)};
     };
+
+    auto duration =
+        std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - m_searchStart);
+    if (duration.count() > m_thinkingTimeMs) {
+        EvaluatedMove evaluatedMove{};
+        evaluatedMove.evaluation = std::numeric_limits<int>::min();
+        return evaluatedMove; 
+    }
+
     EvaluatedMove bestEvaluatedMove{};
     bestEvaluatedMove.evaluation = std::numeric_limits<int>::min();
     AvailableMovesGenerator availableMovesGenerator(game);
@@ -47,12 +63,15 @@ auto Negamax::negamax(Game &game, Move move, unsigned int depth) -> EvaluatedMov
         if (moveOption == std::nullopt) {
             break;
         }
+        printMove(*moveOption);
         EvaluatedMove evaluatedMove = negamax(game, *moveOption, depth - 1);
+        evaluatedMove.evaluation *= -1;
+        std::cout << evaluatedMove.evaluation << '\n'; 
         game.unmakeMove();
         if (evaluatedMove.evaluation > bestEvaluatedMove.evaluation) {
-            bestEvaluatedMove = evaluatedMove;
+            bestEvaluatedMove.move = *moveOption;
+            bestEvaluatedMove.evaluation = evaluatedMove.evaluation;
         }
     }
-    bestEvaluatedMove.evaluation *= -1;
     return bestEvaluatedMove;
 }
