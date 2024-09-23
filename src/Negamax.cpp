@@ -10,8 +10,8 @@
 #include "Move.hpp"
 #include "SearchUtils.hpp"
 
-constexpr int winning_value = 10000;
-constexpr int time_over = 20000;
+constexpr int WINNING_VALUE = 10000;
+constexpr int ALPHA_BETA_VALUE = 100000;
 
 Negamax::Negamax(unsigned int thinkingTimeMs)
     : m_thinkingTimeMs(thinkingTimeMs), m_maxDepth(std::numeric_limits<unsigned int>::max()) {}
@@ -29,31 +29,32 @@ auto Negamax::getMove(const Game &game) -> Move {
             break;
         }
         Game localGame = game;
-        const EvaluatedMove evaluatedMove = negamax(localGame, {FIELDS, FIELDS}, depth);
+        const EvaluatedMove evaluatedMove = negamax(localGame, {FIELDS, FIELDS}, depth, -ALPHA_BETA_VALUE, ALPHA_BETA_VALUE);
         auto durationAfterSearch =
             std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - m_searchStart);
         if (durationAfterSearch.count() > m_thinkingTimeMs) {
             break;
         }
-        //std::cout << "depth: " << depth << '\n';
-        //std::cout << "eval: " << evaluatedMove.evaluation << '\n';
-        if (abs(evaluatedMove.evaluation) == winning_value) { 
+        std::cout << "depth: " << depth << '\n';
+        if (abs(evaluatedMove.evaluation) == WINNING_VALUE) { 
             return evaluatedMove.move;
         }
         bestEvaluatedMove = evaluatedMove;
     }
+
+    std::cout << "evaluation: " << bestEvaluatedMove.evaluation << '\n';
     return bestEvaluatedMove.move;
 }
 
-auto Negamax::negamax(Game &game, Move move, unsigned int depth) -> EvaluatedMove {
+auto Negamax::negamax(Game &game, Move move, unsigned int depth, int alpha, int beta) -> EvaluatedMove {
     if (move.from != FIELDS) {
         Winner winner = game.makeMove(move);
         int sign = (game.areAttackersToMove()) ? 1 : -1;
         if (winner == Winner::Attacker) {
-            return {move, sign * winning_value};
+            return {move, sign * WINNING_VALUE};
         } 
         if (winner == Winner::Defender) {
-            return {move, -sign * winning_value};
+            return {move, -sign * WINNING_VALUE};
         } 
         if (winner == Winner::Draw) {
             return {move, 0};
@@ -78,12 +79,18 @@ auto Negamax::negamax(Game &game, Move move, unsigned int depth) -> EvaluatedMov
         if (moveOption == std::nullopt) {
             break;
         }
-        EvaluatedMove evaluatedMove = negamax(game, *moveOption, depth - 1);
+        EvaluatedMove evaluatedMove = negamax(game, *moveOption, depth - 1, -alpha, -beta);
         evaluatedMove.evaluation *= -1;
         game.unmakeMove();
         if (evaluatedMove.evaluation > bestEvaluatedMove.evaluation) {
             bestEvaluatedMove.move = *moveOption;
             bestEvaluatedMove.evaluation = evaluatedMove.evaluation;
+            if (evaluatedMove.evaluation > alpha) {
+                alpha = evaluatedMove.evaluation;
+            }
+        }
+        if (evaluatedMove.evaluation >= beta) {
+            return bestEvaluatedMove;
         }
     }
     return bestEvaluatedMove;
