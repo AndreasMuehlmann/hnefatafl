@@ -1,4 +1,5 @@
 #include <chrono>
+#include <cstdlib>
 #include <limits>
 #include <iostream>
 
@@ -10,6 +11,7 @@
 #include "SearchUtils.hpp"
 
 constexpr int winning_value = 10000;
+constexpr int time_over = 20000;
 
 Negamax::Negamax(unsigned int thinkingTimeMs)
     : m_thinkingTimeMs(thinkingTimeMs), m_maxDepth(std::numeric_limits<unsigned int>::max()) {}
@@ -28,9 +30,14 @@ auto Negamax::getMove(const Game &game) -> Move {
         }
         Game localGame = game;
         const EvaluatedMove evaluatedMove = negamax(localGame, {FIELDS, FIELDS}, depth);
+        auto durationAfterSearch =
+            std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - m_searchStart);
+        if (durationAfterSearch.count() > m_thinkingTimeMs) {
+            break;
+        }
         //std::cout << "depth: " << depth << '\n';
         //std::cout << "eval: " << evaluatedMove.evaluation << '\n';
-        if (evaluatedMove.evaluation == winning_value) { 
+        if (abs(evaluatedMove.evaluation) == winning_value) { 
             return evaluatedMove.move;
         }
         bestEvaluatedMove = evaluatedMove;
@@ -60,7 +67,6 @@ auto Negamax::negamax(Game &game, Move move, unsigned int depth) -> EvaluatedMov
         std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - m_searchStart);
     if (duration.count() > m_thinkingTimeMs) {
         EvaluatedMove evaluatedMove{};
-        evaluatedMove.evaluation = std::numeric_limits<int>::min();
         return evaluatedMove; 
     }
 
