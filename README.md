@@ -23,6 +23,7 @@ Run `git-clang-format` to format modified files before commiting them or run `cl
 
 - In static evaluation it matters who was to move first initially and not at depth 0  
 - To remove checks for who is to move, cache the value in game
+- Don't use move when thinking time is over
 - reimplement draw only with the history for the current move and check if no move is available
 
 

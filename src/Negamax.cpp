@@ -5,6 +5,8 @@
 #include "AvailableMovesGenerator.hpp"
 #include "Game.hpp"
 #include "Negamax.hpp"
+#include "GameUtils.hpp"
+#include "Move.hpp"
 #include "SearchUtils.hpp"
 
 constexpr int winning_value = 10000;
@@ -26,7 +28,7 @@ auto Negamax::getMove(const Game &game) -> Move {
         }
         Game localGame = game;
         const EvaluatedMove evaluatedMove = negamax(localGame, {FIELDS, FIELDS}, depth);
-        std::cout << "depth: " << depth << '\n';
+        //std::cout << "depth: " << depth << '\n';
         //std::cout << "eval: " << evaluatedMove.evaluation << '\n';
         if (evaluatedMove.evaluation == winning_value) { 
             return evaluatedMove.move;
@@ -39,11 +41,12 @@ auto Negamax::getMove(const Game &game) -> Move {
 auto Negamax::negamax(Game &game, Move move, unsigned int depth) -> EvaluatedMove {
     if (move.from != FIELDS) {
         Winner winner = game.makeMove(move);
+        int sign = (game.areAttackersToMove()) ? 1 : -1;
         if (winner == Winner::Attacker) {
-            return {move, winning_value};
+            return {move, sign * winning_value};
         } 
         if (winner == Winner::Defender) {
-            return {move, -winning_value};
+            return {move, -sign * winning_value};
         } 
         if (winner == Winner::Draw) {
             return {move, 0};

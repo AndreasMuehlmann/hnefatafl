@@ -114,6 +114,7 @@ auto Game::makeMove(Move m) -> Winner {
     m_history.push_back(m_field);
     move(m);
     if (updateField(m.to)) {
+        m_field._Unchecked_flip(INDEX_WIKINGS_TO_MOVE_FLAG);
         return Winner::Attacker;
     };
     Winner winner = whoWon(m.to);

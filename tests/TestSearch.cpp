@@ -47,7 +47,7 @@ TEST_CASE("Test if king makes winning move", "[getMove]") {
         std::array<Figur, FIELD_SIZE>{_, w, _, _, _, _, _, w, _},
     };
     Game game(field, false);
-    Negamax negamax(MAX_THINKING_TIME, 3);
+    Negamax negamax(MAX_THINKING_TIME, 1);
     Move move = negamax.getMove(game);
     Coordinates from = positionToCoordinates(move.from);
     Coordinates to = positionToCoordinates(move.to);
@@ -59,15 +59,15 @@ TEST_CASE("Test if king makes winning move", "[getMove]") {
 
 TEST_CASE("Test if wiking makes winning move", "[getMove]") {
     constexpr Field field = {
-        std::array<Figur, FIELD_SIZE>{_, w, w, w, w, w, w, w, _},
-        std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, _, w},
-        std::array<Figur, FIELD_SIZE>{w, _, _, _, g, _, g, _, w},
-        std::array<Figur, FIELD_SIZE>{w, _, k, w, _, g, _, _, w},
-        std::array<Figur, FIELD_SIZE>{w, w, _, _, _, _, g, _, w},
-        std::array<Figur, FIELD_SIZE>{w, _, g, g, g, w, _, _, w},
-        std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, _, w},
-        std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, _, w},
-        std::array<Figur, FIELD_SIZE>{_, w, w, w, w, w, w, w, _},
+        std::array<Figur, FIELD_SIZE>{_, g, g, g, g, g, g, g, _},
+        std::array<Figur, FIELD_SIZE>{g, _, _, _, _, _, _, _, g},
+        std::array<Figur, FIELD_SIZE>{g, _, _, _, w, _, w, _, g},
+        std::array<Figur, FIELD_SIZE>{g, _, k, w, _, w, _, _, g},
+        std::array<Figur, FIELD_SIZE>{g, w, _, _, _, _, w, _, g},
+        std::array<Figur, FIELD_SIZE>{g, _, g, g, g, w, _, _, g},
+        std::array<Figur, FIELD_SIZE>{g, _, _, _, _, _, _, _, g},
+        std::array<Figur, FIELD_SIZE>{g, _, _, _, _, _, _, _, g},
+        std::array<Figur, FIELD_SIZE>{_, g, g, g, g, g, g, g, _},
     };
     Game game(field, true);
     Negamax negamax(MAX_THINKING_TIME, 3);
