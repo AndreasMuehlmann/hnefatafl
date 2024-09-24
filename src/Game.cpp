@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
+#include <optional>
 
 #include "AvailableMovesGenerator.hpp"
 #include "BitMasks.hpp"
@@ -122,6 +123,13 @@ auto Game::makeMove(Move m) -> Winner {
         winner = Winner::Draw;
     }
     m_field._Unchecked_flip(INDEX_WIKINGS_TO_MOVE_FLAG);
+    AvailableMovesGenerator availableMovesGenerator(*this);
+    if (availableMovesGenerator.next() == std::nullopt) {
+        if (areAttackersToMove()) {
+            return Winner::Defender;
+        }             
+        return Winner::Attacker;
+    }
     return winner;
 }
 
@@ -242,9 +250,20 @@ auto Game::whoWon(Position lastMovedTo) const -> Winner {
 }
 
 auto Game::draw() const -> bool {
-    // check if current position occured 3 times, ignore who is to move
-    // check if there is at least one move available
-
+    InternalField currentPosition = m_field;
+    currentPosition.reset(INDEX_WIKINGS_TO_MOVE_FLAG);
+    unsigned int occurencesCurrentPosition = 1;
+    for (size_t i = 0; i < m_history.size(); i++) {
+        InternalField previousPosition = m_history[m_history.size() - i - 1];
+        previousPosition.reset(INDEX_WIKINGS_TO_MOVE_FLAG);
+        if (currentPosition == previousPosition) {
+            occurencesCurrentPosition++;
+            if (occurencesCurrentPosition >= 3) {
+                return true;
+            }
+        }
+        
+    }
     return false;
 }
 

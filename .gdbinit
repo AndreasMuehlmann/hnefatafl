@@ -1,5 +1,4 @@
 set debuginfod enabled on
-break TestSearch.cpp:51
+break TestGame.cpp:456
 run
-step
 tui enable

@@ -184,8 +184,8 @@ TEST_CASE("Check for draw after three move repetions", "[makeMove]") {
 
     Position fromKing = coordinatesToPosition({6, 4});
     Position toKing = coordinatesToPosition({7, 4});
-    Position fromWiking = coordinatesToPosition({6, 4});
-    Position toWiking = coordinatesToPosition({7, 4});
+    Position fromWiking = coordinatesToPosition({6, 5});
+    Position toWiking = coordinatesToPosition({7, 5});
     Move moveKing = {fromKing, toKing};
     Move reversedMoveKing = {toKing, fromKing};
     Move moveWiking = {fromWiking, toWiking};
@@ -198,7 +198,8 @@ TEST_CASE("Check for draw after three move repetions", "[makeMove]") {
 
     REQUIRE(game.makeMove(moveWiking) == Winner::NoWinner);
     REQUIRE(game.makeMove(moveKing) == Winner::NoWinner);
-    REQUIRE(game.makeMove(reversedMoveWiking) == Winner::Draw);
+    REQUIRE(game.makeMove(reversedMoveWiking) == Winner::NoWinner);
+    REQUIRE(game.makeMove(reversedMoveKing) == Winner::Draw);
 }
 
 TEST_CASE("Check if figurs are captured correctly", "[makeMove]") {
@@ -209,7 +210,7 @@ TEST_CASE("Check if figurs are captured correctly", "[makeMove]") {
         std::array<Figur, FIELD_SIZE>{_, _, g, _, _, _, _, _, _},
         std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
         std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, w, _, _, _, _},
         std::array<Figur, FIELD_SIZE>{_, k, _, _, _, _, _, _, _},
         std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
     };
@@ -252,7 +253,7 @@ TEST_CASE("Check if king can take part in a capture", "[makeMove]") {
         std::array<Figur, FIELD_SIZE>{_, _, _, w, _, _, _, _, _},
         std::array<Figur, FIELD_SIZE>{_, _, _, w, _, _, _, _, _},
         std::array<Figur, FIELD_SIZE>{_, _, _, w, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, g, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, g, _, _, w, _, _},
         std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
         std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
         std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
@@ -417,4 +418,40 @@ TEST_CASE("Check unmake move", "[unmakeMove]") {
     game.unmakeMove();
 
     REQUIRE(initialField == game.getInternalField());
+}
+
+
+TEST_CASE("Check if attackers win when defenders don't have any available moves", "[makeMove]") {
+    constexpr Field field = {
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{w, w, w, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{g, k, w, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{g, g, _, w, _, _, _, _, _},
+    };
+    Game game(field, true);
+
+    REQUIRE(game.makeMove({coordinatesToPosition({3, 8}), coordinatesToPosition({2, 8})}) == Winner::Attacker);
+}
+
+
+TEST_CASE("Check if defenders win when attackers don't have any available moves", "[makeMove]") {
+    constexpr Field field = {
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, g, w, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, k, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+    };
+    Game game(field, false);
+
+    REQUIRE(game.makeMove({coordinatesToPosition({4, 3}), coordinatesToPosition({4, 2})}) == Winner::Defender);
 }

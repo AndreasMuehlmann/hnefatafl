@@ -3,6 +3,7 @@
 #include "Game.hpp"
 #include "GameUtils.hpp"
 #include "Move.hpp"
+#include <optional>
 
 AvailableMovesGenerator::AvailableMovesGenerator(const Game &game)
     : m_game(game), m_currentFigurPosition(0), m_positionDeltaIndex(0),
@@ -19,6 +20,7 @@ AvailableMovesGenerator::AvailableMovesGenerator(const Game &game)
 }
 
 auto AvailableMovesGenerator::next() -> std::optional<Move> {
+    if (!positionInBounds(m_currentFigurPosition)) { return std::nullopt; }
     while (true) {
         while ((0 < m_currentTargetPositionForMove &&
                 m_currentTargetPositionForMove < static_cast<int>(FIELDS)) &&

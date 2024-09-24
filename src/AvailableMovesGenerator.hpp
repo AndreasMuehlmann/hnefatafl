@@ -15,10 +15,10 @@ class AvailableMovesGenerator {
   public:
     AvailableMovesGenerator(const Game &game);
     auto next() -> std::optional<Move>;
-    auto nextFigur() -> bool;
-    auto reset() -> void;
 
   private:
+    auto nextFigur() -> bool;
+
     const Game &m_game;
     Position m_currentFigurPosition;
     std::size_t m_positionDeltaIndex;
