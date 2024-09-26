@@ -49,9 +49,11 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "DebugSan")
         src/Human.cpp
         src/RandomMovesGenerator.cpp
         src/Negamax.cpp
+        src/NegamaxNoAlphaBeta.cpp
         src/SearchUtils.cpp
         src/SingleGameManager.cpp
         src/MultipleGameManager.cpp
+        src/GameManagerUtils.cpp
         src/GameUtils.cpp
         src/Game.cpp
         src/AvailableMovesGenerator.cpp
@@ -74,6 +76,7 @@ add_executable(hnefatafl
     src/SearchUtils.cpp
     src/SingleGameManager.cpp
     src/MultipleGameManager.cpp
+    src/GameManagerUtils.cpp
     src/GameUtils.cpp
     src/Game.cpp
     src/AvailableMovesGenerator.cpp

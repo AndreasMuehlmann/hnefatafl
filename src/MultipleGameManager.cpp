@@ -4,17 +4,18 @@
 #include "Game.hpp"
 #include "MultipleGameManager.hpp"
 #include "SingleGameManager.hpp"
+#include "GameManagerUtils.hpp"
 #include "Utils.hpp"
 
-MultipleGameManager::MultipleGameManager(PlayerFactory playerFactory, size_t games)
-    : m_playerFactory(std::move(playerFactory)), m_games(games) {}
+MultipleGameManager::MultipleGameManager(PlayerFactory playerFactory, size_t games, size_t randomMoveDepthForStartState)
+    : m_playerFactory(std::move(playerFactory)), m_games(games), m_randomMoveDepthForStartState(randomMoveDepthForStartState) {}
 
 auto MultipleGameManager::run() const -> void {
     size_t attackerWins = 0;
     size_t defenderWins = 0;
     size_t draws = 0;
     for (size_t i = 0; i < m_games; i++) {
-        Game game;
+        Game game = createRandomGame(m_randomMoveDepthForStartState);
         SingleGameManager singleGameManager(game, m_playerFactory.createAttacker(),
                                             m_playerFactory.createDefender(), false);
         Winner winner = singleGameManager.run();
@@ -24,6 +25,9 @@ auto MultipleGameManager::run() const -> void {
             defenderWins++;
         } else {
             draws++;
+        }
+        if (i % (m_games / 4) == 0) {
+            std::cout << i + 1 << " game(s) played...\n";
         }
     }
 

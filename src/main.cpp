@@ -10,6 +10,7 @@
 #include "PlayerCreationArguments.hpp"
 #include "PlayerFactory.hpp"
 #include "SingleGameManager.hpp"
+#include "GameManagerUtils.hpp"
 
 auto main(int argc, char *argv[]) -> int {
     argparse::ArgumentParser program("hnefatafl", "v0.0.1");
@@ -18,6 +19,7 @@ auto main(int argc, char *argv[]) -> int {
     bool printAvailablePlayers = false;
     unsigned int perftDepth = 0;
     unsigned int games = 1;
+    unsigned int randomMoveDepthForStartState = 0;
 
     program.add_argument("-a", "--attacker")
         .store_into(playerCreationArguments.attacker)
@@ -46,6 +48,11 @@ auto main(int argc, char *argv[]) -> int {
         .help("Run players play the passed amount of games against each other."
               "If more than one game is played the command line output is disabled and in the end "
               "a summary is printed.");
+
+    program.add_argument("-r", "--random-start-state")
+        .scan<'i', unsigned int>()
+        .store_into(randomMoveDepthForStartState)
+        .help("Start the game with a given amount of random moves made.");
 
     try {
         program.parse_args(argc, argv);
@@ -86,12 +93,12 @@ auto main(int argc, char *argv[]) -> int {
 
     PlayerFactory playerFactory(playerCreationArguments);
     if (games == 1) {
-        Game game;
+        Game game = createRandomGame(randomMoveDepthForStartState);
         SingleGameManager singleGameManager(game, playerFactory.createAttacker(),
                                             playerFactory.createDefender(), true);
         singleGameManager.run();
     } else {
-        MultipleGameManager multipleGameManager(playerFactory, games);
+        MultipleGameManager multipleGameManager(playerFactory, games, randomMoveDepthForStartState);
         multipleGameManager.run();
     }
 }
