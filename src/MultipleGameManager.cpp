@@ -2,13 +2,15 @@
 #include <string>
 
 #include "Game.hpp"
+#include "GameManagerUtils.hpp"
 #include "MultipleGameManager.hpp"
 #include "SingleGameManager.hpp"
-#include "GameManagerUtils.hpp"
 #include "Utils.hpp"
 
-MultipleGameManager::MultipleGameManager(PlayerFactory playerFactory, size_t games, size_t randomMoveDepthForStartState)
-    : m_playerFactory(std::move(playerFactory)), m_games(games), m_randomMoveDepthForStartState(randomMoveDepthForStartState) {}
+MultipleGameManager::MultipleGameManager(PlayerFactory playerFactory, size_t games,
+                                         size_t randomMoveDepthForStartState)
+    : m_playerFactory(std::move(playerFactory)), m_games(games),
+      m_randomMoveDepthForStartState(randomMoveDepthForStartState) {}
 
 auto MultipleGameManager::run() const -> void {
     size_t attackerWins = 0;

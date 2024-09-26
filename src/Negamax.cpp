@@ -36,14 +36,14 @@ auto Negamax::getMove(const Game &game) -> Move {
         if (durationAfterSearch.count() > m_thinkingTimeMs) {
             break;
         }
-        //std::cout << "depth: " << depth << '\n';
+        // std::cout << "depth: " << depth << '\n';
         if (abs(evaluatedMove.evaluation) == WINNING_VALUE) {
             return evaluatedMove.move;
         }
         bestEvaluatedMove = evaluatedMove;
     }
 
-    //std::cout << "evaluation: " << bestEvaluatedMove.evaluation << '\n';
+    // std::cout << "evaluation: " << bestEvaluatedMove.evaluation << '\n';
     return bestEvaluatedMove.move;
 }
 

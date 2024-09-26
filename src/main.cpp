@@ -5,12 +5,12 @@
 
 #include <argparse/argparse.hpp>
 
+#include "GameManagerUtils.hpp"
 #include "MultipleGameManager.hpp"
 #include "Perft.hpp"
 #include "PlayerCreationArguments.hpp"
 #include "PlayerFactory.hpp"
 #include "SingleGameManager.hpp"
-#include "GameManagerUtils.hpp"
 
 auto main(int argc, char *argv[]) -> int {
     argparse::ArgumentParser program("hnefatafl", "v0.0.1");

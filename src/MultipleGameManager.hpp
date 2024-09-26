@@ -7,7 +7,8 @@ constexpr size_t TABLE_WIDTH = 20;
 class MultipleGameManager {
 
   public:
-    MultipleGameManager(PlayerFactory playerFactory, size_t games, size_t randomMoveDepthForStartState);
+    MultipleGameManager(PlayerFactory playerFactory, size_t games,
+                        size_t randomMoveDepthForStartState);
     auto run() const -> void;
 
   private:
