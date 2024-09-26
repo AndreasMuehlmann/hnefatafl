@@ -389,7 +389,6 @@ TEST_CASE("Check if move generator generates correct moves", "[next]") {
     REQUIRE(moveOption == std::nullopt);
 }
 
-
 TEST_CASE("Check unmake move", "[unmakeMove]") {
     constexpr Field field = {
         std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, _, _},
@@ -420,7 +419,6 @@ TEST_CASE("Check unmake move", "[unmakeMove]") {
     REQUIRE(initialField == game.getInternalField());
 }
 
-
 TEST_CASE("Check if attackers win when defenders don't have any available moves", "[makeMove]") {
     constexpr Field field = {
         std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
@@ -435,9 +433,9 @@ TEST_CASE("Check if attackers win when defenders don't have any available moves"
     };
     Game game(field, true);
 
-    REQUIRE(game.makeMove({coordinatesToPosition({3, 8}), coordinatesToPosition({2, 8})}) == Winner::Attacker);
+    REQUIRE(game.makeMove({coordinatesToPosition({3, 8}), coordinatesToPosition({2, 8})}) ==
+            Winner::Attacker);
 }
-
 
 TEST_CASE("Check if defenders win when attackers don't have any available moves", "[makeMove]") {
     constexpr Field field = {
@@ -453,5 +451,6 @@ TEST_CASE("Check if defenders win when attackers don't have any available moves"
     };
     Game game(field, false);
 
-    REQUIRE(game.makeMove({coordinatesToPosition({4, 3}), coordinatesToPosition({4, 2})}) == Winner::Defender);
+    REQUIRE(game.makeMove({coordinatesToPosition({4, 3}), coordinatesToPosition({4, 2})}) ==
+            Winner::Defender);
 }

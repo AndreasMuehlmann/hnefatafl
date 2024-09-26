@@ -20,7 +20,9 @@ AvailableMovesGenerator::AvailableMovesGenerator(const Game &game)
 }
 
 auto AvailableMovesGenerator::next() -> std::optional<Move> {
-    if (!positionInBounds(m_currentFigurPosition)) { return std::nullopt; }
+    if (!positionInBounds(m_currentFigurPosition)) {
+        return std::nullopt;
+    }
     while (true) {
         while ((0 < m_currentTargetPositionForMove &&
                 m_currentTargetPositionForMove < static_cast<int>(FIELDS)) &&

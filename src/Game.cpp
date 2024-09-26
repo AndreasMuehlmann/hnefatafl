@@ -127,7 +127,7 @@ auto Game::makeMove(Move m) -> Winner {
     if (availableMovesGenerator.next() == std::nullopt) {
         if (areAttackersToMove()) {
             return Winner::Defender;
-        }             
+        }
         return Winner::Attacker;
     }
     return winner;
@@ -262,7 +262,6 @@ auto Game::draw() const -> bool {
                 return true;
             }
         }
-        
     }
     return false;
 }

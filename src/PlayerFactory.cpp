@@ -30,5 +30,11 @@ auto PlayerFactory::create(const std::string &identifier) const -> std::unique_p
         }
         return std::make_unique<Negamax>(oneSecond);
     }
+    if (identifier == "negamaxnoalphabeta") {
+        if (m_playerCreationArguments.timeToThink != 0) {
+            return std::make_unique<Negamax>(m_playerCreationArguments.timeToThink);
+        }
+        return std::make_unique<Negamax>(oneSecond);
+    }
     throw std::invalid_argument("Given identifier is in availablePlayers but not handled.");
 }

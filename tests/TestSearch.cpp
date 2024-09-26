@@ -33,7 +33,6 @@ TEST_CASE("Test if king captures two wikings", "[getMove]") {
     REQUIRE(to.y == 6);
 }
 
-
 TEST_CASE("Test if king makes winning move", "[getMove]") {
     constexpr Field field = {
         std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},

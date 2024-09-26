@@ -55,11 +55,8 @@ auto main(int argc, char *argv[]) -> int {
         return 1;
     }
 
-    std::unordered_set<std::string> availablePlayers = {
-        "human",
-        "random",
-        "negamax",
-    };
+    std::unordered_set<std::string> availablePlayers = {"human", "random", "negamax",
+                                                        "negamaxnoalphabeta"};
 
     if (printAvailablePlayers) {
         std::cout << "Available players: \n";
