@@ -21,62 +21,12 @@ Run `git-clang-format` to format modified files before commiting them or run `cl
 
 ## TODO
 
-- In static evaluation it matters who was to move first initially and not at depth 0  
-- To remove checks for who is to move, cache the value in game
-- Don't use move when thinking time is over
-- reimplement draw only with the history for the current move and check if no move is available
+- Add a verbose flag
+- Use not an EvaluatedMovePath but just a MovePath and use the returned evaluation, don't pass a move
+- Reimplement negamax with returning score and pass move back up with PrincipalVariation
+- Reimplement checking for draw with unordered_map and custom fast hashing function
+- Use .value() for getting value from option instead of deref, and has_value() for checking
 
 
 ## Testcases
 
-```
-_ _ _ _ w _ _ _ _
-_ _ _ _ w w _ _ _
-_ _ _ g _ _ _ _ _
-_ _ _ w _ g _ _ w
-w w g g k g g w w
-w _ _ _ g _ _ _ w
-_ _ _ _ g _ _ _ _
-_ _ _ _ w _ _ _ _
-_ _ _ w w w _ _ _
-depth: 1
-depth: 2
-depth: 3
-_ _ _ _ w _ _ _ _
-_ _ _ _ w w _ _ _
-_ _ _ g k _ _ _ _
-_ _ _ w _ g _ _ w
-w w g g _ g g w w
-w _ _ _ g _ _ _ w
-_ _ _ _ g _ _ _ _
-_ _ _ _ w _ _ _ _
-_ _ _ w w w _ _ _
-```
-
-```
-Probably not important cause availablemovegenerator wasn't working
-Why not capture the king
-_ _ _ _ _ _ _ _ w 
-_ _ _ w w _ _ _ w 
-_ _ _ _ _ _ _ _ g 
-_ _ w _ _ _ _ _ w 
-w w _ _ _ k g g w 
-_ _ w g g g _ _ w 
-_ _ _ _ g _ _ w _ 
-_ _ _ _ w _ _ _ _ 
-_ _ _ w w w _ _ _ 
-```
-
-```
-Probably not important cause availablemovegenerator wasn't working
-Why not take the three guards
-_ _ _ _ _ _ w _ _ 
-_ _ _ w w _ _ _ w 
-_ _ _ _ _ _ _ _ g 
-_ _ w _ _ _ g _ w 
-w w _ _ _ k g _ w 
-_ _ w g g g _ _ w 
-_ _ _ _ g _ _ w _ 
-_ _ _ _ w _ _ _ _ 
-_ _ _ w w w _ _ _ 
-```
