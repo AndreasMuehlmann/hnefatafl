@@ -15,8 +15,10 @@ auto SingleGameManager::run() -> Winner {
     while (winner == Winner::NoWinner) {
         Move move{};
         if (m_game.areAttackersToMove()) {
+            //std::cout << "Attackers to move.\n";
             move = m_attackingPlayer->getMove(m_game);
         } else {
+            //std::cout << "Defenders to move.\n";
             move = m_defendingPlayer->getMove(m_game);
         }
         std::string error = m_game.validMove(move);
@@ -25,6 +27,7 @@ auto SingleGameManager::run() -> Winner {
             continue;
         }
         winner = m_game.makeMove(move);
+        m_game.printField();
     }
 
     if (m_commandLineOuptut) {

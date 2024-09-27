@@ -19,3 +19,4 @@ auto bitShiftLeft(const InternalField &field, uint8_t shift) -> InternalField;
 auto bitShiftRight(const InternalField &field, uint8_t shift) -> InternalField;
 auto possibleCapture(const InternalField &field, Position lastMovedTo,
                      bool attackersToMove) -> bool;
+auto isDifferentRow(Position position1, Position position2) -> bool;

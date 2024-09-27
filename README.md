@@ -78,3 +78,52 @@ _ _ _ _ g _ _ _ _
 _ _ _ _ w _ _ _ _
 _ _ _ w w w _ _ _
 ```
+
+```
+Wiking captures guard to the side
+_ _ _ w w w _ _ _ 
+_ _ _ _ w _ _ _ _ 
+w _ _ _ g _ _ _ _ 
+g _ _ _ _ _ _ _ w 
+_ _ g g k g g w w 
+_ w _ _ g _ _ _ w 
+g _ _ _ _ _ _ _ _ 
+_ _ _ _ w _ _ _ _ 
+_ _ _ w w w _ _ _ 
+evaluation: 1
+_ _ _ w w w _ _ _ 
+_ _ _ _ w _ _ _ _ 
+w _ _ _ g _ _ _ _ 
+g _ _ _ _ _ _ _ w 
+_ _ g g k g g w w 
+_ _ _ _ g _ _ _ w 
+_ w _ _ _ _ _ _ _ 
+_ _ _ _ w _ _ _ _ 
+_ _ _ w w w _ _ _ 
+```
+
+```
+Why not capture the king
+_ _ _ _ _ _ _ _ w 
+_ _ _ w w _ _ _ w 
+_ _ _ _ _ _ _ _ g 
+_ _ w _ _ _ _ _ w 
+w w _ _ _ k g g w 
+_ _ w g g g _ _ w 
+_ _ _ _ g _ _ w _ 
+_ _ _ _ w _ _ _ _ 
+_ _ _ w w w _ _ _ 
+```
+
+```
+Why not take the three guards
+_ _ _ _ _ _ w _ _ 
+_ _ _ w w _ _ _ w 
+_ _ _ _ _ _ _ _ g 
+_ _ w _ _ _ g _ w 
+w w _ _ _ k g _ w 
+_ _ w g g g _ _ w 
+_ _ _ _ g _ _ w _ 
+_ _ _ _ w _ _ _ _ 
+_ _ _ w w w _ _ _ 
+```

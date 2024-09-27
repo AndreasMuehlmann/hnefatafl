@@ -104,3 +104,7 @@ auto possibleCapture(const InternalField &field, Position lastMovedTo,
     }
     return possibleCatpure;
 }
+
+auto isDifferentRow(Position position1, Position position2) -> bool {
+    return position1 / static_cast<Position>(FIELD_SIZE) != position2 / static_cast<Position>(FIELD_SIZE);
+}

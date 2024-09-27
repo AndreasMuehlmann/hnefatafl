@@ -28,20 +28,19 @@ auto AvailableMovesGenerator::next() -> std::optional<Move> {
                 m_currentTargetPositionForMove < static_cast<int>(FIELDS)) &&
                m_game.getFigurAt(static_cast<Position>(m_currentTargetPositionForMove)) ==
                    Figur::NoFigur) {
-            if ((m_positionDeltaIndex == 0 || m_positionDeltaIndex == 1) &&
-                static_cast<size_t>(m_currentTargetPositionForMove) / FIELD_SIZE !=
-                    m_currentFigurPosition / FIELD_SIZE) {
+
+            if (m_positionDeltaIndex <= 1 && isDifferentRow(static_cast<Position>(m_currentTargetPositionForMove), static_cast<Position>(m_currentFigurPosition))) {
                 break;
             }
             if (m_currentTargetPositionForMove == FIELDS / 2) {
-                m_currentTargetPositionForMove =
-                    m_currentTargetPositionForMove + POSITION_DELTAS.at(m_positionDeltaIndex);
+                m_currentTargetPositionForMove += POSITION_DELTAS.at(m_positionDeltaIndex);
                 continue;
             }
+
             Move move = {m_currentFigurPosition,
                          static_cast<Position>(m_currentTargetPositionForMove)};
-            m_currentTargetPositionForMove =
-                m_currentTargetPositionForMove + POSITION_DELTAS.at(m_positionDeltaIndex);
+
+            m_currentTargetPositionForMove += POSITION_DELTAS.at(m_positionDeltaIndex);
             return move;
         }
         m_positionDeltaIndex++;
@@ -50,8 +49,7 @@ auto AvailableMovesGenerator::next() -> std::optional<Move> {
                 return std::nullopt;
             }
         } else {
-            m_currentTargetPositionForMove =
-                m_currentFigurPosition + POSITION_DELTAS.at(m_positionDeltaIndex);
+            m_currentTargetPositionForMove = m_currentFigurPosition + POSITION_DELTAS.at(m_positionDeltaIndex);
         }
     }
 }

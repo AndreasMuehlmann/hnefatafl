@@ -3,6 +3,7 @@
 #include "Human.hpp"
 #include "Negamax.hpp"
 #include "PlayerFactory.hpp"
+#include "NegamaxNoAlphaBeta.hpp"
 #include "RandomMovesGenerator.hpp"
 
 constexpr unsigned int oneSecond = 1000;
@@ -32,9 +33,9 @@ auto PlayerFactory::create(const std::string &identifier) const -> std::unique_p
     }
     if (identifier == "negamaxnoalphabeta") {
         if (m_playerCreationArguments.timeToThink != 0) {
-            return std::make_unique<Negamax>(m_playerCreationArguments.timeToThink);
+            return std::make_unique<NegamaxNoAlphaBeta>(m_playerCreationArguments.timeToThink);
         }
-        return std::make_unique<Negamax>(oneSecond);
+        return std::make_unique<NegamaxNoAlphaBeta>(oneSecond);
     }
     throw std::invalid_argument("Given identifier is in availablePlayers but not handled.");
 }

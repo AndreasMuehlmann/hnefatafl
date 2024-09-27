@@ -176,7 +176,9 @@ auto Game::capture(Position lastMovedTo, int shift) -> bool {
     if (areAttackersToMove()) {
         bool capturingKing = false;
         for (int position = lastMovedTo + shift;
-             0 < position && position < static_cast<int>(FIELDS); position += shift) {
+             0 < position && position < static_cast<int>(FIELDS)
+             && (abs(shift) != 1 || !isDifferentRow(lastMovedTo, static_cast<Position>(position)));
+            position += shift) {
             Figur figur = getFigurAt(static_cast<Position>(position));
             if (position == FIELDS / 2) {
                 if (figur == Figur::King) {
@@ -217,7 +219,9 @@ auto Game::capture(Position lastMovedTo, int shift) -> bool {
         }
     } else {
         for (int position = lastMovedTo + shift;
-             0 < position && position < static_cast<int>(FIELDS); position += shift) {
+             0 < position && position < static_cast<int>(FIELDS)
+             && (abs(shift) != 1 || !isDifferentRow(lastMovedTo, static_cast<Position>(position)));
+             position += shift) {
             Figur figur = getFigurAt(static_cast<Position>(position));
             if (position == FIELDS / 2) {
                 m_field &= ~mask;
