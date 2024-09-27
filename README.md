@@ -80,29 +80,7 @@ _ _ _ w w w _ _ _
 ```
 
 ```
-Wiking captures guard to the side
-_ _ _ w w w _ _ _ 
-_ _ _ _ w _ _ _ _ 
-w _ _ _ g _ _ _ _ 
-g _ _ _ _ _ _ _ w 
-_ _ g g k g g w w 
-_ w _ _ g _ _ _ w 
-g _ _ _ _ _ _ _ _ 
-_ _ _ _ w _ _ _ _ 
-_ _ _ w w w _ _ _ 
-evaluation: 1
-_ _ _ w w w _ _ _ 
-_ _ _ _ w _ _ _ _ 
-w _ _ _ g _ _ _ _ 
-g _ _ _ _ _ _ _ w 
-_ _ g g k g g w w 
-_ _ _ _ g _ _ _ w 
-_ w _ _ _ _ _ _ _ 
-_ _ _ _ w _ _ _ _ 
-_ _ _ w w w _ _ _ 
-```
-
-```
+Probably not important cause availablemovegenerator wasn't working
 Why not capture the king
 _ _ _ _ _ _ _ _ w 
 _ _ _ w w _ _ _ w 
@@ -116,6 +94,7 @@ _ _ _ w w w _ _ _
 ```
 
 ```
+Probably not important cause availablemovegenerator wasn't working
 Why not take the three guards
 _ _ _ _ _ _ w _ _ 
 _ _ _ w w _ _ _ w 

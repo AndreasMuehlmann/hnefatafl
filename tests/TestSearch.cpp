@@ -85,7 +85,7 @@ TEST_CASE("Test if guard captures three wikings, with many figurs on the board",
     constexpr Field field = {
         std::array<Figur, FIELD_SIZE>{_, w, w, w, w, w, _, _, _},
         std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
-        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, g},
+        std::array<Figur, FIELD_SIZE>{_, _, w, _, _, _, _, _, g},
         std::array<Figur, FIELD_SIZE>{w, _, _, _, g, _, _, _, w},
         std::array<Figur, FIELD_SIZE>{_, _, g, g, k, g, g, w, w},
         std::array<Figur, FIELD_SIZE>{_, _, _, _, g, _, _, _, w},
@@ -94,7 +94,7 @@ TEST_CASE("Test if guard captures three wikings, with many figurs on the board",
         std::array<Figur, FIELD_SIZE>{w, w, _, _, w, _, _, _, w},
     };
     Game game(field, false);
-    Negamax negamax(MAX_THINKING_TIME, 5);
+    Negamax negamax(MAX_THINKING_TIME, 4);
     Move move = negamax.getMove(game);
     Coordinates from = positionToCoordinates(move.from);
     Coordinates to = positionToCoordinates(move.to);
