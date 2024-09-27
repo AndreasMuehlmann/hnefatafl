@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Move.hpp"
 
 struct EvaluatedMove {

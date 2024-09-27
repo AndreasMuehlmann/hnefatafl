@@ -7,6 +7,7 @@
 #include "GameUtils.hpp"
 #include "Move.hpp"
 #include "Negamax.hpp"
+#include "NegamaxNoAlphaBeta.hpp"
 
 constexpr unsigned int MAX_THINKING_TIME = std::numeric_limits<unsigned int>::max();
 
@@ -77,4 +78,28 @@ TEST_CASE("Test if wiking makes winning move", "[getMove]") {
     REQUIRE(from.y == 4);
     REQUIRE(to.x == 1);
     REQUIRE(to.y == 3);
+}
+
+
+TEST_CASE("Test if guard captures three wikings, with many figurs on the board", "[getMove]") {
+    constexpr Field field = {
+        std::array<Figur, FIELD_SIZE>{_, w, w, w, w, w, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, _, _, _, _, g},
+        std::array<Figur, FIELD_SIZE>{w, _, _, _, g, _, _, _, w},
+        std::array<Figur, FIELD_SIZE>{_, _, g, g, k, g, g, w, w},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, g, _, _, _, w},
+        std::array<Figur, FIELD_SIZE>{_, _, _, _, g, _, _, _, _},
+        std::array<Figur, FIELD_SIZE>{w, _, _, _, _, _, _, w, _},
+        std::array<Figur, FIELD_SIZE>{w, w, _, _, w, _, _, _, w},
+    };
+    Game game(field, false);
+    Negamax negamax(MAX_THINKING_TIME, 5);
+    Move move = negamax.getMove(game);
+    Coordinates from = positionToCoordinates(move.from);
+    Coordinates to = positionToCoordinates(move.to);
+    REQUIRE(from.x == 4);
+    REQUIRE(from.y == 6);
+    REQUIRE(to.x == 8);
+    REQUIRE(to.y == 6);
 }
