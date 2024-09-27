@@ -1,15 +1,14 @@
 #include <chrono>
 #include <cstdlib>
-#include <iostream>
+#include <cstring>
 #include <limits>
 
 #include "AvailableMovesGenerator.hpp"
+#include "EvaluatedMovePath.hpp"
 #include "Game.hpp"
-#include "GameUtils.hpp"
 #include "Move.hpp"
 #include "Negamax.hpp"
 #include "SearchUtils.hpp"
-#include "EvaluatedMovePath.hpp"
 
 constexpr int WINNING_VALUE = 10000;
 constexpr int ALPHA_BETA_VALUE = 100000;
@@ -24,7 +23,7 @@ auto Negamax::getMove(const Game &game) -> Move {
     m_searchStart = Clock::now();
     EvaluatedMove bestEvaluatedMove{};
     for (unsigned int depth = 1; depth <= m_maxDepth; depth++) {
-        auto duration =
+        const auto duration =
             std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - m_searchStart);
         if (duration.count() > m_thinkingTimeMs) {
             break;
@@ -33,50 +32,58 @@ auto Negamax::getMove(const Game &game) -> Move {
         EvaluatedMovePath principalVariation{};
         const EvaluatedMove evaluatedMove =
             negamax(localGame, {FIELDS, FIELDS}, depth, -ALPHA_BETA_VALUE, ALPHA_BETA_VALUE, principalVariation);
-        auto durationAfterSearch =
+        const auto durationAfterSearch =
             std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - m_searchStart);
         if (durationAfterSearch.count() > m_thinkingTimeMs) {
             break;
         }
-        //std::cout << "depth: " << depth << '\n';
+        printPrincipalVariation(game, principalVariation);
         if (abs(evaluatedMove.evaluation) == WINNING_VALUE) {
             return evaluatedMove.move;
         }
         bestEvaluatedMove = evaluatedMove;
     }
 
-    std::cout << "evaluation: " << bestEvaluatedMove.evaluation << '\n';
     return bestEvaluatedMove.move;
 }
 
 auto Negamax::negamax(Game &game, Move move, unsigned int depth, int alpha,
                       int beta, EvaluatedMovePath& principalVariation) -> EvaluatedMove {
     if (move.from != FIELDS) {
-        Winner winner = game.makeMove(move);
-        int sign = (game.areAttackersToMove()) ? 1 : -1;
+        const Winner winner = game.makeMove(move);
+        const int sign = (game.areAttackersToMove()) ? 1 : -1;
         if (winner == Winner::Attacker) {
+            principalVariation.moveCount = 0;
+            principalVariation.evaluation = sign * WINNING_VALUE;
             return {move, sign * WINNING_VALUE};
         }
         if (winner == Winner::Defender) {
+            principalVariation.moveCount = 0;
+            principalVariation.evaluation = -sign * WINNING_VALUE;
             return {move, -sign * WINNING_VALUE};
         }
         if (winner == Winner::Draw) {
+            principalVariation.moveCount = 0;
+            principalVariation.evaluation = 0;
             return {move, 0};
         }
     }
 
-    EvaluatedMovePath evaluatedMovePath{};
     if (depth == 0) {
-        return {move, evaluate(game)};
+        const int evaluation = evaluate(game);
+        principalVariation.moveCount = 0;
+        principalVariation.evaluation = evaluation;
+        return {move, evaluation};
     };
 
-    auto duration =
+    const auto duration =
         std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - m_searchStart);
     if (duration.count() > m_thinkingTimeMs) {
-        EvaluatedMove evaluatedMove{};
+        const EvaluatedMove evaluatedMove{};
         return evaluatedMove;
     }
 
+    EvaluatedMovePath evaluatedMovePath{};
     EvaluatedMove bestEvaluatedMove{};
     bestEvaluatedMove.evaluation = std::numeric_limits<int>::min();
     AvailableMovesGenerator availableMovesGenerator(game);
@@ -91,6 +98,10 @@ auto Negamax::negamax(Game &game, Move move, unsigned int depth, int alpha,
         if (evaluatedMove.evaluation > bestEvaluatedMove.evaluation) {
             bestEvaluatedMove.move = *moveOption;
             bestEvaluatedMove.evaluation = evaluatedMove.evaluation;
+            principalVariation.moves[0] = *moveOption;
+            memcpy(static_cast<Move*>(principalVariation.moves) + 1, static_cast<Move*>(evaluatedMovePath.moves), evaluatedMovePath.moveCount * sizeof(Move));
+            principalVariation.moveCount = evaluatedMovePath.moveCount + 1;
+            principalVariation.evaluation = -evaluatedMovePath.evaluation;
             if (evaluatedMove.evaluation > alpha) {
                 alpha = evaluatedMove.evaluation;
             }

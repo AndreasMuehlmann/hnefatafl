@@ -27,7 +27,7 @@ auto SingleGameManager::run() -> Winner {
             continue;
         }
         winner = m_game.makeMove(move);
-        m_game.printField();
+        //m_game.printField();
     }
 
     if (m_commandLineOuptut) {
