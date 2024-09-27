@@ -9,6 +9,7 @@
 #include "Move.hpp"
 #include "Negamax.hpp"
 #include "SearchUtils.hpp"
+#include "EvaluatedMovePath.hpp"
 
 constexpr int WINNING_VALUE = 10000;
 constexpr int ALPHA_BETA_VALUE = 100000;
@@ -29,26 +30,27 @@ auto Negamax::getMove(const Game &game) -> Move {
             break;
         }
         Game localGame = game;
+        EvaluatedMovePath principalVariation{};
         const EvaluatedMove evaluatedMove =
-            negamax(localGame, {FIELDS, FIELDS}, depth, -ALPHA_BETA_VALUE, ALPHA_BETA_VALUE);
+            negamax(localGame, {FIELDS, FIELDS}, depth, -ALPHA_BETA_VALUE, ALPHA_BETA_VALUE, principalVariation);
         auto durationAfterSearch =
             std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - m_searchStart);
         if (durationAfterSearch.count() > m_thinkingTimeMs) {
             break;
         }
-        // std::cout << "depth: " << depth << '\n';
+        std::cout << "depth: " << depth << '\n';
         if (abs(evaluatedMove.evaluation) == WINNING_VALUE) {
             return evaluatedMove.move;
         }
         bestEvaluatedMove = evaluatedMove;
     }
 
-    // std::cout << "evaluation: " << bestEvaluatedMove.evaluation << '\n';
+    std::cout << "evaluation: " << bestEvaluatedMove.evaluation << '\n';
     return bestEvaluatedMove.move;
 }
 
 auto Negamax::negamax(Game &game, Move move, unsigned int depth, int alpha,
-                      int beta) -> EvaluatedMove {
+                      int beta, EvaluatedMovePath& principalVariation) -> EvaluatedMove {
     if (move.from != FIELDS) {
         Winner winner = game.makeMove(move);
         int sign = (game.areAttackersToMove()) ? 1 : -1;
@@ -62,6 +64,8 @@ auto Negamax::negamax(Game &game, Move move, unsigned int depth, int alpha,
             return {move, 0};
         }
     }
+
+    EvaluatedMovePath evaluatedMovePath{};
     if (depth == 0) {
         return {move, evaluate(game)};
     };
@@ -81,7 +85,7 @@ auto Negamax::negamax(Game &game, Move move, unsigned int depth, int alpha,
         if (moveOption == std::nullopt) {
             break;
         }
-        EvaluatedMove evaluatedMove = negamax(game, *moveOption, depth - 1, -alpha, -beta);
+        EvaluatedMove evaluatedMove = negamax(game, *moveOption, depth - 1, -beta, -alpha, evaluatedMovePath);
         evaluatedMove.evaluation *= -1;
         game.unmakeMove();
         if (evaluatedMove.evaluation > bestEvaluatedMove.evaluation) {

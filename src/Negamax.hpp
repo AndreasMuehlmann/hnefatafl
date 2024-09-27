@@ -3,6 +3,7 @@
 #include <chrono>
 
 #include "EvaluatedMove.hpp"
+#include "EvaluatedMovePath.hpp"
 #include "Player.hpp"
 
 using Clock = std::chrono::high_resolution_clock;
@@ -14,7 +15,7 @@ class Negamax : public Player {
     Negamax(unsigned int thinkingTimeMs, unsigned int maxDepth);
     ~Negamax() override = default;
     auto getMove(const Game &game) -> Move override;
-    auto negamax(Game &game, Move move, unsigned int depth, int alpha, int beta) -> EvaluatedMove;
+    auto negamax(Game &game, Move move, unsigned int depth, int alpha, int beta, EvaluatedMovePath& principalVariation) -> EvaluatedMove;
 
   private:
     unsigned int m_thinkingTimeMs;
