@@ -1,9 +1,9 @@
 #include <iostream>
 
 #include "BitMasks.hpp"
-#include "MovePath.hpp"
 #include "Game.hpp"
 #include "GameUtils.hpp"
+#include "MovePath.hpp"
 #include "SearchUtils.hpp"
 
 constexpr int KING_VALUE = 6;

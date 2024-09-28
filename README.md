@@ -21,11 +21,7 @@ Run `git-clang-format` to format modified files before commiting them or run `cl
 
 ## TODO
 
-- Use not an EvaluatedMovePath but just a MovePath and use the returned evaluation, don't pass a move
-- Reimplement negamax with returning score and pass move back up with PrincipalVariation
 - Abstract Iterative deepening and use for all searches
-- Reimplement checking for draw with unordered_map and custom fast hashing function
-
 
 ## Testcases
 

@@ -4,10 +4,10 @@
 #include <limits>
 
 #include "AvailableMovesGenerator.hpp"
-#include "MovePath.hpp"
 #include "Game.hpp"
 #include "GlobalConfig.hpp"
 #include "Move.hpp"
+#include "MovePath.hpp"
 #include "Negamax.hpp"
 #include "SearchUtils.hpp"
 
@@ -32,7 +32,8 @@ auto Negamax::getMove(const Game &game) -> Move {
         }
         Game localGame = game;
         MovePath principalVariation{};
-        int evaluation = negamax(localGame, depth, -ALPHA_BETA_VALUE, ALPHA_BETA_VALUE, principalVariation);
+        int evaluation =
+            negamax(localGame, depth, -ALPHA_BETA_VALUE, ALPHA_BETA_VALUE, principalVariation);
         evaluation *= game.areAttackersToMove() ? 1 : -1;
         const auto durationAfterSearch =
             std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - m_searchStart);
@@ -81,16 +82,13 @@ auto Negamax::negamax(Game &game, unsigned int depth, int alpha, int beta,
         if (winner == Winner::Attacker) {
             principalVariation.moveCount = 0;
             evaluation = -sign * WINNING_VALUE;
-        }
-        else if (winner == Winner::Defender) {
+        } else if (winner == Winner::Defender) {
             principalVariation.moveCount = 0;
             evaluation = sign * WINNING_VALUE;
-        }
-        else if (winner == Winner::Draw) {
+        } else if (winner == Winner::Draw) {
             principalVariation.moveCount = 0;
             evaluation = 0;
-        }
-        else {
+        } else {
             evaluation = -negamax(game, depth - 1, -beta, -alpha, movePath);
         }
         game.unmakeMove();
@@ -98,8 +96,7 @@ auto Negamax::negamax(Game &game, unsigned int depth, int alpha, int beta,
             bestEvaluation = evaluation;
             principalVariation.moves[0] = *moveOption;
             memcpy(static_cast<Move *>(principalVariation.moves) + 1,
-                   static_cast<Move *>(movePath.moves),
-                   movePath.moveCount * sizeof(Move));
+                   static_cast<Move *>(movePath.moves), movePath.moveCount * sizeof(Move));
             principalVariation.moveCount = movePath.moveCount + 1;
             if (evaluation > alpha) {
                 alpha = evaluation;
