@@ -32,7 +32,7 @@ auto Negamax::getMove(const Game &game) -> Move {
         }
         Game localGame = game;
         MovePath principalVariation{};
-        int evaluation = negamax(localGame, {FIELDS, FIELDS}, depth, -ALPHA_BETA_VALUE, ALPHA_BETA_VALUE, principalVariation);
+        int evaluation = negamax(localGame, depth, -ALPHA_BETA_VALUE, ALPHA_BETA_VALUE, principalVariation);
         evaluation *= game.areAttackersToMove() ? 1 : -1;
         const auto durationAfterSearch =
             std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - m_searchStart);
@@ -54,25 +54,8 @@ auto Negamax::getMove(const Game &game) -> Move {
     return lastPrincipalVariation.moves[0];
 }
 
-auto Negamax::negamax(Game &game, Move move, unsigned int depth, int alpha, int beta,
+auto Negamax::negamax(Game &game, unsigned int depth, int alpha, int beta,
                       MovePath &principalVariation) -> int {
-    if (move.from != FIELDS) {
-        const Winner winner = game.makeMove(move);
-        const int sign = game.areAttackersToMove() ? 1 : -1;
-        if (winner == Winner::Attacker) {
-            principalVariation.moveCount = 0;
-            return sign * WINNING_VALUE;
-        }
-        if (winner == Winner::Defender) {
-            principalVariation.moveCount = 0;
-            return -sign * WINNING_VALUE;
-        }
-        if (winner == Winner::Draw) {
-            principalVariation.moveCount = 0;
-            return 0;
-        }
-    }
-
     if (depth == 0) {
         principalVariation.moveCount = 0;
         return evaluate(game);
@@ -92,7 +75,24 @@ auto Negamax::negamax(Game &game, Move move, unsigned int depth, int alpha, int 
         if (moveOption == std::nullopt) {
             break;
         }
-        int evaluation = -negamax(game, *moveOption, depth - 1, -beta, -alpha, movePath);
+        int evaluation = 0;
+        const Winner winner = game.makeMove(*moveOption);
+        const int sign = game.areAttackersToMove() ? 1 : -1;
+        if (winner == Winner::Attacker) {
+            principalVariation.moveCount = 0;
+            evaluation = -sign * WINNING_VALUE;
+        }
+        else if (winner == Winner::Defender) {
+            principalVariation.moveCount = 0;
+            evaluation = sign * WINNING_VALUE;
+        }
+        else if (winner == Winner::Draw) {
+            principalVariation.moveCount = 0;
+            evaluation = 0;
+        }
+        else {
+            evaluation = -negamax(game, depth - 1, -beta, -alpha, movePath);
+        }
         game.unmakeMove();
         if (evaluation > bestEvaluation) {
             bestEvaluation = evaluation;
