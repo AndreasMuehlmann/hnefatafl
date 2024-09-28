@@ -13,6 +13,9 @@ SingleGameManager::SingleGameManager(Game game, std::unique_ptr<Player> attackin
 
 auto SingleGameManager::run() -> Winner {
     Winner winner = Winner::NoWinner;
+    if (verbosity >= 2) {
+        m_game.printField();
+    }
     while (winner == Winner::NoWinner) {
         Move move{};
         if (m_game.areAttackersToMove()) {

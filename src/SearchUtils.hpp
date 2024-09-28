@@ -1,7 +1,7 @@
 #pragma once
 
-#include "EvaluatedMovePath.hpp"
+#include "MovePath.hpp"
 #include "Game.hpp"
 
 auto evaluate(Game &game) -> int;
-auto printPrincipalVariation(Game game, const EvaluatedMovePath &evaluatedMovePath) -> void;
+auto printPrincipalVariation(Game game, const MovePath &movePath, int evaluation) -> void;

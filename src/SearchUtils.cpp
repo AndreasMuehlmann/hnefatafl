@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "BitMasks.hpp"
-#include "EvaluatedMovePath.hpp"
+#include "MovePath.hpp"
 #include "Game.hpp"
 #include "GameUtils.hpp"
 #include "SearchUtils.hpp"
@@ -16,13 +16,12 @@ auto evaluate(Game &game) -> int {
     return (static_cast<int>(wikingCount) - static_cast<int>(guardCount) - KING_VALUE) * sign;
 }
 
-auto printPrincipalVariation(Game game, const EvaluatedMovePath &evaluatedMovePath) -> void {
-    std::cout << "Principal Variation (depth: " << evaluatedMovePath.moveCount << ")\n";
-    const int sign = (game.areAttackersToMove()) ? 1 : -1;
-    for (size_t i = 0; i < evaluatedMovePath.moveCount; i++) {
-        printMove(evaluatedMovePath.moves[i]);
-        game.makeMove(evaluatedMovePath.moves[i]);
+auto printPrincipalVariation(Game game, const MovePath &movePath, int evaluation) -> void {
+    std::cout << "Principal Variation (depth: " << movePath.moveCount << ")\n";
+    for (size_t i = 0; i < movePath.moveCount; i++) {
+        printMove(movePath.moves[i]);
+        game.makeMove(movePath.moves[i]);
         game.printField();
     }
-    std::cout << "evaluation: " << sign * evaluatedMovePath.evaluation << "\n\n";
+    std::cout << "evaluation: " << evaluation << "\n\n";
 }
