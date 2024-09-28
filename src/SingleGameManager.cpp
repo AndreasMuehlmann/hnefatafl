@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "Game.hpp"
+#include "GlobalConfig.hpp"
 #include "SingleGameManager.hpp"
 
 SingleGameManager::SingleGameManager(Game game, std::unique_ptr<Player> attackingPlayer,
@@ -15,10 +16,14 @@ auto SingleGameManager::run() -> Winner {
     while (winner == Winner::NoWinner) {
         Move move{};
         if (m_game.areAttackersToMove()) {
-            //std::cout << "Attackers to move.\n";
+            if (verbosity >= 2) {
+                std::cout << "Attackers to move.\n";
+            }
             move = m_attackingPlayer->getMove(m_game);
         } else {
-            //std::cout << "Defenders to move.\n";
+            if (verbosity >= 2) {
+                std::cout << "Defenders to move.\n";
+            }
             move = m_defendingPlayer->getMove(m_game);
         }
         std::string error = m_game.validMove(move);
@@ -27,7 +32,9 @@ auto SingleGameManager::run() -> Winner {
             continue;
         }
         winner = m_game.makeMove(move);
-        //m_game.printField();
+        if (verbosity >= 2) {
+            m_game.printField();
+        }
     }
 
     if (m_commandLineOuptut) {

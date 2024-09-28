@@ -29,7 +29,9 @@ auto AvailableMovesGenerator::next() -> std::optional<Move> {
                m_game.getFigurAt(static_cast<Position>(m_currentTargetPositionForMove)) ==
                    Figur::NoFigur) {
 
-            if (m_positionDeltaIndex <= 1 && isDifferentRow(static_cast<Position>(m_currentTargetPositionForMove), static_cast<Position>(m_currentFigurPosition))) {
+            if (m_positionDeltaIndex <= 1 &&
+                isDifferentRow(static_cast<Position>(m_currentTargetPositionForMove),
+                               static_cast<Position>(m_currentFigurPosition))) {
                 break;
             }
             if (m_currentTargetPositionForMove == FIELDS / 2) {
@@ -49,7 +51,8 @@ auto AvailableMovesGenerator::next() -> std::optional<Move> {
                 return std::nullopt;
             }
         } else {
-            m_currentTargetPositionForMove = m_currentFigurPosition + POSITION_DELTAS.at(m_positionDeltaIndex);
+            m_currentTargetPositionForMove =
+                m_currentFigurPosition + POSITION_DELTAS.at(m_positionDeltaIndex);
         }
     }
 }

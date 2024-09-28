@@ -3,14 +3,17 @@
 
 #include "Game.hpp"
 #include "GameUtils.hpp"
+#include "GlobalConfig.hpp"
 #include "Human.hpp"
 
 auto Human::getMove(const Game &game) -> Move {
-    game.printField();
-    if (game.areAttackersToMove()) {
-        std::cout << "Attackers to move\n";
-    } else {
-        std::cout << "Defenders to move\n";
+    if (verbosity <= 1) {
+        game.printField();
+        if (game.areAttackersToMove()) {
+            std::cout << "Attackers to move\n";
+        } else {
+            std::cout << "Defenders to move\n";
+        }
     }
 
     unsigned int xFrom = 0;

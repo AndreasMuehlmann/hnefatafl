@@ -2,8 +2,8 @@
 
 #include "Human.hpp"
 #include "Negamax.hpp"
-#include "PlayerFactory.hpp"
 #include "NegamaxNoAlphaBeta.hpp"
+#include "PlayerFactory.hpp"
 #include "RandomMovesGenerator.hpp"
 
 constexpr unsigned int oneSecond = 1000;

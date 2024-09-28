@@ -6,6 +6,7 @@
 #include <argparse/argparse.hpp>
 
 #include "GameManagerUtils.hpp"
+#include "GlobalConfig.hpp"
 #include "MultipleGameManager.hpp"
 #include "Perft.hpp"
 #include "PlayerCreationArguments.hpp"
@@ -53,6 +54,13 @@ auto main(int argc, char *argv[]) -> int {
         .scan<'i', unsigned int>()
         .store_into(randomMoveDepthForStartState)
         .help("Start the game with a given amount of random moves made.");
+
+    program.add_argument("-V", "--verbose")
+        .action([&](const auto &) { ++verbosity; })
+        .append()
+        .default_value(false)
+        .implicit_value(true)
+        .nargs(0);
 
     try {
         program.parse_args(argc, argv);

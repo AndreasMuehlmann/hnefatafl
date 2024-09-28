@@ -6,6 +6,7 @@
 #include "AvailableMovesGenerator.hpp"
 #include "EvaluatedMovePath.hpp"
 #include "Game.hpp"
+#include "GlobalConfig.hpp"
 #include "Move.hpp"
 #include "Negamax.hpp"
 #include "SearchUtils.hpp"
@@ -22,6 +23,7 @@ Negamax::Negamax(unsigned int thinkingTimeMs, unsigned int maxDepth)
 auto Negamax::getMove(const Game &game) -> Move {
     m_searchStart = Clock::now();
     EvaluatedMove bestEvaluatedMove{};
+    EvaluatedMovePath lastPrincipalVariation{};
     for (unsigned int depth = 1; depth <= m_maxDepth; depth++) {
         const auto duration =
             std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - m_searchStart);
@@ -31,24 +33,30 @@ auto Negamax::getMove(const Game &game) -> Move {
         Game localGame = game;
         EvaluatedMovePath principalVariation{};
         const EvaluatedMove evaluatedMove =
-            negamax(localGame, {FIELDS, FIELDS}, depth, -ALPHA_BETA_VALUE, ALPHA_BETA_VALUE, principalVariation);
+            negamax(localGame, {FIELDS, FIELDS}, depth, -ALPHA_BETA_VALUE, ALPHA_BETA_VALUE,
+                    principalVariation);
         const auto durationAfterSearch =
             std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - m_searchStart);
         if (durationAfterSearch.count() > m_thinkingTimeMs) {
             break;
         }
-        printPrincipalVariation(game, principalVariation);
+        lastPrincipalVariation = principalVariation;
+        if (verbosity >= 4) {
+            printPrincipalVariation(game, principalVariation);
+        }
         if (abs(evaluatedMove.evaluation) == WINNING_VALUE) {
             return evaluatedMove.move;
         }
         bestEvaluatedMove = evaluatedMove;
     }
-
+    if (verbosity >= 3) {
+        printPrincipalVariation(game, lastPrincipalVariation);
+    }
     return bestEvaluatedMove.move;
 }
 
-auto Negamax::negamax(Game &game, Move move, unsigned int depth, int alpha,
-                      int beta, EvaluatedMovePath& principalVariation) -> EvaluatedMove {
+auto Negamax::negamax(Game &game, Move move, unsigned int depth, int alpha, int beta,
+                      EvaluatedMovePath &principalVariation) -> EvaluatedMove {
     if (move.from != FIELDS) {
         const Winner winner = game.makeMove(move);
         const int sign = (game.areAttackersToMove()) ? 1 : -1;
@@ -92,14 +100,17 @@ auto Negamax::negamax(Game &game, Move move, unsigned int depth, int alpha,
         if (moveOption == std::nullopt) {
             break;
         }
-        EvaluatedMove evaluatedMove = negamax(game, *moveOption, depth - 1, -beta, -alpha, evaluatedMovePath);
+        EvaluatedMove evaluatedMove =
+            negamax(game, *moveOption, depth - 1, -beta, -alpha, evaluatedMovePath);
         evaluatedMove.evaluation *= -1;
         game.unmakeMove();
         if (evaluatedMove.evaluation > bestEvaluatedMove.evaluation) {
             bestEvaluatedMove.move = *moveOption;
             bestEvaluatedMove.evaluation = evaluatedMove.evaluation;
             principalVariation.moves[0] = *moveOption;
-            memcpy(static_cast<Move*>(principalVariation.moves) + 1, static_cast<Move*>(evaluatedMovePath.moves), evaluatedMovePath.moveCount * sizeof(Move));
+            memcpy(static_cast<Move *>(principalVariation.moves) + 1,
+                   static_cast<Move *>(evaluatedMovePath.moves),
+                   evaluatedMovePath.moveCount * sizeof(Move));
             principalVariation.moveCount = evaluatedMovePath.moveCount + 1;
             principalVariation.evaluation = -evaluatedMovePath.evaluation;
             if (evaluatedMove.evaluation > alpha) {

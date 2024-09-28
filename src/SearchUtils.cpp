@@ -1,10 +1,10 @@
 #include <iostream>
 
-#include "SearchUtils.hpp"
 #include "BitMasks.hpp"
 #include "EvaluatedMovePath.hpp"
 #include "Game.hpp"
 #include "GameUtils.hpp"
+#include "SearchUtils.hpp"
 
 constexpr int KING_VALUE = 6;
 
@@ -16,7 +16,7 @@ auto evaluate(Game &game) -> int {
     return (static_cast<int>(wikingCount) - static_cast<int>(guardCount) - KING_VALUE) * sign;
 }
 
-auto printPrincipalVariation(Game game, const EvaluatedMovePath& evaluatedMovePath) -> void {
+auto printPrincipalVariation(Game game, const EvaluatedMovePath &evaluatedMovePath) -> void {
     std::cout << "Principal Variation (depth: " << evaluatedMovePath.moveCount << ")\n";
     const int sign = (game.areAttackersToMove()) ? 1 : -1;
     for (size_t i = 0; i < evaluatedMovePath.moveCount; i++) {

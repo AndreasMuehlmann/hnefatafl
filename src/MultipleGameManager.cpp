@@ -3,6 +3,7 @@
 
 #include "Game.hpp"
 #include "GameManagerUtils.hpp"
+#include "GlobalConfig.hpp"
 #include "MultipleGameManager.hpp"
 #include "SingleGameManager.hpp"
 #include "Utils.hpp"
@@ -19,7 +20,7 @@ auto MultipleGameManager::run() const -> void {
     for (size_t i = 0; i < m_games; i++) {
         Game game = createRandomGame(m_randomMoveDepthForStartState);
         SingleGameManager singleGameManager(game, m_playerFactory.createAttacker(),
-                                            m_playerFactory.createDefender(), false);
+                                            m_playerFactory.createDefender(), verbosity >= 1);
         Winner winner = singleGameManager.run();
         if (winner == Winner::Attacker) {
             attackerWins++;

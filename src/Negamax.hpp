@@ -15,7 +15,8 @@ class Negamax : public Player {
     Negamax(unsigned int thinkingTimeMs, unsigned int maxDepth);
     ~Negamax() override = default;
     auto getMove(const Game &game) -> Move override;
-    auto negamax(Game &game, Move move, unsigned int depth, int alpha, int beta, EvaluatedMovePath& principalVariation) -> EvaluatedMove;
+    auto negamax(Game &game, Move move, unsigned int depth, int alpha, int beta,
+                 EvaluatedMovePath &principalVariation) -> EvaluatedMove;
 
   private:
     unsigned int m_thinkingTimeMs;
